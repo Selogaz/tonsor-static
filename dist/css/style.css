@@ -4867,7 +4867,6 @@ body {
 }
 
 .booking__title {
-  min-width: 108rem;
   max-width: none;
   margin: 0 0 2rem;
   font-family: var(--ff-title);
@@ -4878,15 +4877,16 @@ body {
 }
 @media (min-width: 576px) and (max-width: 991px) {
   .booking__title {
-    min-width: 0;
-    max-width: 80rem;
+    max-width: none;
   }
 }
 @media (max-width: 575px) {
   .booking__title {
-    min-width: 0;
     max-width: 29rem;
     margin-bottom: 1.4rem;
+  }
+  .booking__title br {
+    display: none;
   }
 }
 

@@ -95,16 +95,14 @@
 }
 
 // H2 баннера крупнее общего `.section-title` (50px/23px десктоп/моб. против 46px/27px,
-// сверено design-context `76:469`/`109:1183`) — отдельный токен `--fz-booking-title`,
-// общий компонент `.section-title` не трогаем. Акцентное слово «Rezervujte» переиспользует
-// `.section-title__accent`. Бокс заголовка зажат `min-width` на 1080px (`76:469`) — ширину
-// макетного бокса, поэтому перенос строк совпадает с Figma: строка 1 «Rezervujte si termín»,
-// строка 2 «na 3 kliknutí ještě dnes» (без литерального `<br>`/спанов, тот же приём, что
-// `max-width` у `.hero__title`). `line-height` 1.08 (54px) — из панели Dev `76:469` (не
-// `--lh-tight` 0.96=48px), перекрываем на этом заголовке.
+// сверено design-context `76:469`/`109:1183`) — отдельный токен `--fz-booking-title`.
+// Акцентное слово «Rezervujte» переиспользует `.section-title__accent`.
+// Разрыв строки — `<br>`: greedy-алгоритм CSS не гарантирует нужный брейкпоинт
+// (замер Chrome 405–465px), `<br>` даёт точную строку 1 / строку 2. На мобилке (≤575)
+// `<br>` скрывается — макет `109:1183` даёт другой перенос.
+// `line-height` 1.08 (54px) — из Dev-панели `76:469`.
 .booking__title {
-  min-width: 108rem; // 1080px, бокс `76:469`
-  max-width: none;
+  max-width: none; // разрыв строк контролируется <br> в разметке
   margin: 0 0 2rem;
   font-family: var(--ff-title);
   font-size: var(--fz-booking-title);
@@ -112,17 +110,16 @@
   line-height: 1.08; // 54px при fz 50px, `76:469`
   color: var(--fg-regular);
 
-  // U15 (промежуточные ширины): узел макета там отсутствует, фиксированный 108rem вылезает
-  // за узкий контейнер — возврат к текущему поведению (как `.hero__cta` в `_hero.scss`).
+  // Планшетный разрыв 576–991: узел макета отсутствует, <br> сохраняется
+  // (естественная высота строк 2), сброс max-width не нужен.
   @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
-    min-width: 0;
-    max-width: 80rem;
+    max-width: none;
   }
 
   @media (max-width: $mobile-xxlg) {
-    min-width: 0;
-    max-width: 29rem; // 290px, `109:1183` w=290 (не 240 — было занижено, отсюда лишний перенос до 4 строк)
+    max-width: 29rem; // 290px, `109:1183` w=290
     margin-bottom: 1.4rem;
+    br { display: none; } // на мобилке <br> не нужен — естественный перенос
   }
 }
 
