@@ -4867,16 +4867,24 @@ body {
 }
 
 .booking__title {
-  max-width: 80rem;
+  min-width: 108rem;
+  max-width: none;
   margin: 0 0 2rem;
   font-family: var(--ff-title);
   font-size: var(--fz-booking-title);
   font-weight: var(--fw-h2);
-  line-height: var(--lh-tight);
+  line-height: 1.08;
   color: var(--fg-regular);
+}
+@media (min-width: 576px) and (max-width: 991px) {
+  .booking__title {
+    min-width: 0;
+    max-width: 80rem;
+  }
 }
 @media (max-width: 575px) {
   .booking__title {
+    min-width: 0;
     max-width: 29rem;
     margin-bottom: 1.4rem;
   }
@@ -4903,6 +4911,15 @@ body {
   }
 }
 
+.booking__cta--desktop {
+  min-width: 34rem;
+  min-height: 7.6rem;
+}
+@media (min-width: 576px) and (max-width: 991px) {
+  .booking__cta--desktop {
+    min-width: 0;
+  }
+}
 @media (max-width: 575px) {
   .booking__cta--desktop {
     display: none;

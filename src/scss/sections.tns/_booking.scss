@@ -97,29 +97,42 @@
 // H2 баннера крупнее общего `.section-title` (50px/23px десктоп/моб. против 46px/27px,
 // сверено design-context `76:469`/`109:1183`) — отдельный токен `--fz-booking-title`,
 // общий компонент `.section-title` не трогаем. Акцентное слово «Rezervujte» переиспользует
-// `.section-title__accent`. `max-width` подобран под перенос строк реальным браузерным
-// рендером Trajan Pro 3 (без литерального `<br>` — в макете разрыв другой на 320, см. карту
-// секций), как и в `.hero__title`.
+// `.section-title__accent`. Бокс заголовка зажат `min-width` на 1080px (`76:469`) — ширину
+// макетного бокса, поэтому перенос строк совпадает с Figma: строка 1 «Rezervujte si termín»,
+// строка 2 «na 3 kliknutí ještě dnes» (без литерального `<br>`/спанов, тот же приём, что
+// `max-width` у `.hero__title`). `line-height` 1.08 (54px) — из панели Dev `76:469` (не
+// `--lh-tight` 0.96=48px), перекрываем на этом заголовке.
 .booking__title {
-  max-width: 80rem;
+  min-width: 108rem; // 1080px, бокс `76:469`
+  max-width: none;
   margin: 0 0 2rem;
   font-family: var(--ff-title);
   font-size: var(--fz-booking-title);
   font-weight: var(--fw-h2);
-  line-height: var(--lh-tight);
+  line-height: 1.08; // 54px при fz 50px, `76:469`
   color: var(--fg-regular);
 
+  // U15 (промежуточные ширины): узел макета там отсутствует, фиксированный 108rem вылезает
+  // за узкий контейнер — возврат к текущему поведению (как `.hero__cta` в `_hero.scss`).
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    min-width: 0;
+    max-width: 80rem;
+  }
+
   @media (max-width: $mobile-xxlg) {
+    min-width: 0;
     max-width: 29rem; // 290px, `109:1183` w=290 (не 240 — было занижено, отсюда лишний перенос до 4 строк)
     margin-bottom: 1.4rem;
   }
 }
 
-// Кнопка — стандартный `.button--solid`: дефолтные паддинги компонента уже дают ≈76px
-// высоты на десктопе (СТАЙЛГАЙД §5, инстанс «Rezervace-баннер 76»), совпадает с макетом
-// без переопределений. На мобилке — `width: 100%`, тот же приём, что и `.hero__cta`/
-// `.gift__cta`: без него дефолтная ширина по контенту (`--fz-button` 13px) заметно уже
-// 236px из макета — во весь контейнер выглядит увереннее и консистентно с другими секциями.
+// Кнопка — стандартный `.button--solid` на дефолтных паддингах, габариты фиксируем точно по
+// инстансу макета `76:470` (340×76px): `min-width`/`min-height` тем же приёмом, что и
+// `.hero__cta`/`.gift__cta` (357×87 / 400×87). На мобилке — `width: 100%`, тот же приём, что
+// и `.hero__cta`/`.gift__cta`: без него дефолтная ширина по контенту (`--fz-button` 13px)
+// заметно уже 236px из макета — во весь контейнер выглядит увереннее и консистентно.
+// Правая (мобильная) ссылка «Koupit dárkový poukaz» (`109:1185`) остаётся на свободном
+// макете — только `min-height` не трогаем.
 .booking__cta {
   flex-shrink: 0;
 
@@ -139,6 +152,14 @@
 }
 
 .booking__cta--desktop {
+  min-width: 34rem; // 340px, `76:470`
+  min-height: 7.6rem; // 76px, `76:470` (дефолт .button--solid ≈76px — фиксируем явно, как hero)
+
+  // U15 (промежуточные ширины): фикс-ширина вылезает за узкий контейнер — сброс, как `.hero__cta`.
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    min-width: 0;
+  }
+
   @media (max-width: $mobile-xxlg) {
     display: none;
   }
