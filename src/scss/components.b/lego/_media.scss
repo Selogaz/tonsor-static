@@ -1,0 +1,30 @@
+// Универсальная конструкция «меняющейся» картинки (ТЗ):
+// div.block__media > picture.media__pic > img.media__img — позволяет менять картинку
+// в адаптиве без правки разметки. Скругления/размеры задаёт секция-владелец.
+.media {
+  position: relative;
+  overflow: hidden;
+}
+
+.media__pic {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.media__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// Вариант «вписать целиком» (лого/иконки-фото без обрезки).
+.media--contain .media__img {
+  object-fit: contain;
+}
+
+// Вариант «заполнить с обрезкой» (фото на всю карточку). Явный алиас базового поведения.
+.media--cover .media__img {
+  object-fit: cover;
+}

@@ -1,0 +1,88 @@
+@mixin font($fname, $fstyle, $fweight, $furl: "") {
+  @if $furl == "" {
+    @font-face {
+      font-family: $fname;
+      font-style: $fstyle;
+      font-weight: $fweight;
+      font-display: swap;
+    }
+  }
+
+  @else {
+    @font-face {
+      font-family: $fname;
+      font-style: $fstyle;
+      font-weight: $fweight;
+      font-stretch: 100%;
+      src:
+        url("#{$furl}.woff2") format("woff2"),
+        url("#{$furl}.woff") format("woff");
+      font-display: swap;
+    }
+  }
+}
+
+@mixin gridCards($type: fit, $min: 280px, $max: 1fr, $gap: 30px) {
+  display: grid;
+  grid-template-columns: repeat(auto-#{$type}, minmax($min, $max));
+  gap: $gap;
+}
+
+@mixin mask($image_path, $size: contain) {
+  -webkit-mask: url("#{$image_path}");
+  mask: url("#{$image_path}");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: #{$size};
+  mask-size: #{$size};
+}
+
+@mixin scrollbar($width: 16px, $height: 100%, $thumb: #cecece, $track: transparent) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $height;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $thumb;
+  }
+}
+
+@mixin placeholder {
+  $placeholders: ":moz" ":webkit-input" "-moz" "-ms-input";
+
+  @each $placeholder in $placeholders {
+    &:#{$placeholder}-placeholder {
+      @content;
+    }
+  }
+}
+
+@mixin selection {
+  $prefixes: ":" ":-moz-";
+
+  @each $prefix in $prefixes {
+    :#{$prefix}selection {
+      @content;
+    }
+  }
+}
+
+@mixin loader {
+  position: relative;
+  display: block;
+  width: 1em;
+  height: 1em;
+  content: "";
+  border: 2px solid #cecece;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinAround 500ms infinite linear;
+}

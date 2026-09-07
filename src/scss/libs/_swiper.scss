@@ -1,0 +1,3 @@
+// Swiper CSS — вендорим локально (без CDN). Ядро скопировано в _swiper-core.scss из
+// node_modules/swiper/swiper.min.css. JS-модули регистрируются в src/js/index.js (Swiper.use).
+@import "swiper-core";

@@ -1,0 +1,262 @@
+// Patička (`76:522` десктоп 1920×387, узлы мобилки — `109:1272…109:1297`). Базовый
+// `sections.b/_footer.scss` даёт только `margin-top: auto` (прижатие к низу `.wrapper` через
+// флекс) — не переопределяется, фон/паддинги/раскладка целиком в этом файле.
+//
+// Десктоп: 4 колонки в ряд (лого+теглайн+соцсети слева, три текстовых колонки). Ширины
+// колонок сетки подобраны по фактическим отступам узлов от левого края контейнера
+// (`76:532` x=760, `76:534` x=1130, `76:537` x=1490; контейнер начинается в x=220) —
+// 54/37/36rem дают точные старты вложенных колонок 540/910/1270px от края контейнера.
+.footer {
+  padding-top: 7.6rem;
+  padding-bottom: 4.2rem;
+  background: var(--bg-app-dark);
+
+  @media (max-width: $mobile-xxlg) {
+    padding-top: 2.4rem;
+    padding-bottom: 3.2rem;
+    text-align: center;
+  }
+}
+
+.footer__row {
+  display: grid;
+  grid-template-columns: 54rem 37rem 36rem 1fr;
+  align-items: start;
+
+  // U15 (промежуточные ширины): на 576–991 (планшетный разрыв, `--fz-modifier` 1.7639)
+  // фиксированные rem-ширины колонок (подобраны под 1920) в сумме шире самого контейнера —
+  // колонки вылезают за пределы вьюпорта. Тот же стек, что и на мобилке, снимает проблему.
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    display: block;
+  }
+
+  @media (max-width: $mobile-xxlg) {
+    display: block;
+  }
+}
+
+.footer__brand {
+  min-width: 0;
+}
+
+// Лого в футере — чистый белый (`--bg-app-light`, сверено `76:523`/`109:1272`: text-white),
+// в отличие от шапки (`--fg-app-dark` на `.logo` по умолчанию) — расхождение уже
+// зафиксировано в STYLEGUIDE (токен `--bg-app-light` описан как «лого в футере»).
+.footer__logo {
+  display: block;
+  color: var(--bg-app-light);
+}
+
+.footer__tagline {
+  margin: 2.4rem 0 0;
+  font-size: var(--fz-regular);
+  color: var(--fg-secondary);
+
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 0.8rem;
+    font-size: var(--fz-xsmall);
+  }
+}
+
+.footer__socials {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  margin-top: 3.2rem;
+
+  @media (max-width: $mobile-xxlg) {
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.6rem;
+  }
+}
+
+.footer__social {
+  display: block;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: var(--fg-app-dark);
+  transition: color var(--tr) ease;
+
+  @media (max-width: $mobile-xxlg) {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+.footer__social svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.footer__social:hover {
+  @media (any-hover: hover) {
+    color: var(--c-primary);
+  }
+}
+
+.footer__col {
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    margin-top: 2.1rem;
+  }
+
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 2.1rem;
+  }
+}
+
+.footer__col + .footer__col {
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    margin-top: 1.6rem;
+  }
+
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 1.6rem;
+  }
+}
+
+.footer__col-title {
+  margin: 0;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-small);
+  font-weight: var(--fw-medium);
+  color: var(--c-primary);
+
+  // Правка 06.09 (п. 21): на 320 строка заголовка колонки в макете — 17px
+  // (`109:1282`/`109:1287`/`109:1289` при 13px кегля = --lh-ui), а не 20.8px наследуемого
+  // от body --lh-regular. Лишние 3.8px интерлиньяжа и раздували зазор до контента.
+  @media (max-width: $mobile-xxlg) {
+    font-size: var(--fz-xsmall);
+    line-height: var(--lh-ui);
+  }
+}
+
+.footer__col-text {
+  margin: 2.2rem 0 0;
+  font-size: var(--fz-regular);
+  line-height: 3rem;
+  color: var(--fg-muted);
+
+  // Правка 06.09 (п. 21): десктопные 2.2rem (`76:537`→`76:538`) на 320 давали 43px между
+  // верхами заголовка и контента при макетных 23px (`109:1282` верх 6271 → `109:1283` верх
+  // 6294; зазор между боксами — 6px). Мобильный override — по зазору боксов макета.
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 0.6rem;
+    font-size: var(--fz-xsmall);
+    line-height: 1.45;
+  }
+}
+
+// Адрес — 2 строки на десктопе (`76:535`), на мобилке (`109:1288`) одна строка: перенос
+// прячется медиазапросом вместо дублирования разметки.
+.footer__col-text-break {
+  @media (max-width: $mobile-xxlg) {
+    display: none;
+  }
+}
+
+.footer__col-link {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: var(--fz-regular);
+  color: var(--c-primary);
+
+  // Правка 06.09 (п. 21): в макете адрес `109:1288` (низ 6390) → ссылка `109:1286`
+  // (верх 6393) — 3px между боксами при строке ссылки 17px (--lh-ui), у нас было 22px.
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 0.3rem;
+    font-size: var(--fz-xsmall);
+    line-height: var(--lh-ui);
+  }
+}
+
+.footer__col-link:hover {
+  @media (any-hover: hover) {
+    color: var(--c-primary-dark);
+  }
+}
+
+// Правка 06.09 (п. 11/21): отступ от заголовка «KONTAKTY» до телефона отсутствовал совсем
+// (`.footer__col-title` не имеет своего `margin-bottom`, а `.footer__phone` не имел
+// `margin-top`) — в макете (`76:522`) тот же зазор заголовок→контент, что и у соседних
+// колонок «Otevírací doba»/«Adresa» (title-bottom → content-top ≈ 20–22px и там, и там,
+// сверено `get_metadata`; на 320 `109:1289`→`109:1290` тот же паттерн) — переиспользуем
+// значение `.footer__col-text`.
+.footer__phone {
+  display: block;
+  margin-top: 2.2rem;
+  font-size: var(--fz-footer-phone);
+  font-weight: var(--fw-medium);
+  color: var(--fg-regular);
+
+  // Правка 06.09 (п. 21): десктопный `margin-top` (правка п. 11, `76:537`→`76:538`) на 320
+  // не подходит — в макете `109:1289` (низ 6443) → `109:1290` (верх 6448) всего 5px между
+  // боксами, строка телефона 17px (--lh-ui). Десктоп остаётся на 2.2rem.
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 0.5rem;
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-ui);
+  }
+}
+
+.footer__phone:hover {
+  @media (any-hover: hover) {
+    color: var(--c-primary);
+  }
+}
+
+.footer__email {
+  display: block;
+  margin-top: 1.2rem;
+  font-size: var(--fz-regular);
+  color: var(--fg-muted);
+
+  // Правка 06.09 (п. 21): в макете `109:1290` (низ 6465) → `109:1291` (верх 6470) — 5px
+  // между боксами, строка 17px (--lh-ui); было 22px.
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 0.5rem;
+    font-size: var(--fz-xsmall);
+    line-height: var(--lh-ui);
+  }
+}
+
+.footer__email:hover {
+  @media (any-hover: hover) {
+    color: var(--fg-regular);
+  }
+}
+
+.footer__hairline {
+  height: 0.1rem;
+  margin-top: 7.8rem;
+  background: var(--c-divider);
+
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 2rem;
+  }
+}
+
+.footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem 3.2rem;
+  justify-content: center;
+  margin-top: 3.6rem;
+
+  @media (max-width: $mobile-xxlg) {
+    gap: 0.8rem 1.6rem;
+    margin-top: 1.6rem;
+  }
+}
+
+.footer__legal-link {
+  font-size: var(--fz-xsmall);
+  color: var(--fg-legal);
+}
+
+.footer__legal-link:hover {
+  @media (any-hover: hover) {
+    color: var(--fg-muted);
+  }
+}

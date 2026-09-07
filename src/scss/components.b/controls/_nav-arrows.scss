@@ -1,0 +1,75 @@
+// Навигационные стрелки каруселей (паттерн ТЗ: .swiper-button-prev/next вынесены
+// на уровень со .swiper). Два вида из стайлгайда: outline (тонкая рамка) и filled (тёмная).
+.nav-arrow {
+  --size: 4.8em;
+  --radius: 0;
+  --fg: var(--fg-app-light);
+  --bg: transparent;
+  --border-color: var(--c-divider);
+  --border-width: 0.1rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size);
+  height: var(--size);
+  color: var(--fg);
+  cursor: pointer;
+  background: var(--bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--radius);
+  transition: var(--tr-regular);
+}
+
+.nav-arrow:hover {
+  @media (any-hover: hover) {
+    --bg: var(--bg-app-dark);
+    --fg: var(--fg-app-dark);
+    --border-color: var(--bg-app-dark);
+  }
+}
+
+// Пропорции стрелки сняты с «Переключателя» макета: в круге 55.85
+// стрелка 20.54 × 9.45. Обе стороны — проценты от квадратной кнопки, поэтому
+// соотношение сторон держится при любом `--size`.
+.nav-arrow__icon {
+  width: 36.78%;
+  height: 16.93%;
+}
+
+// `currentColor` в SVG не подхватывается через <img> (файл рендерится изолированно
+// от CSS хоста), поэтому на тёмной заливке — и постоянной у `--filled`, и наведённой —
+// стрелка перекрашивается в белый через filter.
+.nav-arrow--filled .nav-arrow__icon {
+  filter: brightness(0) invert(1);
+}
+
+.nav-arrow:hover .nav-arrow__icon {
+  @media (any-hover: hover) {
+    filter: brightness(0) invert(1);
+  }
+}
+
+// Filled — тёмная заливка, белая стрелка (как правый блок в стайлгайде).
+.nav-arrow--filled {
+  --bg: var(--bg-app-dark);
+  --fg: var(--fg-app-dark);
+  --border-color: var(--bg-app-dark);
+}
+
+// Состояние «недоступна» (например, стрелка «назад» на первом слайде).
+.nav-arrow--disabled,
+.nav-arrow.swiper-button-disabled {
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+// Мягкая («неоморфная») кнопка без рамки — белый круг с двойной мягкой тенью
+// (блик сверху-слева + тень снизу-справа). Как у карточек отзывов.
+.nav-arrow--soft {
+  --radius: 50%;
+  --border-color: transparent;
+  box-shadow:
+    -0.64rem -0.64rem 1.93rem rgba(255, 255, 255, 1),
+    0.64rem 0.64rem 1.93rem rgba(174, 174, 192, 0.2);
+}

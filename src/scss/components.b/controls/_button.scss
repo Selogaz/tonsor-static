@@ -1,0 +1,178 @@
+// База кнопки. Все параметры — через локальные переменные, значения — из глобальных токенов.
+// Модификаторы переопределяют только переменные.
+.button {
+  --padding-block: 1.2em;
+  --padding-inline: 2.4em;
+  --gap: 0.8em;
+  --ff: var(--ff-regular);
+  --fz: var(--fz-button);
+  --fw: var(--fw-button);
+  --lh: var(--lh-ui);
+  --ls: normal;
+  --tt: none;
+
+  --fg: var(--fg-button-primary);
+  --bg: var(--bg-button-primary);
+  --bg-hover: var(--bg-button-primary-hover);
+  --border-color: var(--border-button-primary);
+  --border-width: 0.1rem;
+  --radius: var(--radius-button-primary);
+
+  display: inline-flex;
+  gap: var(--gap);
+  align-items: center;
+  justify-content: center;
+
+  padding: var(--padding-block) var(--padding-inline);
+
+  font-family: var(--ff);
+  font-size: var(--fz);
+  font-weight: var(--fw);
+  line-height: var(--lh);
+  color: var(--fg);
+  text-align: center;
+  text-transform: var(--tt);
+  letter-spacing: var(--ls);
+  white-space: nowrap;
+
+  cursor: pointer;
+  background: var(--bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--radius);
+  transition: var(--tr-regular);
+}
+
+.button:hover {
+  @media (any-hover: hover) {
+    background: var(--bg-hover);
+  }
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+// Primary «Подробнее» — красная плашка с градиентом. НЕ uppercase, шрифт заголовочный.
+.button--primary {
+  --ff: var(--ff-title);
+  --fg: var(--fg-button-primary);
+  --bg: var(--gradient-primary);
+  --bg-hover: var(--gradient-primary);
+  --radius: var(--radius-button-primary);
+}
+
+// Ховер меняет только базовый цвет нижнего слоя — структура фона та же, что у --gradient-primary
+// (радиальный блик + сплошной linear-слой), поэтому переход по цвету плавный. Нижний слой — именно
+// linear-gradient сплошного цвета, а не голый цвет (тот ушёл бы в background-color, сменил бы тип
+// слоя image→color и transition дёргался бы вместо плавной заливки).
+.button--primary:hover {
+  @media (any-hover: hover) {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(187, 69, 72, 1) 0%, rgba(187, 69, 72, 0) 100%),
+      linear-gradient(var(--c-primary-light), var(--c-primary-light));
+  }
+}
+
+// Secondary «Читать полностью» — тёмная, UPPERCASE, с трекингом.
+.button--secondary {
+  --ff: var(--ff-regular);
+  --ls: 0.08em;
+  --tt: uppercase;
+  --fg: var(--fg-button-secondary);
+  --bg: var(--bg-button-secondary);
+  --bg-hover: var(--bg-button-secondary-hover);
+  --radius: var(--radius-md);
+}
+
+// Third — вид ссылки (без заливки): тёмный текст, акцент — красный.
+.button--third {
+  --fg: var(--fg-button-third);
+  --bg: transparent;
+  --bg-hover: transparent;
+  --border-color: var(--border-button-third);
+  --radius: var(--radius-md);
+}
+
+.button--third:hover {
+  @media (any-hover: hover) {
+    color: var(--fg-button-third-accent);
+    border-color: var(--fg-button-third-accent);
+  }
+}
+
+// Outline — красная обводка на белом (карточка «шаги»); ховер — заливка красным.
+.button--outline {
+  --fg: var(--c-primary);
+  --bg: transparent;
+  --bg-hover: var(--c-primary);
+  --border-color: var(--c-primary);
+}
+
+.button--outline:hover {
+  @media (any-hover: hover) {
+    color: var(--fg-button-primary);
+  }
+}
+
+// Pill «Пройти курс» — белая капсула на тёмной плашке; ховер — красный текст.
+.button--pill {
+  --padding-block: 1em;
+  --padding-inline: 2.4em;
+  --fg: var(--fg-button-third);
+  --bg: var(--bg-app-light);
+  --bg-hover: var(--bg-app-light);
+  --border-color: transparent;
+  --radius: var(--radius-pill);
+}
+
+.button--pill:hover {
+  @media (any-hover: hover) {
+    color: var(--fg-button-third-accent);
+  }
+}
+
+// Solid — золотая пилюля, тёмный текст (`65:75` Btn / Rezervovat střih (solid),
+// `67:137` Btn / Koupit poukaz (solid)). Основной CTA TONSOR.
+.button--solid {
+  --fg: var(--fg-button-solid);
+  --bg: var(--bg-button-solid);
+  --bg-hover: var(--bg-button-solid-hover);
+  --border-color: var(--border-button-solid);
+  --radius: var(--radius-pill);
+  --padding-inline: 2.5em; // 40px при fz 16px (65:75, 67:137 — паддинг совпадает точно)
+  --padding-block: 1.7em; // высота ≈75px при fz 16px/lh 1.3 — между наблюдаемыми 76–87px
+  // у конкретных инстансов (Koupit poukaz 76, Rezervace-баннер 76, hero 87); точную
+  // высоту места вызова каждая секция при необходимости уточняет своим min-height
+}
+
+// Line — белая пилюля, тёмный текст (`65:64`/`109:644` Btn / Rezervovat střih (line),
+// nav-кнопка шапки). Несмотря на название «line» — заливка, не обводка: сверено
+// design-context на обеих ширинах (bg-white, а не transparent+border).
+.button--line {
+  --fg: var(--fg-button-line);
+  --bg: var(--bg-button-line);
+  --bg-hover: var(--bg-button-line-hover);
+  --border-color: var(--border-button-line);
+  --border-width: 0.1rem;
+  --radius: var(--radius-pill);
+  --padding-inline: 1.6em;
+  --padding-block: 0.8em;
+}
+
+// Растягивание на всю ширину (формы).
+.button--block {
+  display: flex;
+  width: 100%;
+}
+
+// Состояния.
+.button--disabled,
+.button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.button--wait {
+  pointer-events: none;
+  opacity: 0.6;
+}

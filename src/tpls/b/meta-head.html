@@ -1,0 +1,50 @@
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+@@if (typeof title != 'undefined') {
+  <title>@@title</title>
+  <meta property="og:title" content="@@title">
+  <meta property="twitter:title" content="@@title">
+}
+
+<meta name="format-detection" content="telephone=no">
+
+<link rel="icon" type="image/svg+xml" href="./img/common.tns/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./img/common.tns/favicon.png">
+<link rel="apple-touch-icon" href="./img/common.tns/apple-touch-icon.png">
+
+@@if (typeof desc != 'undefined') {
+  <meta name="description" content="@@desc">
+  <meta property="og:description" content="@@desc">
+  <meta property="twitter:description" content="@@desc">
+}
+
+@@if (typeof ogImage == 'undefined') {
+  <meta property="og:image" content="./img/common/og.png">
+  <meta property="twitter:image" content="./img/common/og.png">
+}
+@@if (typeof ogImage != 'undefined') {
+  <meta property="og:image" content="@@ogImage">
+  <meta property="twitter:image" content="@@ogImage">
+}
+<meta property="twitter:card" content="summary_large_image">
+
+@@if (typeof siteName != 'undefined') {
+  <meta property="og:site_name" content="@@siteName">
+}
+@@if (typeof locale != 'undefined') {
+  <meta property="og:locale" content="@@locale">
+}
+
+@@if (typeof ogType != 'undefined') {
+  <meta property="og:type" content="@@ogType">
+}
+@@if (typeof ogType == 'undefined') {
+  <meta property="og:type" content="website">
+}
+
+@@if (typeof ogUrl != 'undefined') {
+  <meta property="og:url" content="@@ogUrl">
+  <link rel="canonical" href="@@ogUrl">
+}

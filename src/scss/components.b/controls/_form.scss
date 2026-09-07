@@ -1,0 +1,51 @@
+// Форма. Верстается БЕЗ тега <form> (валидация formich): корень — .form.js_form,
+// поля — .js_form__control, сабмит — .js_form__submit, скрытое поле name="form_name".
+.form {
+  --gap: 1.6em;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.form__fields {
+  display: grid;
+  gap: var(--gap);
+}
+
+.form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+
+  @media (max-width: $mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.form__submit {
+  width: 100%;
+}
+
+.form__caption {
+  font-size: var(--fz-small);
+  line-height: var(--lh-regular);
+  color: var(--fg-regular);
+}
+
+.form__caption-link {
+  color: var(--c-primary);
+  text-decoration: underline;
+}
+
+// formich навешивает .button--wait на сабмит во время отправки (см. formich.js).
+.js_form__submit.button--wait {
+  pointer-events: none;
+  opacity: 0.6;
+}

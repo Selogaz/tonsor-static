@@ -1,0 +1,85 @@
+
+<!-- Tým TONSOR (`76:481`, юнит U10). H2 `76:482`: «Tým » белым + «TONSOR» золотом — единственная
+секция макета, где акцент — само название бренда, не тематическое слово секции. Карточки
+барберов (`76:483/485/487`, 477×540 десктоп / `109:1199`/`109:1212`, 182×258 мобилка): фото —
+РАСТР, не CSS-фильтр (сверено: исходный JPEG из Figma имеет R=G=B на каждом пикселе, т.е. уже
+чёрно-белый файл), подпись «Jméno barbera» (чешский плейсхолдер «имя барбера», не рыба —
+заменит CMS) шрифтом Trajan Pro 3 (капитель — свойство самого начертания, см. STYLEGUIDE §2).
+В макете все 3 карточки используют один и тот же реальный портрет с разным кропом (в файле
+Figma это один барбер, сфотографированный один раз) — сделано 5 слайдов по кругу тем же фото
+(решение юнита, см. отчёт). Стрелки (`109:1214`/`109:1215` десктоп, `109:1221` мобилка,
+39/47×48px) — свой стиль `.team__arrow` (решение юнита — не общий `nav-arrow`), но токены
+`--bg-nav-btn`/`--radius-nav-btn`/`--c-divider` переиспользованы из Recenze (юнит U7):
+совпадают тютелька в тютельку (сверено design-context). Стрелки лежат сиблингом `.swiper`
+(паттерн ТЗ), центрированы под каруселью на обеих ширинах (в макете центр группы стрелок
+совпадает с центром фрейма/контейнера, не с одной карточкой). -->
+<section class="team" id="tym">
+  <div class="container">
+    <h2 class="team__title section-title" data-aos="fade-up">Tým <span class="section-title__accent">TONSOR</span></h2>
+
+    <div class="team__slider swiper">
+      <div class="swiper-wrapper">
+
+        <article class="team__slide swiper-slide">
+          <div class="team__media">
+            <picture class="team__media-pic">
+              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <p class="team__caption">Jméno barbera</p>
+        </article>
+
+        <article class="team__slide swiper-slide">
+          <div class="team__media">
+            <picture class="team__media-pic">
+              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <p class="team__caption">Jméno barbera</p>
+        </article>
+
+        <article class="team__slide swiper-slide">
+          <div class="team__media">
+            <picture class="team__media-pic">
+              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <p class="team__caption">Jméno barbera</p>
+        </article>
+
+        <article class="team__slide swiper-slide">
+          <div class="team__media">
+            <picture class="team__media-pic">
+              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <p class="team__caption">Jméno barbera</p>
+        </article>
+
+        <article class="team__slide swiper-slide">
+          <div class="team__media">
+            <picture class="team__media-pic">
+              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <p class="team__caption">Jméno barbera</p>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="team__nav">
+      <button type="button" class="team__arrow team__arrow--prev swiper-button-prev" aria-label="Předchozí barber">
+        <svg class="team__arrow-icon" width="15" height="10" aria-hidden="true"><use href="./img/sprite.svg#arrow-left-sym"></use></svg>
+      </button>
+      <button type="button" class="team__arrow team__arrow--next swiper-button-next" aria-label="Další barber">
+        <svg class="team__arrow-icon" width="15" height="10" aria-hidden="true"><use href="./img/sprite.svg#arrow-right-sym"></use></svg>
+      </button>
+    </div>
+  </div>
+</section>

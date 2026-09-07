@@ -1,0 +1,87 @@
+// Поле ввода. Обёртка .input содержит .input__field ([required]) и .input__error.
+// Состояния валидации навешивает formich/input-validator: .is-invalid / .is-invalid--highlighted.
+.input {
+  --bg: var(--bg-input);
+  --fg: var(--fg-input-focus);
+  --fg-placeholder: var(--fg-input-regular);
+  --fz: var(--fz-input);
+  --fw: var(--fw-input);
+  --padding-block: 1.4em;
+  --padding-inline: 1.6em;
+  --border-color: var(--border-input-regular);
+  --border-width: 0.1rem;
+  --radius: var(--radius-md);
+  --error-color: var(--c-error);
+  --error-fz: var(--fz-xs);
+
+  display: block;
+  font-family: var(--ff-regular);
+  font-size: var(--fz);
+  cursor: text;
+  transition: var(--tr-regular);
+}
+
+.input__field {
+  display: block;
+  width: 100%;
+  padding: var(--padding-block) var(--padding-inline);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: var(--fw);
+  color: var(--fg);
+  background: var(--bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--radius);
+  transition: inherit;
+}
+
+.input__field::placeholder {
+  color: var(--fg-placeholder);
+  opacity: 1;
+}
+
+.input__field:hover {
+  @media (any-hover: hover) {
+    --border-color: var(--border-input-hover);
+  }
+}
+
+.input__field:focus {
+  --border-color: var(--border-input-focus);
+  --fg: var(--fg-input-focus);
+}
+
+.input__field:-webkit-autofill,
+.input__field:-webkit-autofill:hover,
+.input__field:-webkit-autofill:focus {
+  box-shadow: 0 0 0 100rem var(--bg-input) inset;
+  -webkit-text-fill-color: var(--fg-input-focus);
+}
+
+// Ошибка валидации — красная рамка/текст + показ сообщения «Поле должно быть заполнено!».
+.input.is-invalid--highlighted {
+  --fg: var(--error-color);
+}
+
+.input.is-invalid--highlighted .input__field {
+  --border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+.input__error {
+  display: block;
+  max-height: 0;
+  padding: 0.4em var(--padding-inline) 0;
+  overflow: hidden;
+  font-family: var(--ff-regular);
+  font-size: var(--error-fz);
+  line-height: 1;
+  color: var(--error-color);
+  opacity: 0;
+  transition: var(--tr-regular);
+}
+
+.is-invalid--highlighted .input__error {
+  max-height: 10rem;
+  opacity: 1;
+}

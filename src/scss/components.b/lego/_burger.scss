@@ -1,0 +1,80 @@
+.burger {
+  --line-width: 1.8rem;
+  --line-height: 0.2rem;
+  --line-offset: 0.5rem;
+  --ring-size: 3.5rem;
+  --ring-width: 0.1rem;
+  --c-burger-line: var(--fg-app-dark);
+
+  position: relative;
+  z-index: 3;
+  width: var(--burger-width, 4rem);
+  height: var(--burger-height, 4rem);
+  cursor: pointer;
+  transition: var(--tr);
+
+  @media (min-width: $has-burger + 1) {
+    display: none;
+  }
+}
+
+// Кольцо — чистым CSS, отдельным псевдоэлементом; ::before занят подложкой
+// крестика в открытом состоянии (.header--burger-opened .header__burger::before).
+.burger::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--ring-size);
+  height: var(--ring-size);
+  pointer-events: none;
+  content: "";
+  border: var(--ring-width) solid var(--c-burger-line);
+  border-radius: 50%;
+  transition: opacity var(--tr);
+  transform: translate(-50%, -50%);
+}
+
+.burger__line {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: var(--line-width);
+  height: var(--line-height);
+  pointer-events: none;
+  background: var(--c-burger-line);
+  border-radius: 0.1rem;
+  transition: var(--tr);
+}
+
+.burger__line:nth-child(1) {
+  transform: translate(-50%, calc(-50% - var(--line-offset)));
+}
+
+.burger__line:nth-child(2) {
+  transform: translate(-50%, -50%);
+}
+
+.burger__line:nth-child(3) {
+  transform: translate(-50%, calc(-50% + var(--line-offset)));
+}
+
+.burger.is-active::after {
+  opacity: 0;
+}
+
+.burger.is-active .burger__line:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.burger.is-active .burger__line:nth-child(2) {
+  width: 0;
+}
+
+.burger.is-active .burger__line:nth-child(3) {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.header--dark-burger .burger {
+  --c-burger-line: var(--fg-regular);
+}

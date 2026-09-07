@@ -1,0 +1,93 @@
+// Чекбокс. Обёртка .checkbox содержит скрытый .checkbox__input ([required]),
+// рисованный .checkbox__check и .checkbox__label. Ошибку навешивает валидатор:
+// .is-invalid--highlighted на .checkbox → красная рамка + красный текст «Нажмите на галочку».
+.checkbox {
+  --size-check: 2em;
+  --border-width-check: 0.1rem;
+  --border-color-check: var(--border-check-regular);
+  --radius-check: 0.2rem;
+  --gap-check: 1em;
+  --bg-check: transparent;
+  --bg-check-checked: transparent;
+  --border-color-check-checked: var(--border-check-regular);
+  --check-mark: var(--border-check-regular);
+
+  --fz-label: var(--fz-small);
+  --fg-label: var(--fg-regular);
+  --fw-label: var(--fw-regular);
+  --lh-label: var(--lh-regular);
+
+  display: flex;
+  gap: var(--gap-check);
+  align-items: flex-start;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-label);
+  font-weight: var(--fw-label);
+  line-height: var(--lh-label);
+  color: var(--fg-label);
+  cursor: pointer;
+}
+
+.checkbox__input {
+  position: absolute;
+  width: 0.1rem;
+  height: 0.1rem;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.checkbox__check {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--size-check);
+  height: var(--size-check);
+  background-color: var(--bg-check);
+  border: var(--border-width-check) solid var(--border-color-check);
+  border-radius: var(--radius-check);
+  transition: var(--tr-regular);
+}
+
+.checkbox__check::before {
+  position: absolute;
+  inset: 0;
+  width: 70%;
+  height: 70%;
+  margin: auto;
+  content: "";
+  background-color: var(--check-mark);
+  -webkit-mask: url("@img/common.tns/icon-check.svg") center / contain no-repeat;
+  mask: url("@img/common.tns/icon-check.svg") center / contain no-repeat;
+  transition: transform 0.2s ease;
+  transform: scale(0);
+}
+
+.checkbox__input:checked ~ .checkbox__check {
+  --border-color-check: var(--border-color-check-checked);
+  --bg-check: var(--bg-check-checked);
+}
+
+.checkbox__input:checked ~ .checkbox__check::before {
+  transform: scale(1);
+}
+
+.checkbox__label {
+  font: inherit;
+  color: inherit;
+}
+
+.checkbox__link {
+  color: var(--c-primary);
+}
+
+// :any-link — чтобы подчёркивание перебило сброс `a, a:link, a:visited { text-decoration: none }`,
+// который специфичнее одиночного класса.
+.checkbox__link:any-link {
+  text-decoration: underline;
+  text-decoration-skip-ink: none;
+}
+
+// Ошибка: не отмечен, но форма отправлена.
+.checkbox.is-invalid--highlighted {
+  --border-color-check: var(--c-error);
+  --fg-label: var(--c-error);
+}

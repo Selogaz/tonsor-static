@@ -1,0 +1,24 @@
+.is-hidden {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.only-mobile {
+  @media (min-width: $mobile-xlg + 1) {
+    display: none;
+  }
+}
+
+.is-locked {
+  overflow: hidden;
+  touch-action: none;
+}
+
+.is-transparent {
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+.is-opaque {
+  opacity: 0.5;
+}

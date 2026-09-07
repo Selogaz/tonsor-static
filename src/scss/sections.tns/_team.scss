@@ -1,0 +1,149 @@
+// Tým TONSOR (юнит U10). Десктоп-узел `76:481` (S_08, 1920×920, фон `#101110` = --bg-app-dark,
+// сверено design-context): H2 top=100 → padding-top 10rem (стандарт, как у соседей); карточки
+// top=200 (гэп от низа H2 45px → margin-bottom тайтла 4.5rem); карточки 477×540, гэп между
+// колонками 24px (`76:483` x=220→697, `76:485` x=721 → гэп 24, `76:487` x=1222 → гэп 24;
+// раскладку даёт сам Swiper — slidesPerView:3 + spaceBetween:24, см. team.js — без CSS-грида);
+// подпись через margin-top 22px от низа карточки; стрелки центрированы по фрейму (группа
+// `109:1214`/`109:1215` шириной 100px ровно на центре 1920 — не под одной карточкой), гэп до
+// подписи 22px. Остаток до низа фрейма 59px → padding-bottom 5.9rem (не стандартные 10rem —
+// секция стыкуется с `faq` без своего зазора, см. `pages/page-homepage.md` §8).
+//
+// Мобилка — композит без фрейма-обёртки (H2 `109:1197` y=5037 = локальный 0 → padding-top 0,
+// стыкуется с предыдущей секцией вплотную): карточки `109:1199`(x=15)/`109:1212`(x=212) 182×258,
+// гэп 15px, вторая карточка вылезает за контейнер (212+182=394 > 320) — «подглядывание»
+// (карусель, slidesPerView:"auto", см. team.js). Стрелки — группа `109:1221`, 39×39px, гэп 8px,
+// центр группы ~на центре контейнера. Общая высота блока по карте секций 450px; остаток после
+// стрелок 34px → padding-bottom 3.4rem.
+.team {
+  padding: 10rem 0 5.9rem;
+  background: var(--bg-app-dark);
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 0 0 3.4rem;
+  }
+}
+
+.team__title {
+  margin-bottom: 4.5rem;
+
+  @media (max-width: $mobile-xxlg) {
+    margin-bottom: 2.7rem;
+  }
+}
+
+// Карусель — Swiper (см. team.js): десктоп 3 карточки в ряд (spaceBetween/slidesPerView дают
+// раскладку без CSS-грида), мобилка — «подглядывание» следующей карточки (slidesPerView:"auto",
+// ширина слайда фиксирована ниже).
+.team__slide {
+  @media (max-width: $mobile-xxlg) {
+    width: 18.2rem;
+  }
+}
+
+.team__media {
+  aspect-ratio: 477 / 540;
+  overflow: hidden;
+  border-radius: var(--radius-photo); // 20px — прямой замер `76:483` (design-context), точное
+  // совпадение с фото-радиусом, отдельный токен не заводим
+
+  @media (max-width: $mobile-xxlg) {
+    aspect-ratio: 182 / 258;
+  }
+}
+
+.team__media-pic {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// Кроп фото (`477×540` из `182.7%`-вертикальной портретной фотографии) даёт вылезание по
+// высоте — центр по Y смещён к верху (~27–33% от верха на обеих ширинах, замер по
+// design-context исходных image-fill трансформаций), а не ровно по центру, чтобы в кадре
+// оставались голова и плечи, а не терялись под нижним обрезом карточки.
+.team__media-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.team__caption {
+  margin: 2.2rem 0 0;
+  font-family: var(--ff-title);
+  font-size: var(--fz-team-name);
+  font-weight: var(--fw-h2);
+  line-height: var(--lh-ui);
+  color: var(--fg-regular);
+  text-align: center;
+
+  @media (max-width: $mobile-xxlg) {
+    margin-top: 1.2rem;
+  }
+}
+
+// Стрелки prev/next (`109:1214`/`109:1215`, мобилка `109:1221`) — свой стиль блока (решение
+// юнита — не общий `.nav-arrow` из `components.b/controls/_nav-arrows.scss`, файл не трогаем),
+// но хром переиспользует токены Recenze (юнит U7): `--bg-nav-btn`/`--radius-nav-btn` совпадают
+// пиксель-в-пиксель (сверено design-context), `--c-divider` — та же едва заметная рамка «назад»
+// (в макете рамка `#e7e7e7` при 10% прозрачности — практически тот же токен). Лежат сиблингом
+// `.team__slider.swiper` (паттерн ТЗ), центрированы под каруселью на обеих ширинах.
+.team__nav {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-top: 2.2rem;
+
+  @media (max-width: $mobile-xxlg) {
+    gap: 0.8rem;
+    margin-top: 3.4rem;
+  }
+}
+
+.team__arrow {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 4.7rem;
+  height: 4.8rem;
+  color: var(--fg-regular);
+  cursor: pointer;
+  background: transparent;
+  border: 0.1rem solid var(--c-divider);
+  border-radius: var(--radius-nav-btn);
+  transition: var(--tr-regular);
+
+  @media (max-width: $mobile-xxlg) {
+    width: 3.9rem;
+    height: 3.9rem;
+  }
+}
+
+.team__arrow--next {
+  background: var(--bg-nav-btn);
+  border-color: var(--bg-nav-btn);
+}
+
+.team__arrow:hover {
+  @media (any-hover: hover) {
+    border-color: var(--c-primary);
+  }
+}
+
+.team__arrow.swiper-button-disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.team__arrow-icon {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1rem;
+
+  @media (max-width: $mobile-xxlg) {
+    width: 1.3rem;
+    height: 0.9rem;
+  }
+}

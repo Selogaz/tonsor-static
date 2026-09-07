@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  @@include('tpls/b/meta-head.html', {
+    "title": "TONSOR — prémiový barbershop v Plzni",
+    "desc": "TONSOR — prémiový barbershop v Plzni. Rezervujte si termín na 3 kliknutí.",
+    "ogImage": "https://tonsor-barber.cz/img/common.tns/og.jpg",
+    "ogUrl": "https://tonsor-barber.cz/",
+    "themeColor": "#171717",
+    "favicon": true,
+    "locale": "cs_CZ"
+  })
+
+  <link rel="preload" href="./css/style.css" as="style">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    @@include('tpls/header.html')
+
+    <main class="main">
+      @@include('tpls/sections/hero.html')
+      @@include('tpls/sections/services.html')
+      @@include('tpls/sections/gift.html')
+      @@include('tpls/sections/care.html')
+      @@include('tpls/sections/portfolio.html')
+      @@include('tpls/sections/reviews.html')
+      @@include('tpls/sections/booking.html')
+      @@include('tpls/sections/team.html')
+      @@include('tpls/sections/faq.html')
+    </main>
+
+    @@include('tpls/footer.html')
+  </div>
+
+  <!-- Schema.org (юнит U14): BarberShop — контакты/адрес/часы из patičky (footer.html) и
+  project-brief.md; FAQPage — 5 вопросов/ответов 1:1 из tpls/sections/faq.html. `@type`
+  BarberShop не входит в официальный словарь schema.org (устоявшееся расширение для
+  барбершопов) — добавлен родительский LocalBusiness вторым значением на случай, если
+  парсер не распознает первый. Домен в `url`/`sameAs` не подтверждён проджектом (сайт ещё
+  не развёрнут) — выведен из email-домена info@tonsor-barber.cz, решение юнита. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["BarberShop", "LocalBusiness"],
+    "name": "TONSOR",
+    "image": "./img/common.tns/og.jpg",
+    "url": "https://tonsor-barber.cz/",
+    "telephone": "+420777042214",
+    "email": "info@tonsor-barber.cz",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Hálkova 1056/10",
+      "postalCode": "301 00",
+      "addressLocality": "Plzeň",
+      "addressCountry": "CZ"
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "08:00",
+      "closes": "20:00"
+    },
+    "sameAs": ["https://instagram.com/tonsor.barbershop"]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Kolik stojí služby?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ceny začínají od 500 Kč za úpravu vousů nebo dětský střih. Kompletní ceník všech služeb najdete na našem webu."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mohu se před návštěvou poradit ohledně střihu?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ano. Můžeme se spojit přes WhatsApp. Pošlete nám referenční fotku a svou fotografii a poradíme vám, zda je daný střih vhodný a jak by vám mohl sedět."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Máte volný termín dnes nebo zítra?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Snažíme se nechávat několik termínů pro rezervace na poslední chvíli. Aktuální dostupnost najdete v online rezervačním systému."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Jak dlouho služba trvá?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Standardní pánský střih trvá přibližně 45–60 minut. Kombinace střih + vousy trvá přibližně 75–90 minut."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Musím se objednat předem?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Doporučujeme rezervovat termín 2–3 dny před plánovanou návštěvou. Před svátky a vytíženými termíny raději alespoň týden dopředu."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script src="./js/index.min.js" defer></script>
+</body>
+</html>

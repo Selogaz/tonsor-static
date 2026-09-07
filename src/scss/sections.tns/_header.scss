@@ -1,0 +1,205 @@
+// Шапка (`65:50`/`65:51`/`65:66` десктоп, `109:643`/`109:644`/`109:917`/`109:918` мобилка).
+// В макете фиксация не показана — шапка стоит в потоке сразу под промо-полосой, поэтому
+// здесь переопределяется `position: fixed` базового `sections.b/_header.scss` (решение
+// зафиксировано в отчёте юнита U1).
+.header {
+  position: static;
+  background: var(--bg-app-dark);
+}
+
+// Три видимых кластера в потоке: лого / меню (нав-ссылки — сворачиваются в дровер на
+// мобилке) / действия (кнопка + бургер). Зазоры между кластерами на 1920 сведены пиксель-
+// в-пиксель через фиксированные margin (см. get_metadata: логотип x=220..332, меню
+// x=733..1700 внутри которого нав x=733..1188 и соцсети x=1414..1561, кнопка x=1570..1700 —
+// поэтому justify-content базового файла здесь не подходит, гэпы не равны).
+.header__container {
+  justify-content: flex-start;
+  padding-block: 1.5rem; // (78 − 48) / 2 — бар высотой 78px; 48px — фактическая высота кнопки
+  // `.button--line` в браузере (компонент стандартизован на 16px текста, макетные 44px из
+  // `65:64` при 15px тексте сюда не переносим — см. STYLEGUIDE §5 про принятое расхождение)
+}
+
+.header__logo {
+  flex-shrink: 0;
+}
+
+// На десктопе меню — не дровер, а просто группа «нав-ссылки + соцсети» в общем ряду шапки:
+// `display: contents` убирает у `.menu` собственный бокс, его дети становятся прямыми
+// flex-элементами `.header__container` и позиционируются через margin ниже.
+@media (min-width: $has-burger + 1) {
+  .menu {
+    display: contents;
+  }
+}
+
+.menu-overlay {
+  display: none;
+}
+
+.menu__nav {
+  margin-left: 40.1rem; // 401px — зазор логотип → нав-ссылки (`65:50` right 332 → `65:66` left 733)
+}
+
+.menu__list {
+  display: flex;
+  gap: 3.8rem; // 38px между пунктами меню, ровно по всем 4 промежуткам (`65:67..65:70`)
+  align-items: center;
+}
+
+.menu__link {
+  font-size: 1.5rem; // 15px (`Group 7`), разовое значение — не входит в типографическую шкалу STYLEGUIDE
+  color: var(--fg-nav-link);
+  white-space: nowrap;
+  transition: color var(--tr) ease;
+}
+
+.menu__link:hover {
+  @media (any-hover: hover) {
+    color: var(--fg-regular);
+  }
+}
+
+.menu__socials {
+  display: flex;
+  gap: 0.9rem; // 9px между иконками (`65:52/56/60`)
+  align-items: center;
+  margin-left: 22.6rem; // 226px — зазор нав-ссылки → соцсети (`65:66` right 1188 → иконки left 1414)
+}
+
+.menu__social {
+  display: block;
+  width: 4.3rem; // 43px (`65:52`/`65:56`/`65:60`)
+  height: 4.3rem;
+  color: var(--fg-app-dark);
+  transition: color var(--tr) ease;
+}
+
+.menu__social svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.menu__social:hover {
+  @media (any-hover: hover) {
+    color: var(--c-primary);
+  }
+}
+
+.header__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1.6rem;
+  align-items: center;
+  margin-left: 0.9rem; // 9px — тот же зазор, что и между соцсетями (иконки+кнопка — один визуальный кластер `65:51`)
+}
+
+.header__cta {
+  flex-shrink: 0;
+}
+
+// Бургер — компонент `components.b/lego/burger` (готовая анимация линий в крестик через
+// класс `.is-active`, навешивает `js/components.b/header/burger.js`). Всё, что отличает
+// его от базового вида, задаётся переменными компонента — сам `components.b` не трогаем.
+// Правка 06.09 (п. 13): цвет и геометрия сняты design-context'ом прямо с макета —
+// подложка `109:917` (44×39, радиус 20 = пилюля, белая заливка при непрозрачности слоя 10%),
+// глиф `109:918` (25×19: три «пилюли» 20.8×2.77 с шагом 5.54, белый градиент .6→.3,
+// среднее ≈45%). Кольцо базового компонента в макете отсутствует (рамка подложки после
+// множителя непрозрачности — 4%, визуально её нет) — гасим шириной, а не цветом, чтобы
+// анимация «крестик» осталась рабочей.
+.header__burger {
+  --burger-width: 4.4rem;
+  --burger-height: 3.9rem;
+  --line-width: 2.08rem;
+  --line-height: 0.28rem;
+  --line-offset: 0.55rem;
+  --ring-width: 0;
+  --c-burger-line: var(--fg-burger);
+  background: var(--bg-burger);
+  border-radius: var(--radius-pill);
+}
+
+@media (max-width: $has-burger) {
+  .header__container {
+    justify-content: space-between;
+  }
+
+  // Меню становится дровером справа — состояние «закрыто/открыто» в макете не нарисовано,
+  // решение по разметке/анимации — на юнит U1 (закрытие по крестику/клику по пункту/Esc —
+  // см. `header.js`; открытие/закрытие класса — `components.b/header/burger.js`).
+  .menu {
+    position: fixed;
+    inset: 0 0 0 auto;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    width: min(30rem, 85vw);
+    padding: 6rem 2rem 3rem;
+    overflow-y: auto;
+    visibility: hidden;
+    background: var(--bg-app-dark);
+    border-left: 0.1rem solid var(--c-divider);
+    transition: transform var(--tr) ease, visibility var(--tr) ease;
+    transform: translateX(100%);
+  }
+
+  .menu--visible {
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  // Бургер сам становится крестиком-закрывателем: фиксируется поверх дровера в углу
+  // экрана, чтобы быть доступным независимо от прокрутки страницы под ним.
+  .header--burger-opened .header__burger {
+    position: fixed;
+    top: 1.6rem;
+    right: 1.6rem;
+  }
+
+  .menu__nav {
+    margin-left: 0;
+  }
+
+  .menu__list {
+    flex-direction: column;
+    gap: 1.8rem;
+    align-items: flex-start;
+  }
+
+  .menu__link {
+    display: block;
+    font-size: var(--fz-regular);
+  }
+
+  .menu__socials {
+    gap: 1.6rem;
+    margin-top: 3rem;
+    margin-left: 0;
+  }
+
+  .menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    visibility: hidden;
+    background: var(--bg-overlay);
+    opacity: 0;
+    transition: var(--tr-regular);
+  }
+
+  .header--burger-opened .menu-overlay {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .header__actions {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: $mobile-xxlg) {
+  .header__container {
+    padding-block: 0.8rem; // (55 − 39) / 2 — бар высотой 55px вокруг кружка бургера (39px, `109:917`)
+  }
+}

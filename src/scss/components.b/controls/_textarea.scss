@@ -1,0 +1,52 @@
+// Текстовое поле. По строению аналогично .input: обёртка .textarea + .textarea__field.
+.textarea {
+  --fg: var(--fg-input-focus);
+  --fg-placeholder: var(--fg-input-regular);
+  --bg: var(--bg-input);
+  --fz: var(--fz-input);
+  --padding-block: 1.4em;
+  --padding-inline: 1.6em;
+  --border-color: var(--border-input-regular);
+  --radius: var(--radius-md);
+  --min-height: 12rem;
+
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: var(--radius);
+}
+
+.textarea__field {
+  display: block;
+  width: 100%;
+  min-height: var(--min-height);
+  padding: var(--padding-block) var(--padding-inline);
+  font-family: var(--ff-regular);
+  font-size: var(--fz);
+  color: var(--fg);
+  resize: vertical;
+  background: var(--bg);
+  border: 0.1rem solid var(--border-color);
+  border-radius: var(--radius);
+  transition: var(--tr-regular);
+}
+
+.textarea__field::placeholder {
+  color: var(--fg-placeholder);
+  opacity: 1;
+}
+
+.textarea__field:hover {
+  @media (any-hover: hover) {
+    --border-color: var(--border-input-hover);
+  }
+}
+
+.textarea__field:focus {
+  --border-color: var(--border-input-focus);
+}
+
+.textarea.is-invalid--highlighted .textarea__field {
+  --border-color: var(--c-error);
+  color: var(--c-error);
+}

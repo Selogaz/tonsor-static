@@ -1,0 +1,16 @@
+// Wordmark «TONSOR.» — DM Serif Text, белый текст + золотая точка. Переиспользуется в
+// шапке (юнит U1, `65:50`/`109:643`) и повторится в патичке (юнит U12, `76:523`).
+// Разметка: <a class="logo">TONSOR<span class="logo__dot">.</span></a>
+.logo {
+  display: inline-flex;
+  font-family: var(--ff-logo);
+  font-size: var(--fz-logo);
+  font-style: normal;
+  line-height: 1;
+  color: var(--fg-app-dark);
+  white-space: nowrap;
+}
+
+.logo__dot {
+  color: var(--c-primary);
+}

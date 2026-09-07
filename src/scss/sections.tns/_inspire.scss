@@ -1,0 +1,71 @@
+// Блок соцсетей (юнит U8) — тот же фрейм макета, что и `.booking` (см. `_booking.scss`),
+// общий фон `--bg-card` наследуется от родительской секции. Иконки — те же символы спрайта,
+// что и в шапке (`src/tpls/header.html`, юнит U1): tiktok/facebook/instagram, только
+// Instagram — рабочая ссылка, остальные — заглушки (боевых адресов нет).
+.inspire {
+  padding: 7rem 0 9.6rem; // 70px сверху (после фото) / 96px снизу (до конца фрейма 700px), `76:465`
+  text-align: center;
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 2.9rem 0 5rem; // 29px / 50px, общий мобильный блок `109:1176` (h=481)
+  }
+}
+
+.inspire__socials {
+  display: flex;
+  gap: 1.6rem; // 16px — `76:472`/`109:1188`: 3×32px иконки + 2×16px = 128px ширины блока
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 2.6rem;
+
+  @media (max-width: $mobile-xxlg) {
+    margin-bottom: 1.6rem;
+  }
+}
+
+.inspire__social {
+  display: block;
+  width: 3.2rem; // 32px, `76:472`/`109:1188` (одинаково на обеих ширинах)
+  height: 3.2rem;
+  color: var(--fg-regular);
+  transition: color var(--tr) ease;
+}
+
+.inspire__social svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.inspire__social:hover {
+  @media (any-hover: hover) {
+    color: var(--c-primary);
+  }
+}
+
+// Заголовок/подпись — отдельные токены `--fz-social-title`/`--fz-social-sub` (не совпадают
+// ни с одной существующей парой fz, сверено design-context `76:479`/`76:480`,
+// `109:1195`/`109:1196`). На мобилке фигма-бокс заголовка (`109:1195`) уже одет в
+// `max-width` ≈236px (перенос на 2 строки) — держим тем же приёмом; у подписи
+// (`109:1196`) бокс в макете full-bleed-артефакт (x=-580 w=1480) — центрируем по CSS,
+// не по буквальным координатам (тот же приём, что и в футере, юнит U12).
+.inspire__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-social-title);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  color: var(--fg-regular);
+
+  @media (max-width: $mobile-xxlg) {
+    max-width: 23.6rem;
+    margin: 0 auto 0.6rem;
+  }
+}
+
+.inspire__sub {
+  margin: 0;
+  font-size: var(--fz-social-sub);
+  line-height: var(--lh-ui);
+  color: var(--fg-secondary);
+}

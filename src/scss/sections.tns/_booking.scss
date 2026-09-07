@@ -1,0 +1,145 @@
+// Rezervace-баннер (юнит U8, `76:465` десктоп / общий блок `109:1176…` мобилка — один
+// фрейм макета покрывает и баннер, и блок соцсетей, см. `pages/page-homepage.md` →
+// строка 08+09). Секция стыкуется с соседями без зазора (reviews→booking→team, СТАЙЛГАЙД
+// §8), базовый `.section` не подключается — высота задаётся напрямую по фрейму. Фон —
+// `--bg-card`, общий для баннера и блока соцсетей (`.inspire`, `_inspire.scss`) — один
+// партиал, одна секция `.booking`.
+.booking {
+  position: relative;
+  padding-top: 8rem; // 80px, `76:466` y=80 (сверено design-context)
+  background: var(--bg-card);
+
+  @media (max-width: $mobile-xxlg) {
+    padding-top: 5rem; // 50px, `109:1179` y=4555 при блоке `109:1176` y=4505
+  }
+}
+
+// Фото-баннер — во всю ширину контейнера (`76:466`: x=220px = левый край контейнера,
+// w=1480px = ширина контейнера, СТАЙЛГАЙД §7), НЕ full-bleed. Скругления — 24px, отдельный
+// токен `--radius-banner` (не совпадает ни с `--radius-photo` 20px, ни с `--radius-pillar`
+// 22px). Фото — стоковый плейсхолдер макета (интерьер), заказчик заменит через CMS.
+.booking__media {
+  position: relative;
+  height: 34rem; // 340px, `76:466`
+  overflow: hidden;
+  border-radius: var(--radius-banner);
+
+  // U15 (промежуточные ширины): на 576–991 (планшетный разрыв, `--fz-modifier` 1.7639)
+  // `--fz-booking-title` (не переопределён для этой зоны) переносится на 4 строки — при
+  // фиксированной высоте 34rem текст+кнопка не помещаются и обрезаются `overflow: hidden`
+  // (кнопка «Rezervovat» становится частично невидимой). Замер: реальная высота контента
+  // в этой зоне держится около 40rem на всей ширине разрыва (шрифт и контейнер скейлятся
+  // одним модификатором) — 42rem даёт запас без обрезки.
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    height: 42rem;
+  }
+
+  @media (max-width: $mobile-xxlg) {
+    height: 24.1rem; // 241px, `109:1179`
+  }
+}
+
+.booking__media-pic {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.booking__media-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// Скрим — CSS-градиент поверх фото (не запечён в растр, в отличие от экспорта макета).
+// Отдельный токен `--gradient-booking-scrim` в `variables/_colors.scss` (тот же приём, что
+// и `--gradient-hero-scrim`, но другие стопы — короткий баннер, не полноэкранное фото).
+.booking__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--gradient-booking-scrim);
+}
+
+// Текст+CTA — поверх фото и скрима, по центру. Отступ сверху — под замеренное положение
+// eyebrow относительно верха фото (60px десктоп `76:468` y=140 минус `76:466` y=80; 39px
+// мобилка `109:1182` y=4594 минус `109:1179` y=4555).
+.booking__content {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6rem;
+  text-align: center;
+
+  @media (max-width: $mobile-xxlg) {
+    padding-top: 3.9rem;
+  }
+}
+
+// Eyebrow — сквозной паттерн секций (см. `.hero__eyebrow` в `_hero.scss`), токены
+// `--fz-eyebrow`/`--fg-eyebrow-lead`. Текст в макете (`76:468`/`109:1182`) набран уже
+// капителью («— ONLINE REZERVACE») — никакого `text-transform` не нужно, копируем как есть.
+.booking__eyebrow {
+  margin: 0 0 2.4rem;
+  font-size: var(--fz-eyebrow);
+  line-height: 1.6;
+  color: var(--fg-eyebrow-lead);
+
+  @media (max-width: $mobile-xxlg) {
+    margin-bottom: 1.3rem;
+  }
+}
+
+// H2 баннера крупнее общего `.section-title` (50px/23px десктоп/моб. против 46px/27px,
+// сверено design-context `76:469`/`109:1183`) — отдельный токен `--fz-booking-title`,
+// общий компонент `.section-title` не трогаем. Акцентное слово «Rezervujte» переиспользует
+// `.section-title__accent`. `max-width` подобран под перенос строк реальным браузерным
+// рендером Trajan Pro 3 (без литерального `<br>` — в макете разрыв другой на 320, см. карту
+// секций), как и в `.hero__title`.
+.booking__title {
+  max-width: 80rem;
+  margin: 0 0 2rem;
+  font-family: var(--ff-title);
+  font-size: var(--fz-booking-title);
+  font-weight: var(--fw-h2);
+  line-height: var(--lh-tight);
+  color: var(--fg-regular);
+
+  @media (max-width: $mobile-xxlg) {
+    max-width: 29rem; // 290px, `109:1183` w=290 (не 240 — было занижено, отсюда лишний перенос до 4 строк)
+    margin-bottom: 1.4rem;
+  }
+}
+
+// Кнопка — стандартный `.button--solid`: дефолтные паддинги компонента уже дают ≈76px
+// высоты на десктопе (СТАЙЛГАЙД §5, инстанс «Rezervace-баннер 76»), совпадает с макетом
+// без переопределений. На мобилке — `width: 100%`, тот же приём, что и `.hero__cta`/
+// `.gift__cta`: без него дефолтная ширина по контенту (`--fz-button` 13px) заметно уже
+// 236px из макета — во весь контейнер выглядит увереннее и консистентно с другими секциями.
+.booking__cta {
+  flex-shrink: 0;
+
+  @media (max-width: $mobile-xxlg) {
+    width: 100%;
+  }
+}
+
+// Две ссылки-кнопки с разным текстом по ширинам (решение заказчика 06.09, п. 19, см.
+// комментарий в `booking.html`) — переключение видимости чистым CSS, без JS.
+.booking__cta--mobile {
+  display: none;
+
+  @media (max-width: $mobile-xxlg) {
+    display: inline-flex; // как база `.button` — только видимость меняем, не layout
+  }
+}
+
+.booking__cta--desktop {
+  @media (max-width: $mobile-xxlg) {
+    display: none;
+  }
+}

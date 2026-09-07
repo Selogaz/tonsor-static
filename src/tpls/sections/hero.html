@@ -1,0 +1,77 @@
+<!-- Hero-слайдер (`65:47`, юнит U2). Слайд 1 в корне: `65:48`+`65:49` (фото/скрим),
+`65:71` (Blok textu: H1 `65:72`, лид `65:73`), `65:77` (eyebrow), `65:74` (CTA).
+Слайд 2 — фрейм `100:47`, слайд 3 — `100:318`. Мобилка: `104:636` (слайд 1: eyebrow
+`109:925`, H1 `109:923`, лид `109:924`, кнопка `109:1039`, фото `109:929` — БЛОК ПОД
+ТЕКСТОМ, не фон), слайды 2/3 — `109:1298`/`109:1562`. Автопрокрутка без стрелок/точек в
+макете не нарисована — точки-пагинация добавлены как решение юнита (см. hero.js/_hero.scss).
+Общий eyebrow/lead/CTA на всех слайдах, меняются H1 и фон-фото. Только первый слайд несёт
+<h1> (единственный h1 страницы), 2 и 3 — <p class="hero__title"> с тем же визуалом. -->
+<section class="hero">
+  <div class="hero__slider swiper">
+    <div class="hero__wrapper swiper-wrapper">
+
+      <div class="hero__slide swiper-slide">
+        <div class="hero__content container" data-aos="fade-up">
+          <div class="hero__text">
+            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
+            <h1 class="hero__title"><span class="hero__title-accent">Vybereme</span> výrazný střih a naučíme vás, jak si ho upravovat</h1>
+            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
+          </div>
+          <a class="hero__cta button button--solid" href="https://barber-team.reservio.com/booking" target="_blank" rel="noopener">Rezervovat střih</a>
+        </div>
+        <div class="hero__media">
+          <picture class="hero__media-pic">
+            <source media="(max-width: 575px)" srcset="./img/hero.tns/hero-slide-1-mobile@2x.webp" type="image/webp">
+            <source media="(max-width: 575px)" srcset="./img/hero.tns/hero-slide-1-mobile@2x.jpg">
+            <source srcset="./img/hero.tns/hero-slide-1@2x.webp" type="image/webp">
+            <img class="hero__media-img" src="./img/hero.tns/hero-slide-1@2x.jpg" alt="" width="1920" height="755" loading="eager" decoding="async">
+          </picture>
+          <div class="hero__scrim"></div>
+        </div>
+      </div>
+
+      <div class="hero__slide swiper-slide">
+        <div class="hero__content container" data-aos="fade-up">
+          <div class="hero__text">
+            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
+            <p class="hero__title">Ostříháme vás podle popisu nebo fotografie. Přesně tak, jak chcete. Uděláme <span class="hero__title-accent hero__title-accent--underline">perfektní fade</span></p>
+            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
+          </div>
+          <a class="hero__cta button button--solid" href="https://barber-team.reservio.com/booking" target="_blank" rel="noopener">Rezervovat střih</a>
+        </div>
+        <div class="hero__media">
+          <picture class="hero__media-pic">
+            <source media="(max-width: 575px)" srcset="./img/hero.tns/hero-slide-2-mobile@2x.webp" type="image/webp">
+            <source media="(max-width: 575px)" srcset="./img/hero.tns/hero-slide-2-mobile@2x.jpg">
+            <source srcset="./img/hero.tns/hero-slide-2@2x.webp" type="image/webp">
+            <img class="hero__media-img" src="./img/hero.tns/hero-slide-2@2x.jpg" alt="" width="1920" height="755" loading="lazy" decoding="async">
+          </picture>
+          <div class="hero__scrim"></div>
+        </div>
+      </div>
+
+      <div class="hero__slide swiper-slide">
+        <div class="hero__content container" data-aos="fade-up">
+          <div class="hero__text">
+            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
+            <p class="hero__title">Upravíme vaše vousy tak, aby působily čistě, upraveně a mužně</p>
+            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
+          </div>
+          <a class="hero__cta button button--solid" href="https://barber-team.reservio.com/booking" target="_blank" rel="noopener">Rezervovat střih</a>
+        </div>
+        <div class="hero__media">
+          <picture class="hero__media-pic">
+            <source media="(max-width: 575px)" srcset="./img/hero.tns/hero-slide-3-mobile@2x.webp" type="image/webp">
+            <source media="(max-width: 575px)" srcset="./img/hero.tns/hero-slide-3-mobile@2x.jpg">
+            <source srcset="./img/hero.tns/hero-slide-3@2x.webp" type="image/webp">
+            <img class="hero__media-img" src="./img/hero.tns/hero-slide-3@2x.jpg" alt="" width="1920" height="755" loading="lazy" decoding="async">
+          </picture>
+          <div class="hero__scrim"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="hero__pagination swiper-pagination"></div>
+  </div>
+</section>

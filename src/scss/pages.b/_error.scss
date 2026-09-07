@@ -1,0 +1,92 @@
+// Страница 404 — узла в макете нет: центрированный блок на общем шелле, стиль по
+// дизайн-системе (крупная «404» + фирменное красное свечение на CSS, см. STYLEGUIDE).
+.error-page {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+  overflow: hidden;
+
+  @media (max-width: $mobile-xlg) {
+    min-height: 60vh;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+// Красное свечение под кодом — декор, position: absolute допустим (свечение на CSS).
+.error-page::before {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: 64rem;
+  aspect-ratio: 1;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(var(--c-primary-rgb), 0.2) 0%,
+      rgba(var(--c-primary-rgb), 0) 60%
+    );
+  transform: translate(-50%, -50%);
+
+  @media (max-width: $mobile-xlg) {
+    width: 44rem;
+  }
+}
+
+.error-page__container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 64rem;
+  padding-right: var(--p-container);
+  padding-left: var(--p-container);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.error-page__code {
+  font-family: var(--ff-title);
+  font-size: 16rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--c-primary);
+  letter-spacing: -0.04em;
+
+  @media (max-width: $mobile-xlg) {
+    font-size: 10rem;
+  }
+}
+
+.error-page__title {
+  margin-top: 1.6rem;
+  font-family: var(--ff-title);
+  font-size: var(--fz-h2);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--fg-app-light);
+  letter-spacing: -0.03em;
+}
+
+.error-page__text {
+  max-width: 46rem;
+  margin-top: 1.6rem;
+  font-size: 1.8rem;
+  line-height: var(--lh-regular);
+  color: var(--fg-regular);
+
+  @media (max-width: $mobile-xlg) {
+    font-size: var(--fz-regular);
+  }
+}
+
+.error-page__action {
+  margin-top: 3.2rem;
+}

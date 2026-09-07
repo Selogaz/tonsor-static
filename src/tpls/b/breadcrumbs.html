@@ -1,0 +1,17 @@
+<nav class="breadcrumbs" aria-label="Хлебные крошки">
+  <a class="breadcrumbs__item" href="page-homepage.html">Главная</a>
+  <span class="breadcrumbs__divider">/</span>
+  @@if (typeof currentLabel == 'undefined') {
+  <span class="breadcrumbs__item breadcrumbs__item--current" aria-current="page">@@parentLabel</span>
+  }
+  @@if (typeof currentLabel != 'undefined' && typeof parentHref != 'undefined') {
+  <a class="breadcrumbs__item" href="@@parentHref">@@parentLabel</a>
+  }
+  @@if (typeof currentLabel != 'undefined' && typeof parentHref == 'undefined') {
+  <span class="breadcrumbs__item">@@parentLabel</span>
+  }
+  @@if (typeof currentLabel != 'undefined') {
+  <span class="breadcrumbs__divider">/</span>
+  <span class="breadcrumbs__item breadcrumbs__item--current" aria-current="page">@@currentLabel</span>
+  }
+</nav>

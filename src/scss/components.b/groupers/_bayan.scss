@@ -1,0 +1,6 @@
+// components.b/groupers/_bayan.js оборачивает первый/второй дочерние элементы .bayan
+// в .bayan__top/.bayan__bottom и добавляет пустую кнопку-триггер — прячем её, клик
+// обрабатывается на всей области .bayan__top.
+.bayan__toggler {
+  display: none;
+}

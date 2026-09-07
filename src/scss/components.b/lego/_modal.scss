@@ -1,0 +1,148 @@
+// Модалка на библиотеке b_modal (src/js/components.b/spawners/b_modal.js).
+// JS генерирует DOM: .b_modal__storage > .b_modal__overlay--<id> > .b_modal__aligner > .b_modal,
+// плюс кнопку .b_modal__closer. Открытое состояние — класс ._show на оверлее.
+.b_modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  visibility: hidden;
+  background: var(--bg-overlay);
+  opacity: 0;
+  transition: var(--tr-regular);
+}
+
+.b_modal__overlay._show {
+  visibility: visible;
+  opacity: 1;
+}
+
+// Скрим попапов «Форма заявки» и «Основатель» темнее движкового дефолта — скоуп,
+// база .b_modal__overlay (callback modal-form и остальные модалки) не трогается
+.b_modal__overlay--audit-request,
+.b_modal__overlay--founder {
+  background: var(--bg-overlay-strong);
+}
+
+.b_modal__aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: var(--p-container);
+}
+
+.b_modal__overlay--scrollable .b_modal__aligner,
+.b_modal--scrollable .b_modal__aligner {
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.b_modal {
+  --padding: 4em;
+  --radius: var(--radius-lg);
+  --max-width: 56rem;
+
+  position: relative;
+  width: 100%;
+  max-width: var(--max-width);
+  padding: var(--padding);
+  background: var(--bg-app-light);
+  border-radius: var(--radius);
+  transition: transform var(--tr) ease;
+  transform: translateY(2rem);
+
+  @media (max-width: $mobile-xlg) {
+    --padding: 2.4em;
+  }
+}
+
+._show .b_modal {
+  transform: translateY(0);
+}
+
+// Кнопка закрытия (генерируется JS, текст «Закрыть» — визуально скрыт, рисуем крестик).
+// Размеры — в rem, а не em: у кнопки свой font-size: 0 (прячет текст), em от него
+// схлопнул бы width/height/top/right в 0 (та же логика — у ::before).
+.b_modal__closer {
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  font-size: 0;
+  color: var(--fg-regular);
+  cursor: pointer;
+  background: var(--bg-card);
+  border-radius: 50%;
+  transition: var(--tr-regular);
+}
+
+.b_modal__closer::before {
+  width: 1.6rem;
+  height: 1.6rem;
+  content: "";
+  background-color: currentColor;
+  -webkit-mask: url("@img/common.tns/icon-close.svg") center / contain no-repeat;
+  mask: url("@img/common.tns/icon-close.svg") center / contain no-repeat;
+}
+
+// Крестик попапов «Форма заявки» и «Основатель» — голый светлый глиф без чипа-подложки,
+// увеличенный инсет от угла вьюпорта; скоуп, база (callback modal-form) не трогается.
+// Идёт до :hover ниже — при равной специфичности (0,2,0) хов-правило побеждает порядком.
+.b_modal__overlay--audit-request .b_modal__closer,
+.b_modal__overlay--founder .b_modal__closer {
+  top: 2.6rem;
+  right: 2.6rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  color: var(--fg-closer-inverted);
+  background: transparent;
+  border-radius: 0;
+}
+
+// Крестик «Основателя» по макету тусклее аудитного — приглушённый белый 30%, а не сплошной
+// светлый глиф. Специфичность (0,2,0) как у общего правила выше — берёт порядком; :hover ниже
+// так же перебивает цвет по порядку.
+.b_modal__overlay--founder .b_modal__closer {
+  color: var(--fg-closer-founder);
+}
+
+.b_modal__overlay--audit-request .b_modal__closer::before,
+.b_modal__overlay--founder .b_modal__closer::before {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.b_modal__closer:hover {
+  @media (any-hover: hover) {
+    color: var(--c-primary);
+  }
+}
+
+// Текстовые узлы внутри модалки.
+.b_modal__title {
+  font-family: var(--ff-title);
+  font-size: var(--fz-h3);
+  font-weight: var(--fw-h3);
+  line-height: var(--lh-tight);
+  color: var(--fg-regular);
+}
+
+.b_modal__desc {
+  margin-top: 1.6em;
+  font-size: var(--fz-regular);
+  line-height: var(--lh-regular);
+  color: var(--fg-regular);
+}
+
+// Служебная инфо-плашка (b_modal.makeInfoPop) — невалидный id и т.п.
+.b_modal--invalid {
+  --max-width: 40rem;
+
+  text-align: center;
+}

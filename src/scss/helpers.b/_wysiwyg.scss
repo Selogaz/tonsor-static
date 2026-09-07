@@ -1,0 +1,86 @@
+// Хелпер типографики длинного контента (политика, тело кейса/новости — приходит из CMS
+// без классов, поэтому стилизуем голые теги внутри блока). Восстанавливает то, что снял
+// reset: маркеры списков и подчёркивание ссылок. Только токены/rem, без px и hex.
+.wysiwyg {
+  font-size: 1.7rem;
+  line-height: 1.7;
+  color: var(--fg-regular);
+}
+
+// Вертикальный ритм между блоками.
+.wysiwyg > * + * {
+  margin-top: 1.6rem;
+}
+
+.wysiwyg h2 {
+  margin-top: 4rem;
+  font-family: var(--ff-title);
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--fg-app-light);
+  letter-spacing: -0.02em;
+}
+
+.wysiwyg h3 {
+  margin-top: 3.2rem;
+  font-family: var(--ff-title);
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--fg-app-light);
+}
+
+.wysiwyg h2:first-child,
+.wysiwyg h3:first-child {
+  margin-top: 0;
+}
+
+.wysiwyg a {
+  color: var(--c-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color var(--tr) ease;
+}
+
+.wysiwyg a:hover {
+  color: var(--c-primary-dark);
+}
+
+.wysiwyg strong,
+.wysiwyg b {
+  font-weight: 700;
+  color: var(--fg-app-light);
+}
+
+.wysiwyg ul,
+.wysiwyg ol {
+  padding-left: 2.4rem;
+}
+
+// Маркеры возвращаем: reset гасит их у всех li.
+.wysiwyg li {
+  list-style-position: outside;
+}
+
+.wysiwyg ul li {
+  list-style-type: disc;
+}
+
+.wysiwyg ol li {
+  list-style-type: decimal;
+}
+
+.wysiwyg li + li {
+  margin-top: 0.8rem;
+}
+
+.wysiwyg li::marker {
+  color: var(--c-primary);
+}
+
+.wysiwyg blockquote {
+  padding-left: 2rem;
+  color: var(--fg-secondary);
+  border-left: 0.3rem solid var(--c-primary);
+}

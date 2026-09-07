@@ -1,0 +1,14 @@
+.idea/
+.vscode/
+artefacts/
+scratchpad/
+node_modules
+psd/
+package-lock.json
+convert-images/
+_inbox/
+desktop.txt
+src/mix-manifest.json
+
+readme-local.md
+pz.md

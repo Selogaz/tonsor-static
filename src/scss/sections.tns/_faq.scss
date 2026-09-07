@@ -1,0 +1,165 @@
+// Časté dotazy (юнит U11). Секция стыкуется с соседями без своего зазора (карта секций:
+// team→faq→footer впритык) — паддинги взяты по аналогии с большинством секций (10rem
+// десктоп / 4rem мобилка, как у `.reviews`/`.portfolio`).
+//
+// Необычная палитра: фон САМОЙ СЕКЦИИ — `--bg-card` (#171817, обычно цвет карточек в
+// других секциях), а фон карточек-аккордеонов внутри — `--bg-app-dark` (#101110, обычно
+// фон страницы) — инверсия привычного паттерна «тёмная секция + светлые карточки».
+// Сверено `get_design_context` по нодам `76:494` (секция) и `76:497` (карточка) — оба
+// цвета сняты напрямую с узлов, не опечатка.
+.faq {
+  padding: 10rem 0;
+  background: var(--bg-card);
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 4rem 0;
+  }
+}
+
+.faq__head {
+  margin-bottom: 6.5rem; // 320-223=97px≈6.5rem с учётом margin `.section-title` ниже
+
+  @media (max-width: $mobile-xxlg) {
+    margin-bottom: 3rem;
+  }
+}
+
+.faq__title {
+  margin: 0 0 1.6rem;
+
+  @media (max-width: $mobile-xxlg) {
+    margin-bottom: 0.7rem;
+  }
+}
+
+.faq__lead {
+  margin: 0;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-faq-lead);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-regular);
+  color: var(--fg-muted);
+
+  // Правка 06.09 (п. 14): у лида на 320 своя ширина бокса — 267px (`109:1230`), уже
+  // контейнера (290px), из-за чего в макете перенос идёт после «před», а у нас шёл после
+  // «návštěvou». Строк в обоих случаях две, отличалась только точка переноса.
+  @media (max-width: $mobile-xxlg) {
+    max-width: 26.7rem;
+  }
+}
+
+// Раскладка 2 колонки на десктопе — обычный `grid-template-columns: 1fr 1fr` без
+// `grid-auto-flow: column`: `get_metadata` показывает, что faq-1/faq-2 стоят на одном и
+// том же y=250, faq-3/faq-4 — на y=420, т.е. это ПАРЫ СТРОК, не независимые колонки —
+// стандартный row-major поток с DOM-порядком 1..5 сам даёт нужное «слева 1,3,5 / справа 2,4».
+// `align-items: start` — в макете все 5 карточек нарисованы раскрытыми одной высоты
+// (150px), но в реальном аккордеоне свёрнутая карточка в паре с открытой первой не должна
+// растягиваться на всю высоту строки грида.
+.faq__list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: $mobile-xxlg) {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+}
+
+.faq__item {
+  overflow: hidden;
+  background: var(--bg-app-dark);
+  border-radius: var(--radius-photo); // числовое совпадение 20px, см. аналогичный приём у карточки Recenze (U7)
+}
+
+.faq__item-question {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3.2rem 3.8rem 3.2rem 3.6rem;
+  cursor: pointer;
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 1.6rem 1.8rem 1.6rem 1.5rem;
+  }
+}
+
+.faq__item-question-text {
+  margin: 0;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-faq-question);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  color: var(--fg-regular);
+
+  // Правка 06.09 (п. 14): в макете бокс вопроса на 320 — 216px (`109:1249`/`109:1254`), а
+  // не всё свободное место карточки до шеврона (227px): «Máte volný termín dnes nebo zítra?»
+  // ломается после «dnes», у нас ломалось после «nebo». Ограничиваем ширину боксом макета.
+  @media (max-width: $mobile-xxlg) {
+    max-width: 21.6rem;
+  }
+}
+
+// Шеврон — символ спрайта `chevron-down-sym` (базовое состояние «вниз» = свёрнуто, см.
+// `pages/page-homepage.md` → «Иконки»). Цвет снят пипеткой с рендера макета (`76:500` —
+// золото `--c-primary`), не `--fg-regular`, как у аналогичного шеврона портфолио-селекта.
+// Мобильный размер 14×8 — переиспользован без изменений у портфолио-селекта (тот же символ).
+.faq__item-chevron {
+  flex-shrink: 0;
+  width: 2.2rem;
+  height: 1.3rem;
+  color: var(--c-primary);
+  transition: var(--tr-regular);
+
+  @media (max-width: $mobile-xxlg) {
+    width: 1.4rem;
+    height: 0.8rem;
+  }
+}
+
+.faq__item.bayan--opened .faq__item-chevron {
+  transform: rotate(180deg);
+}
+
+// Раскрытое состояние (1920, `76:498`→`76:499`): реальный зазор вопрос→ответ 14px, а не
+// 32px (нижний паддинг вопроса `3.2rem`, нужный для симметричной пилюли в СВЁРНУТОМ
+// виде) — переопределяем только когда аккордеон открыт, закрытая пилюля не меняется.
+// Только десктоп — пункт правки касался 1920, мобильный отступ (`109:1239`) не сверялся
+// и не трогается. Правка 06.09, п.9.
+@media (min-width: $mobile-xxlg + 1) {
+  .faq__item.bayan--opened .faq__item-question {
+    padding-bottom: 1.4rem;
+  }
+}
+
+// Раскрытие — по высоте `.faq__item-answer` (не автообёртке `.bayan__bottom`: библиотека
+// bayan не задаёт ей никакой геометрии, см. `components.b/groupers/_bayan.scss`). 24rem
+// с запасом — реальный текст короче, значение не участвует в раскладке, ограничивает
+// только длительность transition.
+.faq__item-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.faq__item.bayan--opened .faq__item-answer {
+  max-height: 24rem;
+}
+
+.faq__item-answer-inner {
+  padding: 0 3.8rem 3.2rem 3.6rem;
+  margin: 0;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-regular);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-regular);
+  color: var(--fg-secondary);
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 0 1.8rem 1.6rem 1.5rem;
+    font-size: var(--fz-xsmall);
+    line-height: 1.35; // шум к --lh-ui (1.3), сверено design-context `109:1239`
+  }
+}

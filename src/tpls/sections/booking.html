@@ -1,0 +1,54 @@
+<!-- Rezervace-баннер + блок соцсетей (`76:465`, юнит U8). Один фрейм макета на десктопе и
+один визуальный блок на мобилке (общий фон `109:1176`) — баннер (`.booking`) и соцсети
+(`.inspire`) идут подряд без разделителя в одном партиале, фон общий (`--bg-card`).
+Баннер: фото `76:581`/`109:1179` (скрим — CSS, `--gradient-booking-scrim`) + eyebrow
+`76:468`/`109:1182` + H2 `76:469`/`109:1183` + кнопка `76:470`/`109:1185`. Соцсети:
+иконки `76:472`/`109:1188` (плоские глифы без круга, см. `_inspire.scss`) + заголовок
+`76:479`/`109:1195` + подпись `76:480`/`109:1196`.
+
+Решение заказчика 06.09 (правка, п. 19): текст кнопки баннера РАЗНЫЙ по ширинам — на
+десктопе «Rezervovat» (`76:471`, ссылка Reservio), на мобилке «Koupit dárkový poukaz»
+(`109:1185`, как в мобильном инстансе макета). Раньше это считалось багом макета
+(мобильный инстанс кнопки был назван «Btn / Rezervovat střih (solid)», но с
+неотредактированным текстовым оверрайдом «Koupit dárkový poukaz», скопированным с
+Dárkový poukaz) — по замечанию заказчика 06.09 верстаем как в макете (подтверждение у
+клиента — 07.09): два явных CTA, переключаемых `display` по `$mobile-xxlg` (без JS). -->
+<section class="booking" id="rezervace">
+  <div class="container">
+    <div class="booking__media">
+      <picture class="booking__media-pic">
+        <source media="(max-width: 575px)" srcset="./img/booking.tns/booking-banner-mobile@2x.webp" type="image/webp">
+        <source media="(max-width: 575px)" srcset="./img/booking.tns/booking-banner-mobile@2x.jpg">
+        <source srcset="./img/booking.tns/booking-banner-desktop@2x.webp" type="image/webp">
+        <img class="booking__media-img" src="./img/booking.tns/booking-banner-desktop@2x.jpg" alt="Interiér barbershopu TONSOR" width="1480" height="340" loading="lazy" decoding="async">
+      </picture>
+      <div class="booking__scrim"></div>
+
+      <div class="booking__content" data-aos="fade-up">
+        <p class="booking__eyebrow">— ONLINE REZERVACE</p>
+        <h2 class="booking__title"><span class="section-title__accent">Rezervujte</span> si termín na 3 kliknutí ještě dnes</h2>
+        <a class="booking__cta booking__cta--desktop button button--solid" href="https://barber-team.reservio.com/booking" target="_blank" rel="noopener">Rezervovat</a>
+        <a class="booking__cta booking__cta--mobile button button--solid" href="#poukaz">Koupit dárkový poukaz</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="inspire">
+    <div class="container" data-aos="fade-up">
+      <div class="inspire__socials">
+        <a class="inspire__social" href="#" target="_blank" rel="noopener" aria-label="TikTok TONSOR">
+          <svg width="32" height="32"><use href="./img/sprite.svg#tiktok-plain-sym"></use></svg>
+        </a>
+        <a class="inspire__social" href="#" target="_blank" rel="noopener" aria-label="Facebook TONSOR">
+          <svg width="32" height="32"><use href="./img/sprite.svg#facebook-plain-sym"></use></svg>
+        </a>
+        <a class="inspire__social" href="https://instagram.com/tonsor.barbershop" target="_blank" rel="noopener" aria-label="Instagram TONSOR">
+          <svg width="32" height="32"><use href="./img/sprite.svg#instagram-plain-sym"></use></svg>
+        </a>
+      </div>
+
+      <p class="inspire__title">Najděte inspiraci pro svůj střih na sociálních sítích TONSOR</p>
+      <p class="inspire__sub">Uděláme vám střih podle fotografie</p>
+    </div>
+  </div>
+</section>

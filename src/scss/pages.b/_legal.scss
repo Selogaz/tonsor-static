@@ -1,0 +1,38 @@
+// Страница «Политика конфиденциальности» — узла в макете нет: длинный текст на общем
+// шелле, узкая колонка чтения. Типографика контента — хелпер .wysiwyg (helpers.b).
+.legal {
+  padding-top: 8rem;
+  padding-bottom: 10rem;
+
+  @media (max-width: $desktop-md) {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  @media (max-width: $mobile-xlg) {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+// Колонка чтения уже общего --w-container: длинный текст читается комфортнее в узкой мере.
+.legal__container {
+  max-width: 88rem;
+  padding-right: var(--p-container);
+  padding-left: var(--p-container);
+  margin: 0 auto;
+}
+
+.legal__title {
+  margin-bottom: 3.2rem;
+  font-family: var(--ff-title);
+  font-size: var(--fz-h2);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--fg-app-light);
+  letter-spacing: -0.03em;
+
+  @media (max-width: $mobile-xlg) {
+    margin-bottom: 2.4rem;
+  }
+}

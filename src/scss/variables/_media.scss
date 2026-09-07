@@ -1,0 +1,31 @@
+$desktop-xxlg: 3839px;
+$desktop-xlg: 2559px;
+$desktop-lg: 1890px;
+$desktop-md: 1599px;
+$desktop-lgz: 1535px;
+
+$laptop-xxlg: 1439px;
+$laptop-xlg: 1365px;
+$laptop-lg: 1279px;
+$laptop-md: 1099px;
+$laptop-sm: 1023px;
+$laptop: $laptop-xxlg;
+
+$tablet-xlg: 991px;
+$tablet-lg: 809px;
+$tablet-md: 767px;
+$tablet-sm: 719px;
+$tablet: $tablet-xlg;
+
+$mobile-xxlg: 575px;
+$mobile-xlg: 449px;
+$mobile-lg: 413px;
+$mobile-md: 411px;
+$mobile-sm: 392px;
+$mobile-xs: 374px;
+$mobile-xxs: 359px;
+$mobile-xxx: 320px;
+
+$mobile: $tablet-xlg;
+
+$has-burger: $tablet-xlg;

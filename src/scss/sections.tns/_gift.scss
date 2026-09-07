@@ -1,0 +1,164 @@
+// «Dárkový poukaz» (`67:127` десктоп 1920×680, узлы мобилки — `109:1023…109:1042`).
+// Стыкуется с соседями без зазора (STYLEGUIDE → «Вертикальные отступы секций»), поэтому
+// высота задаётся напрямую по фрейму, а не через базовый `.section`. Карта сертификата —
+// декоративно-контентное фото (карта + камни на чёрном), позиционируется абсолютно слева
+// (`76:391`: x=85 y=0 в пределах фрейма после клиппинга w=968 h=680 — растр уже обрезан
+// по границе фрейма при экспорте), текстовый блок — в обычном потоке внутри `.container`.
+//
+// U15 (промежуточные ширины): порог мобильной стековой раскладки расширен с `$mobile-xxlg`
+// до `$tablet` — на 576–991 (планшетный разрыв между макетами, `--fz-modifier` там 1.7639)
+// фиксированный `margin-left: 80.9rem` у `.gift__content` (рассчитан под 1920) раздувается
+// в пикселях сильнее самого контейнера и уводит текст за пределы вьюпорта под `overflow:
+// hidden`. Мобильная раскладка (фото сверху, текст в потоке) — общий безопасный вариант для
+// всего разрыва, значения остаются в `rem` и просто масштабируются вместе с зоной.
+.gift {
+  position: relative;
+  min-height: 68rem;
+  overflow: hidden;
+  background: var(--bg-gift);
+
+  @media (max-width: $tablet) {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    padding-top: 4rem;
+    overflow: visible;
+  }
+}
+
+.gift__media {
+  position: absolute;
+  top: 0;
+  left: 8.5rem;
+  width: 96.8rem;
+  height: 68rem;
+
+  // Мобилка (`109:1042`, экспорт уже 320×259 — во всю ширину вьюпорта): растр после
+  // текстового блока (order), full-bleed за счёт отрицательных полей на паддинг контейнера.
+  @media (max-width: $tablet) {
+    position: static;
+    order: 2;
+    width: auto;
+    height: auto;
+    margin: 2rem calc(var(--p-container) * -1) 0;
+  }
+}
+
+.gift__media-pic {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gift__media-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  @media (max-width: $tablet) {
+    height: auto;
+  }
+}
+
+.gift__container {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-height: 68rem;
+
+  @media (max-width: $tablet) {
+    display: block;
+    order: 1;
+    min-height: auto;
+  }
+}
+
+// Смещение текстового блока к правой части контейнера и вниз от верха фрейма — сверено
+// по `67:129` (x=1049 y=140 в системе координат фрейма 1920×680, контейнер начинается
+// в x=220, паддинг 2rem) точно под ширину 1920; на другой ширине вьюпорта (кроме 320,
+// см. override) — приближённо.
+.gift__content {
+  max-width: 41.2rem;
+  padding-top: 14rem;
+  margin-left: 80.9rem;
+
+  @media (max-width: $tablet) {
+    max-width: none;
+    padding-top: 0;
+    margin-left: 0;
+  }
+}
+
+.gift__title {
+  margin: 0;
+}
+
+.gift__lead {
+  margin: 0.4rem 0 0;
+  font-size: var(--fz-gift-lead);
+  line-height: var(--lh-regular);
+  color: var(--fg-muted);
+}
+
+// Акцент «Od 500 Kč»: Onest Bold + осветление до --fg-regular (в макете чистый белый,
+// разница несущественна).
+.gift__lead-accent {
+  font-weight: var(--fw-bold);
+  color: var(--fg-regular);
+}
+
+// `flex-wrap: nowrap` в базе — сверено `get_metadata` (`67:127`): второй чек-пункт
+// начинается на x=1319, за пределами колонки H2/Lead (412px) — пункты в один ряд
+// шире текстовой колонки, а не переносятся внутрь неё.
+.gift__checks {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1.2rem 10.5rem; // column-gap 105px — замер `67:131`→`67:134` минус ширины
+  // icon+gap+текста (получено сверкой реального рендера, box-width текстовых нод в
+  // макете не совпадает с реальной шириной глифов) — правка 06.09, п.3
+  padding: 0;
+  margin: 3rem 0 0;
+  list-style: none;
+
+  @media (max-width: $tablet) {
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.5rem;
+  }
+}
+
+.gift__check {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1.2rem;
+  align-items: center;
+}
+
+.gift__check-icon {
+  flex-shrink: 0;
+  color: var(--c-primary);
+}
+
+// nowrap — пункт не переносится по словам при сжатии `.gift__content` (см. комментарий
+// у `.gift__checks`); на мобилке (колонкой, полная ширина) переносу это не мешает.
+.gift__check-text {
+  font-size: var(--fz-gift-check);
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+.gift__cta {
+  min-width: 40rem; // 400px, точная ширина инстанса `67:137` — правка 06.09, п.2
+  margin-top: 6rem;
+
+  @media (max-width: $tablet) {
+    width: 100%;
+    min-width: 0;
+    min-height: 5rem; // 50px (`109:1040`, как `.hero__cta`) — правка 06.09, п.17
+    --padding-block: 1.2em; // дефолтный паддинг солид-кнопки (1.7em) даёт больше 50px
+    // высоты при мобильном `--fz-button` (13px) — сжимаем под макетную высоту
+    margin-top: 2.8rem;
+  }
+}

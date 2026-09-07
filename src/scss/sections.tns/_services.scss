@@ -1,0 +1,47 @@
+// «Služby a ceny» — 11 карточек услуг. Секция стыкуется с соседями практически без
+// зазора (`74:343`: рамка 1920×1180, отступ до H2 и после сетки — по 110px = 11rem
+// с каждой стороны, весь остаток высоты — грид карточек), поэтому паддинги считаем от
+// макета, а не от общего `.section` b-компонента.
+.services {
+  padding: 11rem 0;
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 4rem 0 6rem;
+  }
+}
+
+// Карточки на 320 стоят ближе к краям экрана, чем общий `--p-container` (16px): замер
+// `109:943` даёт x=10px. Переопределяем токен контейнера только внутри своей секции
+// (b-компонент `.container` не трогаем) — правка 06.09, п.16.
+.services .container {
+  @media (max-width: $mobile-xxlg) {
+    --p-container: 1rem;
+  }
+}
+
+.services__head {
+  margin-bottom: 8.5rem;
+
+  @media (max-width: $mobile-xxlg) {
+    margin-bottom: 2.4rem;
+  }
+}
+
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+
+  // U15 (промежуточные ширины): на 576–991 (планшетный разрыв, `--fz-modifier` 1.7639)
+  // строка ссылок карточки (`.service-card__links`, не переносится) требует больше места,
+  // чем достаётся голому `1fr` (у грид-трека дефолтный минимум — `auto` = min-content
+  // элемента) — колонки вылезают за контейнер. `minmax(0, 1fr)` снимает минимум, треки
+  // честно делят ширину, карточка укладывается в свою половину без переполнения.
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: $mobile-xxlg) {
+    grid-template-columns: 1fr;
+  }
+}

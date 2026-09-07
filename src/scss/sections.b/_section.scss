@@ -1,0 +1,70 @@
+.section {
+  padding-top: 10rem;
+  padding-bottom: 10rem;
+
+  @media (max-width: $desktop-md) {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  @media (max-width: $mobile-xlg) {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+.section__container {
+  width: 100%;
+  max-width: calc(var(--w-container) + 2 * var(--p-container));
+  padding-right: var(--p-container);
+  padding-left: var(--p-container);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.section__head {
+  margin-bottom: 4.8rem;
+  text-align: center;
+
+  @media (max-width: $mobile-xlg) {
+    margin-bottom: 3.2rem;
+  }
+}
+
+.section-title {
+  margin-bottom: 1.6rem;
+  font-family: var(--ff-title);
+  font-size: var(--fz-h2);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--fg-regular);
+  letter-spacing: -0.03em;
+}
+
+.section-desc {
+  max-width: 72rem;
+  margin: 0 auto;
+  font-size: 1.8rem;
+  line-height: var(--lh-regular);
+  color: var(--fg-regular);
+
+  @media (max-width: $mobile-xlg) {
+    font-size: var(--fz-regular);
+  }
+}
+
+.section--dark {
+  background: var(--bg-app-dark);
+}
+
+.section--dark .section-title {
+  color: var(--fg-app-dark);
+}
+
+.section--dark .section-desc {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.section--light {
+  background: var(--bg-app-light-secondary);
+}

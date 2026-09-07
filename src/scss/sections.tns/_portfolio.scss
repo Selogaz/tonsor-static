@@ -1,0 +1,227 @@
+// Portfolio barberů (юнит U6). Десктоп `67:151` (S_05, 1920×870): H2 `67:152`, 5 табов
+// `67:153…67:161` (первый активен — золотая пилюля), 4 карточки `67:163/165/167/169` +
+// подписи, стрелки `76:550`/`76:551`. Мобилка — композит без фрейма-обёртки (фон
+// `109:1111`): H2 `109:1114`, ОДИН таб как `<select>` (`109:1115`+шеврон `109:1119` —
+// подтверждает бриф про select на мобиле), 2 видимые карточки `109:1120`/`109:1122`
+// (карусель с «подглядыванием»), стрелки под каруселью `109:1133`.
+//
+// Стыкуется с соседями без зазора с `Recenze` (STYLEGUIDE §8), с `care` — родительский
+// зазор уже учтён в `_care.scss` (bottom-padding). Паддинги секции — по внутренним
+// отступам самого фрейма (H2→верх кадра, подпись/стрелки→низ кадра), не общий `.section`.
+.portfolio {
+  padding: 10rem 0 12.5rem;
+  background: var(--bg-card);
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 5rem 0 4.9rem;
+  }
+}
+
+// Общая грид-обвязка: у заголовка/фильтров/стрелок разный порядок на десктопе и мобилке
+// (десктоп — стрелки в одной строке с табами; мобилка — стрелки ПОД каруселью), поэтому
+// раскладка держится на именованных grid-area, а не на порядке тегов в разметке.
+.portfolio__grid {
+  display: grid;
+  grid-template-areas: "title title" "tabs nav" "slider slider";
+  grid-template-columns: 1fr auto;
+  align-items: center;
+
+  @media (max-width: $mobile-xxlg) {
+    grid-template-areas: "title" "select" "slider" "nav";
+    grid-template-columns: 1fr;
+  }
+}
+
+.portfolio__title {
+  grid-area: title;
+  margin: 0 0 3.5rem;
+
+  @media (max-width: $mobile-xxlg) {
+    margin-bottom: 1.3rem;
+  }
+}
+
+// Табы-чипы — только десктоп (мобилка использует `<select>` ниже). Ширина по контенту
+// (hug), паддинг в `em` подобран под наблюдаемые инстансы (110–168px при тексте 5–12 симв.).
+.portfolio__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  grid-area: tabs;
+  gap: 1.6rem;
+
+  @media (max-width: $mobile-xxlg) {
+    display: none;
+  }
+}
+
+.portfolio__tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.8rem;
+  padding: 0 2.4em;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-portfolio-tab);
+  font-weight: var(--fw-regular);
+  color: var(--fg-muted);
+  cursor: pointer;
+  background: transparent;
+  border: 0.1rem solid var(--c-divider);
+  border-radius: var(--radius-pill);
+  transition: var(--tr-regular);
+}
+
+.portfolio__tab:hover {
+  @media (any-hover: hover) {
+    color: var(--fg-regular);
+    border-color: var(--fg-regular);
+  }
+}
+
+.portfolio__tab--active,
+.portfolio__tab--active:hover {
+  font-weight: var(--fw-medium);
+  color: var(--fg-app-light);
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+}
+
+// Мобильный фильтр — нативный `<select>` поверх полупрозрачной пилюли, свой шеврон
+// поверх (нативная стрелка скрыта через `appearance: none`). Та же логика фильтра, что
+// у табов — обработчик один (`portfolio.js`), разметка разная осознанно (см. ROADMAP U6).
+.portfolio__select-wrap {
+  position: relative;
+  display: none;
+
+  @media (max-width: $mobile-xxlg) {
+    display: block;
+    grid-area: select;
+  }
+}
+
+.portfolio__select {
+  width: 100%;
+  min-height: 3.8rem;
+  padding: 0 3.6em 0 1.6em;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-regular);
+  font-weight: var(--fw-regular);
+  color: var(--fg-regular);
+  appearance: none;
+  cursor: pointer;
+  background: var(--bg-filter-select);
+  border: none;
+  border-radius: var(--radius-pill);
+}
+
+.portfolio__select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 1.6em;
+  width: 1.4rem;
+  height: 0.8rem;
+  color: var(--fg-regular);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+// Карусель работ. Мобилка — `overflow: visible`, чтобы следующая карточка «подглядывала»
+// за границей `.container` (эффект из макета, `109:1122` x=192.67 шире контейнера 320 —
+// артефакт copy-paste с десктопа, но сам приём «подглядывания» — задуманный, см. брифу
+// и page-homepage.md); внешний `.wrapper { overflow: clip }` (style.scss) страхует от
+// горизонтального скролла страницы.
+.portfolio__slider {
+  grid-area: slider;
+  min-width: 0; // страховка от раздувания grid-колонки контентом карусели (см. комментарий
+  // ниже про overflow: visible) — без этого `.portfolio__grid`/`.container` растягивались
+  // по ширине слайдов вместо ширины вьюпорта
+  margin: 5.2rem 0 1.6rem;
+
+  @media (max-width: $mobile-xxlg) {
+    margin: 2.3rem 0 0;
+    overflow: visible;
+  }
+}
+
+.portfolio__slide {
+  @media (max-width: $mobile-xxlg) {
+    width: 16.6rem;
+  }
+}
+
+// Скрытие слайда фильтром: `display: none` убирает карточку из потока и из расчёта
+// ширины у Swiper после `swiper.update()` (см. portfolio.js) — проще, чем разбирать и
+// пересобирать инстанс Swiper на каждое переключение фильтра.
+.portfolio__slide--hidden {
+  display: none;
+}
+
+.portfolio__media {
+  aspect-ratio: 352 / 420;
+  overflow: hidden;
+  border-radius: var(--radius-portfolio-card);
+}
+
+.portfolio__media-pic {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.portfolio__media-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portfolio__caption {
+  margin: 1.6rem 0 0;
+  font-size: var(--fz-portfolio-tab);
+  color: var(--fg-secondary);
+
+  @media (max-width: $mobile-xxlg) {
+    font-size: var(--fz-small);
+  }
+}
+
+// Стрелки — паттерн ТЗ (`.swiper-button-prev/next` на уровне со `.swiper`, не внутри).
+// Хром кнопки — переиспользован общий `.nav-arrow` (`components.b/controls/_nav-arrows.scss`,
+// не редактируется юнитом) через его CSS-переменные; свои значения — только в этом файле.
+.portfolio__nav {
+  display: flex;
+  grid-area: nav;
+  gap: 0.6rem;
+  justify-self: end;
+
+  @media (max-width: $mobile-xxlg) {
+    justify-self: center;
+    margin-top: 4.6rem;
+  }
+}
+
+.portfolio__arrow {
+  --size: 4.8rem;
+  --radius: var(--radius-nav-btn);
+  --fg: var(--fg-regular); // `.nav-arrow` по умолчанию рассчитан на светлый фон
+  // (`--fg-app-light`, тёмный текст) — здесь фон секции тёмный, нужен светлый `--fg`
+
+  @media (max-width: $mobile-xxlg) {
+    --size: 3.9rem;
+  }
+}
+
+.portfolio__arrow--next {
+  --bg: var(--bg-nav-btn);
+  --border-color: var(--bg-nav-btn);
+}
+
+.portfolio__arrow-icon {
+  width: 1.5rem;
+  height: 1rem;
+
+  @media (max-width: $mobile-xxlg) {
+    width: 1.3rem;
+    height: 0.9rem;
+  }
+}

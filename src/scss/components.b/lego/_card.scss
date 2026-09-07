@@ -1,0 +1,35 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-app-light);
+  border-radius: var(--radius-md);
+}
+
+.card__info {
+  padding: 2.4rem;
+}
+
+.card__title {
+  margin-bottom: 1.2rem;
+  font-family: var(--ff-title);
+  font-size: var(--fz-h3);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--fg-regular);
+}
+
+.card__desc {
+  margin-bottom: 1.6rem;
+  font-size: var(--fz-regular);
+  line-height: var(--lh-regular);
+  color: var(--fg-regular);
+}
+
+.card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}

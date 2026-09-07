@@ -1,0 +1,24 @@
+// Заголовок секции — Trajan Pro 3, обычно одно акцентное слово золотом. Сверено на
+// H2 «Služby a ceny» (`74:344` десктоп 46px / `109:931` мобилка 27px): Trajan Pro 3
+// Regular, база --fg-regular, первое слово — --c-primary. Приём (золотое первое/ключевое
+// слово) повторяется по заголовкам макета — секция сама решает, на каком слове поставить
+// модификатор.
+//
+// Разметка: <h2 class="section-title"><span class="section-title__accent">Slovo</span> ...</h2>
+//
+// Совпадает по имени с легаси `.section-title` в sections.b/_section.scss (b-база
+// bite-transit, для TONSOR не используется) — этот файл подключается позже в каскаде
+// (_components.scss после sections.b/section в style.scss), поэтому побеждает без правки
+// чужого файла.
+.section-title {
+  margin: 0;
+  font-family: var(--ff-title);
+  font-size: var(--fz-h2);
+  font-weight: var(--fw-h2);
+  line-height: var(--lh-tight);
+  color: var(--fg-regular);
+}
+
+.section-title__accent {
+  color: var(--c-primary);
+}

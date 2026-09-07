@@ -1,0 +1,8 @@
+# Вендорные минифицированные библиотеки (swiper/masonry/inputmask и т.п.) — не линтуем.
+src/js/libs/
+# Авторские модули работодателя из эталон-сборки carrent-static (formich/bayan/b_modal/burger
+# + хелперы) — переносятся как есть, не переписываем.
+src/js/components.b/
+src/js/helpers.b/
+dist/
+node_modules/

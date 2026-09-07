@@ -1,0 +1,112 @@
+// Карточка услуги (`74:345` десктоп 730×120 / группы `109:943…109:1015` мобилка).
+//
+// На мобильных дублях макета у карточек 2/4/6/8/10 в файле отсутствует фон-плашка
+// (проверено `get_design_context` + попиксельная сверка с `figma-renders/03-services_320.png`:
+// это баг дублирования слоя в Figma, а не задуманный «зебра»-паттерн — 11 одинаковых по
+// смыслу пунктов не могут через один визуально терять карточку). Решение: все 11 карточек
+// рисуются одинаково (с фоном), зазор между ними на мобиле — те же 2rem, что и
+// row/column-gap сетки на десктопе (см. `_services.scss`), а не 0/93px из бага макета.
+//
+// Раскладка — grid-template-areas: десктоп «title/links слева колонкой, price справа
+// на всю высоту», мобилка «title+price в одну строку, links отдельной строкой снизу».
+.service-card {
+  display: grid;
+  grid-template-areas: "title price" "links price";
+  grid-template-columns: 1fr auto;
+  row-gap: 0.8rem;
+  column-gap: 1.6rem;
+  align-items: center;
+  min-height: 12rem;
+  padding: 1.6rem 3.2rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
+
+  @media (max-width: $mobile-xxlg) {
+    grid-template-areas: "title price" "links links";
+    row-gap: 0.9rem;
+    min-height: 9.3rem;
+    padding: 1.6rem;
+  }
+}
+
+.service-card__title {
+  grid-area: title;
+  margin: 0;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-service-title);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  color: var(--fg-regular);
+}
+
+.service-card__price {
+  grid-area: price;
+  align-self: center;
+  margin: 0;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-service-price);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-ui);
+  color: var(--fg-regular);
+  white-space: nowrap;
+}
+
+.service-card__links {
+  display: flex;
+  grid-area: links;
+  align-items: center;
+  font-size: var(--fz-small);
+
+  // U15 (промежуточные ширины): на 576–991 (планшетный разрыв, `--fz-modifier` 1.7639)
+  // левая колонка карточки (title+links, `1fr` рядом с фикс. `price`) у'же, чем нужно
+  // строке ссылок без переноса («Rezervovat · Ukázky práce» не сжимается ниже своего
+  // текста) — карточка переполняется, цена наезжает на соседнюю колонку. Перенос строки
+  // решает без изменения самой раскладки/сетки.
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: $mobile-xxlg) {
+    gap: 0.8em;
+    font-size: var(--fz-xs);
+  }
+}
+
+.service-card__cta {
+  color: var(--c-primary);
+  text-decoration: underline;
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 0.4em 1em;
+    color: var(--c-primary);
+    text-decoration: none;
+    border: 0.1rem solid var(--c-primary);
+    border-radius: var(--radius-sm);
+  }
+}
+
+.service-card__cta:hover {
+  @media (any-hover: hover) {
+    color: var(--c-primary-dark);
+  }
+}
+
+.service-card__sep {
+  margin: 0 0.6em;
+  color: var(--fg-regular);
+
+  @media (max-width: $mobile-xxlg) {
+    display: none;
+  }
+}
+
+.service-card__more {
+  color: var(--fg-link-muted);
+  text-decoration: underline;
+}
+
+.service-card__more:hover {
+  @media (any-hover: hover) {
+    color: var(--fg-regular);
+  }
+}

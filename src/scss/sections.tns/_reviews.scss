@@ -1,0 +1,280 @@
+// Recenze (юнит U7). Десктоп-узел `76:422` (700px высотой): H2+рейтинг на y=100 (=10rem —
+// совпадает со стандартным паддингом секции), карточки y=220→600, остаток 100px до низа
+// фрейма — паддинг-боттом тоже 10rem, отсюда симметричные `.reviews { padding: 10rem 0; }`.
+// Мобилка — композит без фрейма-обёртки (`109:1134`/`109:1135`/`109:1153`/`109:1154`/
+// `109:1167`), координаты сняты относительно начала секции (y=4155 по карте секций):
+// H2/рейтинг y=0, карточки y=60, стрелки y=261→300, итог секции 355 → паддинг-боттом 5.5rem.
+// Правка 06.09 (п.18): паддинг-топ ранее стоял 0 (предполагалось стыкование без зазора,
+// по локальному рендеру `07-reviews_320.png`) — прямой замер `get_metadata` показал зазор
+// 50px между низом фона портфолио (`109:1111`, абсолютный y=4105) и верхом H2 Recenze
+// (`109:1134`, y=4155): секция реально ПРИЛИПАЛА к портфолио, паддинг-топ нужен 5rem.
+.reviews {
+  padding: 10rem 0;
+  background: var(--bg-app-dark);
+
+  @media (max-width: $mobile-xxlg) {
+    padding: 5rem 0 5.5rem;
+  }
+}
+
+// Обёртка контейнера — позиционирующий контекст для абсолютных стрелок (десктоп) и
+// flex-раскладки, которая на мобилке переносит стрелки под карусель (см. `.reviews__arrow`).
+.reviews__inner {
+  position: relative;
+
+  @media (max-width: $mobile-xxlg) {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 2rem;
+    column-gap: 0.8rem;
+    justify-content: center;
+  }
+}
+
+// Шапка секции: H2 + индикатор рейтинга Google в одну строку (`76:423`+`76:424`,
+// `109:1134`+`109:1135`). На десктопе — рядом слева, стрелки (сиблинги `.reviews__slider`)
+// абсолютно позиционированы справа в этой же строке. На мобилке — по краям контейнера.
+.reviews__head {
+  display: flex;
+  gap: 13rem; // 130px — реальный зазор до рейтинга (`76:423`→`76:424`), не 33px; правка
+  // 06.09, п.4: рейтинг стоит правее, но НЕ прижат к стрелкам/правому краю контейнера
+  align-items: center;
+  margin-bottom: 6.5rem; // 220-155=65px, см. комментарий у `.reviews`
+
+  @media (max-width: $mobile-xxlg) {
+    flex: 0 0 100%;
+    gap: 1.6rem;
+    justify-content: space-between;
+    margin-bottom: 0; // отступ до карусели даёт `row-gap` на `.reviews__inner`
+  }
+}
+
+.reviews__title {
+  margin: 0;
+}
+
+// Индикатор рейтинга Google (`76:424`/`109:1135`): звезда-символ спрайта + число.
+.reviews__rating {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1.2rem;
+  align-items: center;
+
+  // Мобилка: H2 «Recenze» не переносится (одно слово), поэтому под рейтинг остаётся
+  // меньше места, чем на десктопе — даём блоку сжиматься и переносить строку вместо
+  // вылезания за контейнер (без `min-width: 0` flex-item не сжался бы ниже контента).
+  @media (max-width: $mobile-xxlg) {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+}
+
+.reviews__rating-icon {
+  flex-shrink: 0;
+  color: var(--c-primary);
+}
+
+.reviews__rating-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.reviews__rating-value {
+  margin: 0;
+  font-size: var(--fz-review-rating);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  color: var(--fg-regular);
+}
+
+// Десктоп (`76:427`) — вторая строка визуально совпадает с первой (тот же размер/вес).
+// Мобилка (`109:1139`) — мельче, Onest Bold, opacity .5 (переопределено ниже).
+.reviews__rating-sub {
+  margin: 0;
+  font-size: var(--fz-review-rating);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  color: var(--fg-regular);
+
+  @media (max-width: $mobile-xxlg) {
+    font-size: var(--fz-review-rating-sub);
+    font-weight: var(--fw-bold);
+    opacity: 0.5;
+  }
+}
+
+// Карусель — Swiper (см. reviews.js): десктоп 3 карточки в ряд, мобилка «подглядывание»
+// следующей. Стрелки — НЕ внутри `.swiper` (у него `overflow: hidden` из ядра библиотеки,
+// а десктопные стрелки лежат в шапке, вне блока карточек) — сиблинги на уровне `.reviews__inner`.
+.reviews__slider {
+  @media (max-width: $mobile-xxlg) {
+    flex: 0 0 100%;
+  }
+}
+
+.reviews__card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 38rem; // 380px, `76:428` — фиксированная высота независимо от длины текста
+  padding: 3.6rem 3.6rem 6rem; // низ 6rem (60px) не равен остальным сторонам (36px) —
+  // замер `76:428`(низ)→блок автора: карточка фиксированной высоты, автор прижат книзу
+  // флексом, а низ карточки дальше от автора, чем верх/бока от контента — правка 06.09, п.6
+  text-align: left; // сброс центрирования `.reviews__inner` на мобилке (см. `.reviews__arrow`)
+  background: var(--bg-card);
+  border-radius: var(--radius-photo); // 20px — прямой замер `76:428` (design-context);
+  // совпадает с фото-радиусом численно, отдельный токен не заводим ради одного числа
+
+  @media (max-width: $mobile-xxlg) {
+    min-height: 18.1rem; // 181px, `109:1141`
+    padding: 2rem 1.5rem;
+  }
+}
+
+.reviews__stars {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.6rem;
+  margin-bottom: 2.8rem; // 28px, замер `76:429`(низ)→`76:435`(верх) — правка 06.09, п.5
+
+  @media (max-width: $mobile-xxlg) {
+    margin-bottom: 1.2rem;
+  }
+}
+
+.reviews__star {
+  flex-shrink: 0;
+  color: var(--c-primary);
+}
+
+.reviews__text {
+  margin: 0;
+  font-size: var(--fz-review-text);
+  line-height: var(--lh-regular);
+  color: var(--fg-muted);
+
+  @media (max-width: $mobile-xxlg) {
+    line-height: var(--lh-ui);
+  }
+}
+
+// Прижат к низу карточки независимо от длины текста выше (все карточки — одной высоты).
+.reviews__author {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1.6rem;
+  align-items: center;
+  padding-top: 2rem;
+  margin-top: auto;
+
+  @media (max-width: $mobile-xxlg) {
+    gap: 0.8rem;
+    padding-top: 1.2rem;
+  }
+}
+
+.reviews__avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 4.8rem;
+  height: 4.8rem;
+  font-family: var(--ff-regular);
+  font-size: var(--fz-review-avatar);
+  font-weight: var(--fw-medium);
+  color: var(--c-primary);
+  background: var(--bg-avatar);
+  border-radius: 50%;
+
+  @media (max-width: $mobile-xxlg) {
+    width: 3.3rem;
+    height: 3.3rem;
+  }
+}
+
+.reviews__author-info {
+  min-width: 0;
+}
+
+.reviews__name {
+  margin: 0;
+  font-size: var(--fz-review-name);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  color: var(--fg-regular);
+}
+
+.reviews__service {
+  margin: 0;
+  font-size: var(--fz-review-service);
+  line-height: var(--lh-ui);
+  color: var(--fg-secondary);
+}
+
+// Стрелки prev/next (`76:557`/`76:558`, мобилка `109:1167`) — свой стиль блока, не общий
+// `nav-arrow` из `components.b/controls/_nav-arrows.scss` (решение юнита — не трогать общий
+// файл). «Назад» — едва заметная рамка (`--c-divider`, тот же приём, что hairline/
+// line-кнопка); «вперёд» — тёмная заливка `--bg-nav-btn`. На десктопе абсолютно
+// позиционированы в строке шапки справа (`top: 0` — `.reviews__inner` уже сдвинут вниз на
+// `padding-top` секции, поэтому 0 совпадает с замером `76:557`/`76:558` y=100 от края фрейма);
+// на мобилке — в потоке под каруселью, по центру (`justify-content: center` у `.reviews__inner`).
+.reviews__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.7rem;
+  height: 4.8rem;
+  color: var(--fg-regular);
+  cursor: pointer;
+  background: transparent;
+  border: 0.1rem solid var(--c-divider);
+  border-radius: var(--radius-nav-btn);
+  transition: var(--tr-regular);
+
+  @media (max-width: $mobile-xxlg) {
+    position: static;
+    width: 3.9rem;
+    height: 3.9rem;
+  }
+}
+
+.reviews__arrow--prev {
+  position: absolute;
+  top: 0;
+  right: 5.3rem; // ширина next (4.7rem) + зазор между кнопками (0.6rem)
+
+  @media (max-width: $mobile-xxlg) {
+    position: static;
+    right: auto;
+  }
+}
+
+.reviews__arrow--next {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--bg-nav-btn);
+  border-color: var(--bg-nav-btn);
+
+  @media (max-width: $mobile-xxlg) {
+    position: static;
+    right: auto;
+  }
+}
+
+.reviews__arrow:hover {
+  @media (any-hover: hover) {
+    border-color: var(--c-primary);
+  }
+}
+
+.reviews__arrow.swiper-button-disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.reviews__arrow-icon {
+  flex-shrink: 0;
+}

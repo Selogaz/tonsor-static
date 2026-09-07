@@ -1,0 +1,20 @@
+.header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: var(--z-header);
+  width: 100%;
+  transition: all 0.4s ease;
+}
+
+.header__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: calc(var(--w-container) + 2 * var(--p-container));
+  padding: 1.2rem var(--p-container);
+  margin-right: auto;
+  margin-left: auto;
+}

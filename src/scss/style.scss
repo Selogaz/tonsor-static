@@ -1,0 +1,64 @@
+@use "sass:math";
+
+@import "variables/media";
+@import "variables/variables";
+@import "variables/colors";
+@import "mixins";
+
+// Trajan Pro 3 — только Regular лицензирован, у font-face нет отдельного bold-начертания:
+// везде используем fw 400 (см. variables/_variables.scss).
+@include font("Trajan Pro 3", normal, 400, "@fonts/TrajanPro3-Regular");
+@include font("Onest", normal, 400, "@fonts/Onest-Regular");
+@include font("Onest", normal, 500, "@fonts/Onest-Medium");
+@include font("Onest", normal, 700, "@fonts/Onest-Bold");
+@include font("DM Serif Text", normal, 400, "@fonts/DMSerifText-Regular");
+
+@import "reset";
+@import "normalize";
+
+html {
+  font-size: calc(var(--fz-modifier) * var(--base-size));
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--ff-regular);
+  font-size: var(--fz-regular);
+  line-height: var(--lh-regular);
+  color: var(--fg-regular);
+
+  background-color: var(--bg-app-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  // clip, а не hidden: hidden превращает wrapper в scroll-контейнер и ломает
+  // position: sticky/fixed у шапки (сверяется с этим предком вместо вьюпорта),
+  // clip даёт то же обрезание бликов/декора по горизонтали без этого побочного эффекта
+  overflow: clip;
+}
+
+.main {
+  flex: 1 0 auto;
+}
+
+.container {
+  max-width: calc(var(--w-container) + 2 * var(--p-container));
+  padding-right: var(--p-container);
+  padding-left: var(--p-container);
+  margin: 0 auto;
+}
+
+@import "libs/swiper";
+@import "libs/aos";
+@import "keyframes";
+@import "sections.b/section";
+@import "components";
+@import "helpers";
+@import "sections";
+@import "pages";
+@import "modifiers";
