@@ -2,10 +2,21 @@
 `65:71` (Blok textu: H1 `65:72`, лид `65:73`), `65:77` (eyebrow), `65:74` (CTA).
 Слайд 2 — фрейм `100:47`, слайд 3 — `100:318`. Мобилка: `104:636` (слайд 1: eyebrow
 `109:925`, H1 `109:923`, лид `109:924`, кнопка `109:1039`, фото `109:929` — БЛОК ПОД
-ТЕКСТОМ, не фон), слайды 2/3 — `109:1298`/`109:1562`. Автопрокрутка без стрелок/точек в
-макете не нарисована — точки-пагинация добавлены как решение юнита (см. hero.js/_hero.scss).
-Общий eyebrow/lead/CTA на всех слайдах, меняются H1 и фон-фото. Только первый слайд несёт
-<h1> (единственный h1 страницы), 2 и 3 — <p class="hero__title"> с тем же визуалом. -->
+ТЕКСТОМ, не фон), слайды 2/3 — `109:1298`/`109:1562`. Общий eyebrow/lead/CTA на всех
+слайдах, меняются H1 и фон-фото. Только первый слайд несёт <h1> (единственный h1
+страницы), 2 и 3 — <p class="hero__title"> с тем же визуалом.
+
+Автопрокрутка без контролов в макете не нарисована. Правка 09.09 (п.3 реестра): точки
+заменены на стрелки листания. Паттерн переиспользован у Portfolio barberů (`.nav-arrow` —
+общий хром b-компонента `components.b/controls/_nav-arrows.scss`, перекрашенный под тёмный
+фон через `--fg`, тот же приём, что `.portfolio__arrow`) + иконка спрайта `arrow-left-sym`/
+`arrow-right-sym` (та же, что у Portfolio/Recenze/Tým). В отличие от тех трёх каруселей, где
+стрелки сгруппированы рядом друг с другом, здесь — по независимым краям экрана, вертикально
+по центру (`position: absolute` внутри `.hero`, законное применение для боковых стрелок
+слайдера). Стрелки — сиблинги `.hero__slider.swiper` (паттерн ТЗ, правило 13). На мобилке
+(`≤ $mobile-xxlg`) скрыты — секция там не full-bleed фон (фото уходит в поток под текст),
+центрировать боковые стрелки не по чему без наезда на контент; свайп пальцем остаётся
+(Swiper даёт его по умолчанию). -->
 <section class="hero">
   <div class="hero__slider swiper">
     <div class="hero__wrapper swiper-wrapper">
@@ -71,7 +82,12 @@
       </div>
 
     </div>
-
-    <div class="hero__pagination swiper-pagination"></div>
   </div>
+
+  <button type="button" class="hero__arrow hero__arrow--prev nav-arrow swiper-button-prev" aria-label="Předchozí snímek">
+    <svg class="hero__arrow-icon" width="15" height="10" aria-hidden="true"><use href="./img/sprite.svg#arrow-left-sym"></use></svg>
+  </button>
+  <button type="button" class="hero__arrow hero__arrow--next nav-arrow swiper-button-next" aria-label="Další snímek">
+    <svg class="hero__arrow-icon" width="15" height="10" aria-hidden="true"><use href="./img/sprite.svg#arrow-right-sym"></use></svg>
+  </button>
 </section>

@@ -7,22 +7,50 @@
 // рисуются одинаково (с фоном), зазор между ними на мобиле — те же 2rem, что и
 // row/column-gap сетки на десктопе (см. `_services.scss`), а не 0/93px из бага макета.
 //
-// Раскладка — grid-template-areas: десктоп «title/links слева колонкой, price справа
-// на всю высоту», мобилка «title+price в одну строку, links отдельной строкой снизу».
+// Раскладка — grid-template-areas: десктоп «title price links» в одну строку целиком
+// (правка 9.09 п.4: цена и обе CTA-ссылки на одном уровне с заголовком, раньше links
+// стояли отдельной строкой под title), мобилка «title+price в одну строку, links
+// отдельной строкой снизу» — три элемента в один ряд на 320 не умещаются.
+//
+// Из prototype.png взято ТОЛЬКО взаимное расположение слов. Оформление самих ссылок —
+// прежнее: золотая «Rezervovat», приглушённо-серая «Ukázky práce», между ними разделитель
+// «·»; боксом-мини-кнопкой «Rezervovat» становится только на мобилке (`109:937`).
+// Объявленный ниже `text-decoration: underline` до пикселя не доходит — его перекрывает
+// более специфичный `a, a:link, a:visited { text-decoration: none }` из ресета; так было
+// и до правки, поэтому оставлено как есть (снимать подчёркивание с ресета или дожимать
+// его тут — отдельное дизайн-решение, не часть отката). Промежуточная версия правки 9.09
+// п.4 рисовала обе ссылки одинаковыми боксами с золотой рамкой и uppercase — забраковано
+// заказчиком, вернули прежний вид.
 .service-card {
   display: grid;
-  grid-template-areas: "title price" "links price";
-  grid-template-columns: 1fr auto;
-  row-gap: 0.8rem;
-  column-gap: 1.6rem;
+  grid-template-areas: "title price links";
+  grid-template-columns: 1fr auto auto;
+  column-gap: 1.2rem;
   align-items: center;
   min-height: 12rem;
   padding: 1.6rem 3.2rem;
   background: var(--bg-card);
   border-radius: var(--radius-card);
 
+  // U15 (промежуточные ширины): на 576-991 (планшетный разрыв, `--fz-modifier` 1.7639)
+  // карточка занимает половину контейнера при «десктопном» кегле — три трека
+  // «title price links» в одну строку туда не влезают ни при каком кегле CTA (только
+  // price+links уже шире контентной ширины карточки, трек `1fr` схлопывается и заголовок
+  // рассыпается в столбик по одной букве). Раскладка этой зоны — мобильная, двухстрочная,
+  // но без мобильного оформления ссылок (мини-кнопка/скрытый разделитель остаются ниже 576).
+  // По той же причине у `.service-card__title`/`.service-card__links` нет `min-width: 0`:
+  // с ним трек `1fr` теряет минимум по min-content и заголовок рвётся посередине слова
+  // (`overflow-wrap: break-word` из ресета), а на десктопе он и так не нужен — в одну
+  // строку всё влезает с запасом (проверено рендером, см. отчёт по правке).
+  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
+    grid-template-areas: "title price" "links links";
+    grid-template-columns: 1fr auto;
+    row-gap: 0.8rem;
+  }
+
   @media (max-width: $mobile-xxlg) {
     grid-template-areas: "title price" "links links";
+    grid-template-columns: 1fr auto;
     row-gap: 0.9rem;
     min-height: 9.3rem;
     padding: 1.6rem;
@@ -41,7 +69,6 @@
 
 .service-card__price {
   grid-area: price;
-  align-self: center;
   margin: 0;
   font-family: var(--ff-regular);
   font-size: var(--fz-service-price);
@@ -51,34 +78,41 @@
   white-space: nowrap;
 }
 
+// «od » слева от цены (правка 9.09 п.5, «od 500 Kč» = «от 500 Kč») — мельче и приглушённее
+// основной цены, типовой приём для такой формулировки. Перенос строки между «od» и числом
+// исключён `white-space: nowrap` у родителя `.service-card__price` (наследуется). Пробел
+// после «od» — обычный текстовый (как и остальные пробелы в цене «1 000 Kč»), не `&nbsp;`.
+.service-card__price-from {
+  margin-right: 0.15em;
+  font-size: var(--fz-service-price-from);
+  color: var(--fg-secondary);
+}
+
 .service-card__links {
   display: flex;
   grid-area: links;
   align-items: center;
-  font-size: var(--fz-small);
+  font-size: var(--fz-service-cta);
 
-  // U15 (промежуточные ширины): на 576–991 (планшетный разрыв, `--fz-modifier` 1.7639)
-  // левая колонка карточки (title+links, `1fr` рядом с фикс. `price`) у'же, чем нужно
-  // строке ссылок без переноса («Rezervovat · Ukázky práce» не сжимается ниже своего
-  // текста) — карточка переполняется, цена наезжает на соседнюю колонку. Перенос строки
-  // решает без изменения самой раскладки/сетки.
+  // Страховка к двухстрочной раскладке зоны 576-991 (см. `.service-card` выше): своя
+  // строка на всю ширину карточки строке ссылок хватает, но запас там небольшой —
+  // перенос лучше переполнения.
   @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
     flex-wrap: wrap;
   }
 
   @media (max-width: $mobile-xxlg) {
     gap: 0.8em;
-    font-size: var(--fz-xs);
   }
 }
 
 .service-card__cta {
   color: var(--c-primary);
   text-decoration: underline;
+  white-space: nowrap;
 
   @media (max-width: $mobile-xxlg) {
     padding: 0.4em 1em;
-    color: var(--c-primary);
     text-decoration: none;
     border: 0.1rem solid var(--c-primary);
     border-radius: var(--radius-sm);
@@ -103,6 +137,7 @@
 .service-card__more {
   color: var(--fg-link-muted);
   text-decoration: underline;
+  white-space: nowrap;
 }
 
 .service-card__more:hover {
