@@ -89,15 +89,6 @@
   color: var(--c-primary);
 }
 
-// Слайд 2 (`perfektní fade`, `100:72`) — акцентное слово ещё и подчёркнуто (сверено
-// design-context: decoration-skip-ink none, underline-position from-font).
-.hero__title-accent--underline {
-  text-decoration-line: underline;
-  text-underline-position: from-font;
-  text-underline-offset: 0.2em;
-  text-decoration-skip-ink: none;
-}
-
 .hero__lead {
   max-width: 62rem;
   margin: 0;

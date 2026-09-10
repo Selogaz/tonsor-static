@@ -11,9 +11,10 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
 Стрелки `76:557`/`76:558` (мобилка `109:1167`) — свой стиль `.reviews__arrow` (решение
 юнита: не `nav-arrow` из components.b, чтобы не трогать общий файл), лежат сиблингами
 `.reviews__slider.swiper` (паттерн ТЗ), на десктопе абсолютно поверх шапки справа, на
-мобилке — в потоке под каруселью по центру. Тексты и имена — 3 реальных отзыва из макета,
-продублированы ×2 до 6 слайдов (CMS заменит боевыми). Стоковых фото в макете этой секции
-нет — img/reviews.tns/ не используется юнитом. -->
+мобилке — в потоке под каруселью по центру. Тексты и имена — 10 реальных отзывов клиента
+(правка 10.09, п.5), без дублей — на 10 слайдах loop в Swiper держится без дополнительных
+копий (см. reviews.js). Стоковых фото в макете этой секции нет — img/reviews.tns/ не
+используется юнитом. -->
 <section class="reviews" id="recenze">
   <div class="container reviews__inner">
 
@@ -40,12 +41,12 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
             </div>
-            <p class="reviews__text">Kluci dělají fakt skvělé střihy. Pokud chcete fade, TONSOR rozhodně doporučuji. Parkování zdarma a služby přizpůsobené přáním zákazníka. 😊</p>
+            <p class="reviews__text">„Kluci dělají fakt skvělé střihy. Pokud chcete fade, TONSOR rozhodně doporučuji. Parkování zdarma a služby přizpůsobené přáním zákazníka. 😊“</p>
             <div class="reviews__author">
               <span class="reviews__avatar">P</span>
               <div class="reviews__author-info">
-                <p class="reviews__name">Pavel H</p>
-                <p class="reviews__service">Střih krátkých vlasů</p>
+                <p class="reviews__name">Pavel H.</p>
+                <p class="reviews__service">Střih / barber služby</p>
               </div>
             </div>
           </article>
@@ -60,12 +61,12 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
             </div>
-            <p class="reviews__text">Super profesionální služby na velké úrovni. Krásné prostředí výborný kolektiv.</p>
+            <p class="reviews__text">„Super profesionální služby na velké úrovni. Krásné prostředí, výborný kolektiv.“</p>
             <div class="reviews__author">
               <span class="reviews__avatar">M</span>
               <div class="reviews__author-info">
                 <p class="reviews__name">Maxim D.</p>
-                <p class="reviews__service">Střih krátkých vlasů</p>
+                <p class="reviews__service">Střih / barber služby</p>
               </div>
             </div>
           </article>
@@ -80,12 +81,12 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
             </div>
-            <p class="reviews__text">Skvělý barbershop! Profesionální přístup, příjemná atmosféra a opravdu precizní práce. Barber si dal záležet na každém detailu a výsledek přesně odpovídal mé představě.</p>
+            <p class="reviews__text">„Skvělý barbershop! Profesionální přístup, příjemná atmosféra a opravdu precizní práce. Barber si dal záležet na každém detailu a výsledek přesně odpovídal mé představě.“</p>
             <div class="reviews__author">
               <span class="reviews__avatar">D</span>
               <div class="reviews__author-info">
                 <p class="reviews__name">Denis K.</p>
-                <p class="reviews__service">Střih krátkých vlasů</p>
+                <p class="reviews__service">Střih / barber služby</p>
               </div>
             </div>
           </article>
@@ -100,32 +101,12 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
             </div>
-            <p class="reviews__text">Kluci dělají fakt skvělé střihy. Pokud chcete fade, TONSOR rozhodně doporučuji. Parkování zdarma a služby přizpůsobené přáním zákazníka. 😊</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">P</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Pavel H</p>
-                <p class="reviews__service">Střih krátkých vlasů</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
-            </div>
-            <p class="reviews__text">Super profesionální služby na velké úrovni. Krásné prostředí výborný kolektiv.</p>
+            <p class="reviews__text">„Velká spokojenost! Jednoduchá a rychlá rezervace. Super odvedená práce. Doporučuji!!“</p>
             <div class="reviews__author">
               <span class="reviews__avatar">M</span>
               <div class="reviews__author-info">
-                <p class="reviews__name">Maxim D.</p>
-                <p class="reviews__service">Střih krátkých vlasů</p>
+                <p class="reviews__name">Milan J.</p>
+                <p class="reviews__service">Střih / barber služby</p>
               </div>
             </div>
           </article>
@@ -140,12 +121,112 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
               <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
             </div>
-            <p class="reviews__text">Skvělý barbershop! Profesionální přístup, příjemná atmosféra a opravdu precizní práce. Barber si dal záležet na každém detailu a výsledek přesně odpovídal mé představě.</p>
+            <p class="reviews__text">„Zkušený tým pracovníků 👍“</p>
             <div class="reviews__author">
-              <span class="reviews__avatar">D</span>
+              <span class="reviews__avatar">V</span>
               <div class="reviews__author-info">
-                <p class="reviews__name">Denis K.</p>
-                <p class="reviews__service">Střih krátkých vlasů</p>
+                <p class="reviews__name">Vitalij</p>
+                <p class="reviews__service">Barber služby</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="reviews__slide swiper-slide">
+          <article class="reviews__card">
+            <div class="reviews__stars" aria-hidden="true">
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+            </div>
+            <p class="reviews__text">„Bezkonkurenčně nejlepší Barber v Plzni.“</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">J</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name">Jiří A.</p>
+                <p class="reviews__service">Střih / barber služby</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="reviews__slide swiper-slide">
+          <article class="reviews__card">
+            <div class="reviews__stars" aria-hidden="true">
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+            </div>
+            <p class="reviews__text">„Vše naprosto super. Nejen samotný střih, ale všechen servis kolem toho. Prostředí barbershopu navíc velmi příjemné.“</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">J</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name">Jakub D.</p>
+                <p class="reviews__service">Střih / barber služby</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="reviews__slide swiper-slide">
+          <article class="reviews__card">
+            <div class="reviews__stars" aria-hidden="true">
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+            </div>
+            <p class="reviews__text">„Dostal jsem perfektní střih, super barbershop, všem radím!“</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">I</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name">Ivan G.</p>
+                <p class="reviews__service">Střih</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="reviews__slide swiper-slide">
+          <article class="reviews__card">
+            <div class="reviews__stars" aria-hidden="true">
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+            </div>
+            <p class="reviews__text">„Super přístup a střih doporučuji 10/10.“</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">L</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name">Lukáš K.</p>
+                <p class="reviews__service">Střih</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="reviews__slide swiper-slide">
+          <article class="reviews__card">
+            <div class="reviews__stars" aria-hidden="true">
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+              <svg class="reviews__star" width="16" height="16"><use href="./img/sprite.svg#star-sym"></use></svg>
+            </div>
+            <p class="reviews__text">„TOP jako vždy... doporučuji... 👍“</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">R</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name">Roman</p>
+                <p class="reviews__service">Barber služby</p>
               </div>
             </div>
           </article>

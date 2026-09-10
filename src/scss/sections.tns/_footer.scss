@@ -39,14 +39,6 @@
   min-width: 0;
 }
 
-// Лого в футере — чистый белый (`--bg-app-light`, сверено `76:523`/`109:1272`: text-white),
-// в отличие от шапки (`--fg-app-dark` на `.logo` по умолчанию) — расхождение уже
-// зафиксировано в STYLEGUIDE (токен `--bg-app-light` описан как «лого в футере»).
-.footer__logo {
-  display: block;
-  color: var(--bg-app-light);
-}
-
 .footer__tagline {
   margin: 2.4rem 0 0;
   font-size: var(--fz-regular);

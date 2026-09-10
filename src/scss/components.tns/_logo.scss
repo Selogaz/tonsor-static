@@ -1,16 +1,24 @@
-// Wordmark «TONSOR.» — DM Serif Text, белый текст + золотая точка. Переиспользуется в
-// шапке (юнит U1, `65:50`/`109:643`) и повторится в патичке (юнит U12, `76:523`).
-// Разметка: <a class="logo">TONSOR<span class="logo__dot">.</span></a>
+// Логотип TONSOR — растровая эмблема клиента (леттеринг «TONSOR.» с золотой точкой,
+// светлый вариант под тёмный фон шапки/патички). Переиспользуется в шапке (юнит U1) и
+// патичке (юнит U12). `display: inline-flex` (не наследуемый b-базовый `block`) нужен,
+// чтобы `.footer__logo` центрировался вместе с остальным текстом футера на мобилке
+// (`.footer { text-align: center }` центрирует только инлайновые боксы).
+// Разметка: <a class="logo"><picture><source .webp><img class="logo__img"></picture></a>
 .logo {
   display: inline-flex;
-  font-family: var(--ff-logo);
-  font-size: var(--fz-logo);
-  font-style: normal;
-  line-height: 1;
-  color: var(--fg-app-dark);
-  white-space: nowrap;
 }
 
-.logo__dot {
-  color: var(--c-primary);
+// Ширина подогнана под прежний текстовый логотип «TONSOR.» (`--fz-logo`, HEAD-версия
+// компонента): 11.2rem — фактическая ширина wordmark при 2.8rem/DM Serif Text на 1920
+// (см. комментарий `menu__nav` в `_header.scss`); 7.2rem — та же ширина, пересчитанная
+// на мобильный `--fz-logo: 1.8rem` (11.2 × 1.8/2.8). Высота не фиксируется — только
+// пропорция исходника (≈5.9:1).
+.logo__img {
+  display: block;
+  width: 11.2rem;
+  height: auto;
+
+  @media (max-width: $mobile-xxlg) {
+    width: 7.2rem;
+  }
 }

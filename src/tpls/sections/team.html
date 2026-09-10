@@ -2,13 +2,16 @@
 <!-- Tým TONSOR (`76:481`, юнит U10). H2 `76:482`: «Tým » белым + «TONSOR» золотом — единственная
 секция макета, где акцент — само название бренда, не тематическое слово секции. Карточки
 барберов (`76:483/485/487`, 477×540 десктоп / `109:1199`/`109:1212`, 182×258 мобилка): фото —
-РАСТР, не CSS-фильтр (сверено: исходный JPEG из Figma имеет R=G=B на каждом пикселе, т.е. уже
-чёрно-белый файл), подпись «Jméno barbera» (чешский плейсхолдер «имя барбера», не рыба —
-заменит CMS) шрифтом Trajan Pro 3 (капитель — свойство самого начертания, см. STYLEGUIDE §2).
-В макете все 3 карточки используют один и тот же реальный портрет с разным кропом (в файле
-Figma это один барбер, сфотографированный один раз) — сделано 5 слайдов по кругу тем же фото
-(решение юнита, см. отчёт). Стрелки (`109:1214`/`109:1215` десктоп, `109:1221` мобилка,
-39/47×48px) — свой стиль `.team__arrow` (решение юнита — не общий `nav-arrow`), но токены
+РАСТР, не CSS-фильтр (чёрно-белое запечено в JPEG при экспорте — R=G=B на каждом пикселе, тот же
+приём, что был у макетного плейсхолдера), подпись «Barber Имя» шрифтом Trajan Pro 3 (капитель —
+свойство самого начертания, см. STYLEGUIDE §2). 4 реальных барбера (правка клиента 10.09, п.6) —
+Zachar/Ivan/Viktorie/Anastasie, порядок фиксирован клиентом. Кадр — под точное соотношение
+карточки (477×540 → 954×1080px @2x), поэтому `object-fit: cover` в `_team.scss` де-факто не
+обрезает, а только подстраховывает. С 4 карточками (было 5) `loop` в `team.js` не включаем:
+при `slidesPerView:3` на десктопе и «подглядывании» на мобилке Swiper и без loop корректно
+докручивает до последней карточки и сам гасит стрелку в конце — проверено кликами по обеим
+стрелкам на 1920 и 320, пустых мест и ошибок в консоли нет. Стрелки (`109:1214`/`109:1215` десктоп, `109:1221` мобилка, 39/47×48px) — свой стиль
+`.team__arrow` (решение юнита — не общий `nav-arrow`), но токены
 `--bg-nav-btn`/`--radius-nav-btn`/`--c-divider` переиспользованы из Recenze (юнит U7):
 совпадают тютелька в тютельку (сверено design-context). Стрелки лежат сиблингом `.swiper`
 (паттерн ТЗ), центрированы под каруселью на обеих ширинах (в макете центр группы стрелок
@@ -23,51 +26,41 @@ Figma это один барбер, сфотографированный оди�
         <article class="team__slide swiper-slide">
           <div class="team__media">
             <picture class="team__media-pic">
-              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+              <source srcset="./img/team.tns/barber-zachar@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-zachar@2x.jpg" alt="Barber Zachar" width="477" height="540" loading="lazy" decoding="async">
             </picture>
           </div>
-          <p class="team__caption">Jméno barbera</p>
+          <p class="team__caption">Barber Zachar</p>
         </article>
 
         <article class="team__slide swiper-slide">
           <div class="team__media">
             <picture class="team__media-pic">
-              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+              <source srcset="./img/team.tns/barber-ivan@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-ivan@2x.jpg" alt="Barber Ivan" width="477" height="540" loading="lazy" decoding="async">
             </picture>
           </div>
-          <p class="team__caption">Jméno barbera</p>
+          <p class="team__caption">Barber Ivan</p>
         </article>
 
         <article class="team__slide swiper-slide">
           <div class="team__media">
             <picture class="team__media-pic">
-              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+              <source srcset="./img/team.tns/barber-viktorie@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-viktorie@2x.jpg" alt="Barber Viktorie" width="477" height="540" loading="lazy" decoding="async">
             </picture>
           </div>
-          <p class="team__caption">Jméno barbera</p>
+          <p class="team__caption">Barber Viktorie</p>
         </article>
 
         <article class="team__slide swiper-slide">
           <div class="team__media">
             <picture class="team__media-pic">
-              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
+              <source srcset="./img/team.tns/barber-anastasie@2x.webp" type="image/webp">
+              <img class="team__media-img" src="./img/team.tns/barber-anastasie@2x.jpg" alt="Barber Anastasie" width="477" height="540" loading="lazy" decoding="async">
             </picture>
           </div>
-          <p class="team__caption">Jméno barbera</p>
-        </article>
-
-        <article class="team__slide swiper-slide">
-          <div class="team__media">
-            <picture class="team__media-pic">
-              <source srcset="./img/team.tns/barber-1@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-1@2x.jpg" alt="Barber TONSOR" width="477" height="540" loading="lazy" decoding="async">
-            </picture>
-          </div>
-          <p class="team__caption">Jméno barbera</p>
+          <p class="team__caption">Barber Anastasie</p>
         </article>
 
       </div>

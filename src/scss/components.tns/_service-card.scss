@@ -2,8 +2,8 @@
 //
 // На мобильных дублях макета у карточек 2/4/6/8/10 в файле отсутствует фон-плашка
 // (проверено `get_design_context` + попиксельная сверка с `figma-renders/03-services_320.png`:
-// это баг дублирования слоя в Figma, а не задуманный «зебра»-паттерн — 11 одинаковых по
-// смыслу пунктов не могут через один визуально терять карточку). Решение: все 11 карточек
+// это баг дублирования слоя в Figma, а не задуманный «зебра»-паттерн — одинаковые по
+// смыслу пункты не могут через один визуально терять карточку). Решение: все карточки
 // рисуются одинаково (с фоном), зазор между ними на мобиле — те же 2rem, что и
 // row/column-gap сетки на десктопе (см. `_services.scss`), а не 0/93px из бага макета.
 //
@@ -12,20 +12,25 @@
 // стояли отдельной строкой под title), мобилка «title+price в одну строку, links
 // отдельной строкой снизу» — три элемента в один ряд на 320 не умещаются.
 //
-// Из prototype.png взято ТОЛЬКО взаимное расположение слов. Оформление самих ссылок —
-// прежнее: золотая «Rezervovat», приглушённо-серая «Ukázky práce», между ними разделитель
-// «·»; боксом-мини-кнопкой «Rezervovat» становится только на мобилке (`109:937`).
-// Объявленный ниже `text-decoration: underline` до пикселя не доходит — его перекрывает
-// более специфичный `a, a:link, a:visited { text-decoration: none }` из ресета; так было
-// и до правки, поэтому оставлено как есть (снимать подчёркивание с ресета или дожимать
-// его тут — отдельное дизайн-решение, не часть отката). Промежуточная версия правки 9.09
-// п.4 рисовала обе ссылки одинаковыми боксами с золотой рамкой и uppercase — забраковано
-// заказчиком, вернули прежний вид.
+// Из prototype.png взято взаимное расположение слов. Оформление ссылок — правка 10.09
+// п.2: заказчик прислал свой скриншот (image.png, геометрия «поехала», но сам приём —
+// обводка + uppercase + цвет — то, что просил) и попросил превратить обе ссылки в кнопки
+// с обводкой вместо мелкого подчёркнутого текста с разделителем «·». Разделитель убран
+// из разметки и стилей. Обе кнопки — один и тот же бокс (паддинг/шрифт/радиус/переход),
+// разный только цвет: золото у «Rezervovat» (совпадает с прежним акцентом ссылки),
+// приглушённый серый у «Ukázky práce» (тот же токен, что раньше был только у текста).
+// Мини-кнопка «Rezervovat» была раньше только на мобилке (`109:937`) — теперь тот же вид
+// на обеих ширинах, мобильный размер регулируется исключительно через `--fz-service-cta`
+// (паддинг/буква-спейсинг — em, масштабируются сами).
 .service-card {
   display: grid;
   grid-template-areas: "title price links";
   grid-template-columns: 1fr auto auto;
-  column-gap: 1.2rem;
+  // 0.8rem, не 1.2rem — правка 10.09 (доработка п.2): после превращения ссылок в кнопки
+  // с паддингом трек `title` короткие названия («Dětský střih do 10 let» и т.п.) стало
+  // рвать. Общий column-gap ужат ради места заголовку; на ≤575 возвращён прежний 1.2rem
+  // (мобилка не трогается, см. медиа-блок ниже).
+  column-gap: 0.8rem;
   align-items: center;
   min-height: 12rem;
   padding: 1.6rem 3.2rem;
@@ -36,9 +41,9 @@
   // карточка занимает половину контейнера при «десктопном» кегле — три трека
   // «title price links» в одну строку туда не влезают ни при каком кегле CTA (только
   // price+links уже шире контентной ширины карточки, трек `1fr` схлопывается и заголовок
-  // рассыпается в столбик по одной букве). Раскладка этой зоны — мобильная, двухстрочная,
-  // но без мобильного оформления ссылок (мини-кнопка/скрытый разделитель остаются ниже 576).
-  // По той же причине у `.service-card__title`/`.service-card__links` нет `min-width: 0`:
+  // рассыпается в столбик по одной букве). Раскладка этой зоны — мобильная, двухстрочная
+  // (кнопки `.service-card__cta`/`.service-card__more` теперь одного вида на всех
+  // ширинах — правка 10.09 п.2, см. комментарий у блока кнопок ниже). По той же причине у `.service-card__title`/`.service-card__links` нет `min-width: 0`:
   // с ним трек `1fr` теряет минимум по min-content и заголовок рвётся посередине слова
   // (`overflow-wrap: break-word` из ресета), а на десктопе он и так не нужен — в одну
   // строку всё влезает с запасом (проверено рендером, см. отчёт по правке).
@@ -52,6 +57,7 @@
     grid-template-areas: "title price" "links links";
     grid-template-columns: 1fr auto;
     row-gap: 0.9rem;
+    column-gap: 1.2rem; // возврат к прежнему значению — мобилка не участвует в правке
     min-height: 9.3rem;
     padding: 1.6rem;
   }
@@ -65,6 +71,16 @@
   font-weight: var(--fw-medium);
   line-height: var(--lh-ui);
   color: var(--fg-regular);
+
+  // Правка 10.09 (доработка п.2): самое длинное название («Střih táta a syn + úprava
+  // vousů») в узком треке `1fr` всё равно переносится — пусть перенос ляжет ровно
+  // (без «висячего» короткого хвоста), а не как получится. На однострочные названия
+  // не влияет (balance активен только когда перенос уже случился). Только от 576px —
+  // на 320 перенос того же названия и так ровный («…+ úprava / vousů»), balance его
+  // меняет на другой (тоже корректный) вариант без необходимости — мобилку не трогаем.
+  @media (min-width: $mobile-xxlg + 1) {
+    text-wrap: balance;
+  }
 }
 
 .service-card__price {
@@ -90,58 +106,78 @@
 
 .service-card__links {
   display: flex;
+  flex-wrap: wrap;
   grid-area: links;
+  // 0.5em, не 0.8em — правка 10.09 (доработка п.2), см. комментарий у блока кнопок ниже.
+  // На ≤575 возвращён прежний зазор (мобилка не трогается).
+  gap: 0.5em;
   align-items: center;
   font-size: var(--fz-service-cta);
-
-  // Страховка к двухстрочной раскладке зоны 576-991 (см. `.service-card` выше): своя
-  // строка на всю ширину карточки строке ссылок хватает, но запас там небольшой —
-  // перенос лучше переполнения.
-  @media (min-width: $mobile-xxlg + 1) and (max-width: $tablet) {
-    flex-wrap: wrap;
-  }
 
   @media (max-width: $mobile-xxlg) {
     gap: 0.8em;
   }
 }
 
-.service-card__cta {
-  color: var(--c-primary);
-  text-decoration: underline;
+// Общий бокс обеих CTA-кнопок — паддинг/буква-спейсинг в `em`, масштабируются вместе с
+// `--fz-service-cta` (десктоп/моб. override — см. `_variables.scss`). Правка 10.09
+// (доработка п.2): на десктопе (`title price links` в одну строку, от 992px) кнопки со
+// своим прежним паддингом `1.2em` съедали трек заголовка — короткие названия вроде
+// «Dětský střih do 10 let» рвались. Горизонтальный паддинг ужат до `0.9em` только для
+// этого диапазона (кегль кнопок не трогаем — шрифт последний рычаг, не первый); на ≤575
+// возвращён исходный `1.2em`, мобилка не участвует в правке.
+.service-card__cta,
+.service-card__more {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6em 0.9em;
+  font-family: var(--ff-regular);
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   white-space: nowrap;
+  background: transparent;
+  border: 0.1rem solid;
+  border-radius: var(--radius-sm);
+  transition: var(--tr-regular);
 
   @media (max-width: $mobile-xxlg) {
-    padding: 0.4em 1em;
-    text-decoration: none;
-    border: 0.1rem solid var(--c-primary);
-    border-radius: var(--radius-sm);
+    padding: 0.6em 1.2em;
   }
+}
+
+.service-card__cta {
+  color: var(--c-primary);
+  border-color: var(--c-primary);
 }
 
 .service-card__cta:hover {
   @media (any-hover: hover) {
-    color: var(--c-primary-dark);
+    color: var(--fg-app-light);
+    background: var(--c-primary);
   }
 }
 
-.service-card__sep {
-  margin: 0 0.6em;
-  color: var(--fg-regular);
-
-  @media (max-width: $mobile-xxlg) {
-    display: none;
-  }
+.service-card__cta:focus-visible {
+  outline: 0.2rem solid var(--c-primary);
+  outline-offset: 0.2rem;
 }
 
 .service-card__more {
   color: var(--fg-link-muted);
-  text-decoration: underline;
-  white-space: nowrap;
+  border-color: var(--fg-link-muted);
 }
 
 .service-card__more:hover {
   @media (any-hover: hover) {
-    color: var(--fg-regular);
+    color: var(--fg-muted);
+    border-color: var(--fg-muted);
   }
+}
+
+.service-card__more:focus-visible {
+  outline: 0.2rem solid var(--fg-link-muted);
+  outline-offset: 0.2rem;
 }
