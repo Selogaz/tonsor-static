@@ -2,8 +2,8 @@
 <!-- Tým TONSOR (`76:481`, юнит U10). H2 `76:482`: «Tým » белым + «TONSOR» золотом — единственная
 секция макета, где акцент — само название бренда, не тематическое слово секции. Карточки
 барберов (`76:483/485/487`, 477×540 десктоп / `109:1199`/`109:1212`, 182×258 мобилка): фото —
-РАСТР, не CSS-фильтр (чёрно-белое запечено в JPEG при экспорте — R=G=B на каждом пикселе, тот же
-приём, что был у макетного плейсхолдера), подпись «Barber Имя» шрифтом Trajan Pro 3 (капитель —
+РАСТР, цветные (в макете плейсхолдер был чёрно-белым, но реальные фото барберов клиент передал
+в цвете — так и оставляем, без ч/б-фильтра), подпись «Barber Имя» шрифтом Trajan Pro 3 (капитель —
 свойство самого начертания, см. STYLEGUIDE §2). 4 реальных барбера (правка клиента 10.09, п.6) —
 Zachar/Ivan/Viktorie/Anastasie, порядок фиксирован клиентом. Кадр — под точное соотношение
 карточки (477×540 → 954×1080px @2x), поэтому `object-fit: cover` в `_team.scss` де-факто не
@@ -27,7 +27,7 @@ Zachar/Ivan/Viktorie/Anastasie, порядок фиксирован клиент
           <div class="team__media">
             <picture class="team__media-pic">
               <source srcset="./img/team.tns/barber-zachar@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-zachar@2x.jpg" alt="Barber Zachar" width="477" height="540" loading="lazy" decoding="async">
+              <img class="team__media-img" src="./img/team.tns/barber-zachar@2x.jpg" alt="Barber Zachar" width="477" height="540" decoding="async">
             </picture>
           </div>
           <p class="team__caption">Barber Zachar</p>
@@ -37,7 +37,7 @@ Zachar/Ivan/Viktorie/Anastasie, порядок фиксирован клиент
           <div class="team__media">
             <picture class="team__media-pic">
               <source srcset="./img/team.tns/barber-ivan@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-ivan@2x.jpg" alt="Barber Ivan" width="477" height="540" loading="lazy" decoding="async">
+              <img class="team__media-img" src="./img/team.tns/barber-ivan@2x.jpg" alt="Barber Ivan" width="477" height="540" decoding="async">
             </picture>
           </div>
           <p class="team__caption">Barber Ivan</p>
@@ -47,7 +47,7 @@ Zachar/Ivan/Viktorie/Anastasie, порядок фиксирован клиент
           <div class="team__media">
             <picture class="team__media-pic">
               <source srcset="./img/team.tns/barber-viktorie@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-viktorie@2x.jpg" alt="Barber Viktorie" width="477" height="540" loading="lazy" decoding="async">
+              <img class="team__media-img" src="./img/team.tns/barber-viktorie@2x.jpg" alt="Barber Viktorie" width="477" height="540" decoding="async">
             </picture>
           </div>
           <p class="team__caption">Barber Viktorie</p>
@@ -57,7 +57,7 @@ Zachar/Ivan/Viktorie/Anastasie, порядок фиксирован клиент
           <div class="team__media">
             <picture class="team__media-pic">
               <source srcset="./img/team.tns/barber-anastasie@2x.webp" type="image/webp">
-              <img class="team__media-img" src="./img/team.tns/barber-anastasie@2x.jpg" alt="Barber Anastasie" width="477" height="540" loading="lazy" decoding="async">
+              <img class="team__media-img" src="./img/team.tns/barber-anastasie@2x.jpg" alt="Barber Anastasie" width="477" height="540" decoding="async">
             </picture>
           </div>
           <p class="team__caption">Barber Anastasie</p>
