@@ -1,7 +1,10 @@
 import path from "path";
 
 const rootFolder = path.basename(path.resolve()); // Корневая папка проекта
-const buildFolder = "./dist"; // Папка с файлами на продакшн
+// Флаг --wp переключает выход сборки на ассеты темы WordPress (см. wp:build/wp:watch
+// в package.json); без флага — прежнее поведение, сборка в ./dist.
+const isWp = process.argv.includes("--wp");
+const buildFolder = isWp ? "./wordpress/theme/tonsor/assets" : "./dist"; // Папка с файлами на продакшн
 const srcFolder = "./src"; // Папка с исходниками
 
 export default {
@@ -42,4 +45,5 @@ export default {
   buildFolder,
   srcFolder,
   rootFolder,
+  isWp,
 };

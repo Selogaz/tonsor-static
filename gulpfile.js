@@ -68,6 +68,32 @@ const tasks = gulp.series(
   imagesCopy
 );
 
+// Ассеты без HTML — выход в тему WordPress (шаблоны там PHP, см. `--wp` в gulp/config/path.js
+// и `wp:build`/`wp:watch` в package.json). cleanDist чистит именно buildFolder (dist или assets
+// в зависимости от флага), поэтому одна и та же функция безопасна для обеих сборок.
+const wpAssetTasks = gulp.series(
+  cssBuild,
+  jsBuild,
+  convertImages,
+  imagesBuild,
+  resourcesBuild,
+  fontsBuild,
+  imagesCopy
+);
+
+// Наблюдение за ассетами для темы WordPress — без BrowserSync-сервера (WP уже отдаётся
+// контейнером на localhost:8080).
+function watchAssetFiles() {
+  /* eslint-disable no-undef */
+  gulp.watch(app.path.watch.scss, cssBuild);
+  gulp.watch(app.path.watch.js, jsBuild);
+  gulp.watch(app.path.watch.images, imagesBuild);
+  gulp.watch(app.path.watch.svg, imagesBuild);
+  gulp.watch(app.path.watch.resources, resourcesBuild);
+  gulp.watch(app.path.watch.fonts, fontsBuild);
+  /* eslint-enable no-undef */
+}
+
 // Серия выполнения команд для разработки
 export const dev = gulp.series(
   cleanDist,
@@ -92,6 +118,12 @@ export const prodCopyImages = gulp.series(
     fontsBuild
   )
 );
+
+// Сборка ассетов темы WordPress (`npm run wp:build` → `gulp wpBuild --production --wp`)
+export const wpBuild = gulp.series(cleanDist, wpAssetTasks);
+
+// Watch ассетов темы WordPress (`npm run wp:watch` → `gulp wpWatch --wp`)
+export const wpWatch = gulp.series(cleanDist, wpAssetTasks, watchAssetFiles);
 
 export { convertImages };
 

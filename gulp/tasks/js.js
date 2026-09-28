@@ -18,7 +18,7 @@ const jsEntryPoints = {
 }
 
 export default function jsBuild() {
-  del("./dist/js/**/*.js");
+  del(`${app.path.build.js}**/*.js`);
   return gulp
     .src(app.path.src.js, { sourcemaps: app.isDev })
     .pipe(

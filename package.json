@@ -8,6 +8,8 @@
     "prod": "gulp prodCopyImages --production",
     "prod-ci": "gulp prod --production",
     "convert-images": "gulp convertImages",
+    "wp:build": "gulp wpBuild --production --wp",
+    "wp:watch": "gulp wpWatch --wp",
     "sprite": "npx mix"
   },
   "keywords": [],

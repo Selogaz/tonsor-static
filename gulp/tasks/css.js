@@ -14,7 +14,7 @@ import replace from "gulp-replace";
 const sass = gulpSass(dartSass);
 
 export default function cssBuild() {
-  del("./dist/css/**/*.css");
+  del(`${app.path.build.css}**/*.css`);
   return gulp
     .src(app.path.src.scss, { sourcemaps: app.isDev })
     .pipe(sourcemaps.init())

@@ -11,7 +11,7 @@ import versionNumber from "gulp-version-number";
 // а по конвенции проекта все контентные картинки уже обёрнуты в <picture> — плагин
 // молчаливо не сделал бы ничего. См. gulp/tasks/images.js → convertImages (U16).
 export default function htmlBuild() {
-  del("./dist/*.html");
+  del(`${app.path.build.html}*.html`);
   return (
     gulp
       .src(app.path.src.html)
