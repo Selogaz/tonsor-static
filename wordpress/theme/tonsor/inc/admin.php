@@ -44,6 +44,34 @@ add_action('init', function (): void {
 }, 20);
 
 /**
+ * Ссылки соцсетей живут в полях главной (их читает фронт) и дублируются в опции Yoast
+ * `wpseo_social` (её читает сам плагин — соцпрофили организации, `sameAs` в собственном
+ * графе Yoast; наш JSON-LD BarberShop берёт их отдельно, tns_schema_barbershop()).
+ * Без синхронизации клиенту пришлось бы менять ссылку в двух местах. Приоритет 20 — после
+ * того как ACF (хук по умолчанию, приоритет 10) уже записал новые значения в постмету,
+ * иначе tns_field() читал бы старые. Без Yoast (тот же признак, что в seed/seed.php) —
+ * не выполняется, тема без плагина не падает.
+ */
+add_action('acf/save_post', function ($post_id): void {
+    if (!function_exists('YoastSEO')) {
+        return;
+    }
+
+    $front_page_id = (int) get_option('page_on_front');
+    if (!$front_page_id || (int) $post_id !== $front_page_id) {
+        return;
+    }
+
+    $tns_wpseo_social = get_option('wpseo_social', []);
+    $tns_wpseo_social['facebook_site'] = (string) tns_field('social_facebook', $front_page_id);
+    $tns_wpseo_social['instagram_url'] = (string) tns_field('social_instagram', $front_page_id);
+    $tns_wpseo_social['other_social_urls'] = array_values(array_filter([
+        (string) tns_field('social_tiktok', $front_page_id),
+    ]));
+    update_option('wpseo_social', $tns_wpseo_social);
+}, 20);
+
+/**
  * На странице главной нет блочного редактора — весь контент только через вкладки
  * ACF. get_current_screen() на admin_init ещё не готов (set_current_screen() в
  * wp-admin/admin.php вызывается позже) — определяем экран через $pagenow и $_GET,
