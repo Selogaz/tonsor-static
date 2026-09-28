@@ -1,10 +1,13 @@
 <?php
 /**
  * Tým TONSOR: карусель барберов (team.js). Перенесено 1:1 со статикой
- * (src/tpls/sections/team.html); данные — CPT tns_barber (ACF).
+ * (src/tpls/sections/team.html); заголовок — поле главной (ACF), карточки барберов
+ * остаются статикой до CPT tns_barber (W6).
  */
 
 defined('ABSPATH') || exit;
+
+$tns_team_title = (string) tns_field('team_title', tns_front_id());
 ?>
 
 <!-- Tým TONSOR (`76:481`, юнит U10). H2 `76:482`: «Tým » белым + «TONSOR» золотом — единственная
@@ -26,7 +29,7 @@ Zachar/Ivan/Viktorie/Anastasie, порядок фиксирован клиент
 совпадает с центром фрейма/контейнера, не с одной карточкой). -->
 <section class="team" id="tym">
   <div class="container">
-    <h2 class="team__title section-title" data-aos="fade-up">Tým <span class="section-title__accent">TONSOR</span></h2>
+    <h2 class="team__title section-title" data-aos="fade-up"><?php echo tns_accent($tns_team_title); ?></h2>
 
     <div class="team__slider swiper">
       <div class="swiper-wrapper">

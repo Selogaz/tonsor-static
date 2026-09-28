@@ -1,16 +1,18 @@
 <?php
 /**
  * Služby a ceny: карточки услуг. Перенесено 1:1 со статикой (src/tpls/sections/services.html);
- * данные — CPT tns_service (ACF).
+ * заголовок — поле главной (ACF); карточки услуг остаются статикой до CPT tns_service (W6).
  */
 
 defined('ABSPATH') || exit;
+
+$tns_services_title = (string) tns_field('services_title', tns_front_id());
 ?>
 
 <section class="services" id="sluzby">
   <div class="container">
     <div class="services__head" data-aos="fade-up">
-      <h2 class="section-title"><span class="section-title__accent">Služby</span> a ceny</h2>
+      <h2 class="section-title"><?php echo tns_accent($tns_services_title); ?></h2>
     </div>
 
     <div class="services__grid">

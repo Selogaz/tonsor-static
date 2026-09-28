@@ -5,36 +5,45 @@
  */
 
 defined('ABSPATH') || exit;
+
+$tns_front_id = tns_front_id();
+$tns_title = (string) tns_field('gift_title', $tns_front_id);
+$tns_lead = (string) tns_field('gift_lead', $tns_front_id);
+$tns_price = (string) tns_field('gift_price', $tns_front_id);
+$tns_checks = tns_split_lines((string) tns_field('gift_checks', $tns_front_id));
+$tns_cta_text = (string) tns_field('gift_cta_text', $tns_front_id);
+$tns_fresha_gift = (string) tns_field('fresha_gift', $tns_front_id);
+$tns_image_desktop = (int) tns_field('gift_image_desktop', $tns_front_id);
+$tns_image_mobile = (int) tns_field('gift_image_mobile', $tns_front_id);
 ?>
 
 <section class="gift" id="poukaz">
   <div class="gift__media">
-    <picture class="gift__media-pic">
-      <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/gift.tns/certificate-mobile@2x.webp')); ?>" type="image/webp">
-      <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/gift.tns/certificate-mobile@2x.jpg')); ?>">
-      <source srcset="<?php echo esc_url(tns_asset('img/gift.tns/certificate-desktop@2x.webp')); ?>" type="image/webp">
-      <img class="gift__media-img" src="<?php echo esc_url(tns_asset('img/gift.tns/certificate-desktop@2x.jpg')); ?>" alt="Dárkový poukaz TONSOR" width="968" height="680" loading="lazy" decoding="async">
-    </picture>
+    <?php echo tns_picture($tns_image_desktop, $tns_image_mobile, ['block' => 'gift', 'loading' => 'lazy']); ?>
   </div>
 
   <div class="container gift__container">
     <div class="gift__content" data-aos="fade-up">
-      <h2 class="gift__title section-title"><span class="section-title__accent">Dárkový</span> poukaz TONSOR</h2>
+      <h2 class="gift__title section-title"><?php echo tns_accent($tns_title); ?></h2>
 
-      <p class="gift__lead">Darujte důležitému muži sebevědomí a upravený vzhled. <strong class="gift__lead-accent">Od 500 Kč</strong></p>
+      <?php if ($tns_lead || $tns_price) : ?>
+      <p class="gift__lead"><?php echo nl2br(esc_html($tns_lead), false); ?><?php if ($tns_price) : ?> <strong class="gift__lead-accent"><?php echo esc_html($tns_price); ?></strong><?php endif; ?></p>
+      <?php endif; ?>
 
+      <?php if ($tns_checks) : ?>
       <ul class="gift__checks">
+        <?php foreach ($tns_checks as $tns_check) : ?>
         <li class="gift__check">
           <svg class="gift__check-icon" width="20" height="20"><use href="<?php echo esc_url(tns_sprite('check')); ?>"></use></svg>
-          <span class="gift__check-text">Zaslání e-mailem</span>
+          <span class="gift__check-text"><?php echo esc_html($tns_check); ?></span>
         </li>
-        <li class="gift__check">
-          <svg class="gift__check-icon" width="20" height="20"><use href="<?php echo esc_url(tns_sprite('check')); ?>"></use></svg>
-          <span class="gift__check-text">Na jakoukoli službu TONSOR</span>
-        </li>
+        <?php endforeach; ?>
       </ul>
+      <?php endif; ?>
 
-      <a class="gift__cta button button--solid" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/packages?share=true&amp;pId=3091855" target="_blank" rel="noopener">Koupit dárkový poukaz</a>
+      <?php if ($tns_fresha_gift) : ?>
+      <a class="gift__cta button button--solid" href="<?php echo esc_url($tns_fresha_gift); ?>" target="_blank" rel="noopener"><?php echo esc_html($tns_cta_text ?: 'Koupit dárkový poukaz'); ?></a>
+      <?php endif; ?>
     </div>
   </div>
 </section>

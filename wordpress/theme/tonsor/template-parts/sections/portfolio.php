@@ -1,16 +1,19 @@
 <?php
 /**
  * Portfolio barberů: фильтры + карусель (portfolio.js). Перенесено 1:1 со статикой
- * (src/tpls/sections/portfolio.html); данные — CPT tns_work + таксономия (ACF).
+ * (src/tpls/sections/portfolio.html); заголовок — поле главной (ACF), табы/слайды —
+ * пока статика, до CPT tns_work + таксономии (W6).
  */
 
 defined('ABSPATH') || exit;
+
+$tns_portfolio_title = (string) tns_field('portfolio_title', tns_front_id());
 ?>
 
 <section class="portfolio" id="portfolio">
   <div class="container">
     <div class="portfolio__grid">
-      <h2 class="portfolio__title section-title" data-aos="fade-up"><span class="section-title__accent">Portfolio</span> barberů</h2>
+      <h2 class="portfolio__title section-title" data-aos="fade-up"><?php echo tns_accent($tns_portfolio_title); ?></h2>
 
       <div class="portfolio__tabs" role="tablist">
         <button type="button" class="portfolio__tab portfolio__tab--active" data-filter="kratke-vlasy" role="tab" aria-selected="true">Krátké vlasy</button>

@@ -5,53 +5,48 @@
  */
 
 defined('ABSPATH') || exit;
+
+$tns_front_id = tns_front_id();
+$tns_title = (string) tns_field('care_title', $tns_front_id);
+$tns_image_1 = (int) tns_field('care_image_1', $tns_front_id);
+$tns_image_2 = (int) tns_field('care_image_2', $tns_front_id);
+$tns_image_mobile = (int) tns_field('care_image_mobile', $tns_front_id);
+
+$tns_pillars = [
+    (array) tns_field('care_pillar_1', $tns_front_id),
+    (array) tns_field('care_pillar_2', $tns_front_id),
+    (array) tns_field('care_pillar_3', $tns_front_id),
+];
 ?>
 
 <section class="care" id="o-nas">
   <div class="container">
     <div class="care__media">
-      <picture class="care__media-pic care__media-pic--1">
-        <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/care.tns/interior-mobile@2x.webp')); ?>" type="image/webp">
-        <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/care.tns/interior-mobile@2x.jpg')); ?>">
-        <source srcset="<?php echo esc_url(tns_asset('img/care.tns/interior-1@2x.webp')); ?>" type="image/webp">
-        <img class="care__media-img" src="<?php echo esc_url(tns_asset('img/care.tns/interior-1@2x.jpg')); ?>" alt="Interiér barbershopu TONSOR" width="721" height="362" loading="lazy" decoding="async">
-      </picture>
-      <picture class="care__media-pic care__media-pic--2">
-        <source srcset="<?php echo esc_url(tns_asset('img/care.tns/interior-2@2x.webp')); ?>" type="image/webp">
-        <img class="care__media-img" src="<?php echo esc_url(tns_asset('img/care.tns/interior-2@2x.jpg')); ?>" alt="Interiér barbershopu TONSOR" width="721" height="362" loading="lazy" decoding="async">
-      </picture>
+      <?php echo tns_picture($tns_image_1, $tns_image_mobile, ['block' => 'care', 'modifier' => '1', 'loading' => 'lazy']); ?>
+      <?php echo tns_picture($tns_image_2, 0, ['block' => 'care', 'modifier' => '2', 'loading' => 'lazy']); ?>
     </div>
 
-    <h2 class="care__title section-title" data-aos="fade-up"><span class="section-title__accent">Pečujeme</span> o vaše sebevědomí</h2>
+    <h2 class="care__title section-title" data-aos="fade-up"><?php echo tns_accent($tns_title); ?></h2>
 
     <div class="care__pillars">
-      <div class="care__pillar" data-aos="fade-up">
-        <h3 class="care__pillar-title">Spolehlivost</h3>
+      <?php foreach ($tns_pillars as $tns_index => $tns_pillar) :
+          $tns_pillar_title = (string) ($tns_pillar['title'] ?? '');
+          $tns_pillar_items = tns_split_lines((string) ($tns_pillar['items'] ?? ''));
+          $tns_is_accent = 2 === $tns_index; // 3-й столп — акцентный по вёрстке
+      ?>
+      <div class="care__pillar<?php echo $tns_is_accent ? ' care__pillar--accent' : ''; ?>" data-aos="fade-up">
+        <?php if ($tns_pillar_title) : ?>
+        <h3 class="care__pillar-title"><?php echo esc_html($tns_pillar_title); ?></h3>
+        <?php endif; ?>
+        <?php if ($tns_pillar_items) : ?>
         <ul class="care__pillar-list">
-          <li class="care__pillar-item">Jednoduchá online rezervace na 3 kliknutí s potvrzením termínu</li>
-          <li class="care__pillar-item">Připomenutí návštěvy 24 hodin předem</li>
-          <li class="care__pillar-item">Bez zbytečného čekání před návštěvou i během ní</li>
-          <li class="care__pillar-item">Přesně vytvoříme střih i vousy podle vašeho popisu nebo fotografie</li>
+          <?php foreach ($tns_pillar_items as $tns_item) : ?>
+          <li class="care__pillar-item"><?php echo esc_html($tns_item); ?></li>
+          <?php endforeach; ?>
         </ul>
+        <?php endif; ?>
       </div>
-
-      <div class="care__pillar" data-aos="fade-up">
-        <h3 class="care__pillar-title">Profesionalita</h3>
-        <ul class="care__pillar-list">
-          <li class="care__pillar-item">Konzultace před střihem nebo úpravou vousů. Najdeme styl, který vám bude sedět</li>
-          <li class="care__pillar-item">Péče o vlasy a vousy je součástí každé služby. Používáme hypoalergenní kosmetiku ZNAČKA</li>
-          <li class="care__pillar-item">Signature drink a příjemná hudba. Z běžné návštěvy děláme příjemný relax</li>
-        </ul>
-      </div>
-
-      <div class="care__pillar care__pillar--accent" data-aos="fade-up">
-        <h3 class="care__pillar-title">Dlouhodobá péče</h3>
-        <ul class="care__pillar-list">
-          <li class="care__pillar-item">Vaše preference ohledně střihu i nápoje si zapamatujeme už od první návštěvy</li>
-          <li class="care__pillar-item">Pomůžeme vám usnadnit úpravu delších vlasů správnou technikou střihu. Poradíme s péčí i výběrem vhodných produktů</li>
-          <li class="care__pillar-item">Udržujeme stejnou kvalitu střihu i služeb při každé návštěvě</li>
-        </ul>
-      </div>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>

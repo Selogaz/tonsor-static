@@ -1,9 +1,8 @@
 <?php
 /**
- * Закрывающая разметка: патичка, Schema.org (BarberShop/LocalBusiness + FAQPage — перенесены
- * 1:1 со статики, путь картинки через tns_asset), wp_footer() (подключает assets/js/index.min.js
- * из inc/assets.php). Замена JSON-LD на данные из полей/CPT (BarberShop и FAQPage) —
- * отдельная доработка вывода после появления полей в шаблонах.
+ * Закрывающая разметка: патичка, Schema.org (BarberShop/LocalBusiness — из полей главной,
+ * inc/schema.php; FAQPage пока захардкожена 1:1 со статики — переедет на записи вопросов
+ * вместе со списком FAQ), wp_footer() (подключает assets/js/index.min.js из inc/assets.php).
  */
 
 defined('ABSPATH') || exit;
@@ -14,34 +13,7 @@ defined('ABSPATH') || exit;
   </div>
 
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": ["BarberShop", "LocalBusiness"],
-    "name": "TONSOR",
-    "image": "<?php echo esc_url(tns_asset('img/common.tns/og.jpg')); ?>",
-    "url": "https://tonsorbarber.cz/",
-    "telephone": "+420777042214",
-    "email": "info@tonsorbarber.cz",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Hálkova 1056/10",
-      "postalCode": "301 00",
-      "addressLocality": "Plzeň",
-      "addressCountry": "CZ"
-    },
-    "openingHoursSpecification": {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      "opens": "08:00",
-      "closes": "20:00"
-    },
-    "sameAs": [
-      "https://www.tiktok.com/@tonsor.barbershop.cz",
-      "https://www.facebook.com/profile.php?id=61591946332992",
-      "https://www.instagram.com/tonsor.barbershop/"
-    ],
-    "hasMap": "https://maps.app.goo.gl/r4fRSUpbbaMPW99v7"
-  }
+  <?php echo tns_schema_barbershop(); ?>
   </script>
   <script type="application/ld+json">
   {

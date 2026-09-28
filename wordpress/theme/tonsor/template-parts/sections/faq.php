@@ -1,10 +1,15 @@
 <?php
 /**
  * Časté dotazy: аккордеон bayan, первый пункт раскрыт. Перенесено 1:1 со статикой
- * (src/tpls/sections/faq.html); данные — CPT tns_faq (ACF).
+ * (src/tpls/sections/faq.html); заголовок и лид — поля главной (ACF), сами
+ * вопросы-ответы остаются статикой до CPT tns_faq (W6).
  */
 
 defined('ABSPATH') || exit;
+
+$tns_front_id = tns_front_id();
+$tns_faq_title = (string) tns_field('faq_title', $tns_front_id);
+$tns_faq_lead = (string) tns_field('faq_lead', $tns_front_id);
 ?>
 <!-- Časté dotazy (`76:494`, юнит U11). H2 «Odpovídáme na vaše otázky» (акцент — целиком
 слово «Odpovídáme») + лид «Vše, co potřebujete vědět před návštěvou barbershopu TONSOR»
@@ -33,8 +38,10 @@ y=420, faq-5 — y=590, т.е. карточки идут ПАРАМИ СТРОК
 <section class="faq" id="faq">
   <div class="container">
     <div class="faq__head" data-aos="fade-up">
-      <h2 class="section-title faq__title"><span class="section-title__accent">Odpovídáme</span> na vaše otázky</h2>
-      <p class="faq__lead">Vše, co potřebujete vědět před návštěvou barbershopu TONSOR</p>
+      <h2 class="section-title faq__title"><?php echo tns_accent($tns_faq_title); ?></h2>
+      <?php if ($tns_faq_lead) : ?>
+      <p class="faq__lead"><?php echo esc_html($tns_faq_lead); ?></p>
+      <?php endif; ?>
     </div>
 
     <div class="faq__list">

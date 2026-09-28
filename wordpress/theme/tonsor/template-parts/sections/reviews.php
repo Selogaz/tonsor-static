@@ -1,10 +1,16 @@
 <?php
 /**
  * Recenze: карусель отзывов (reviews.js). Перенесено 1:1 со статикой
- * (src/tpls/sections/reviews.html); данные — CPT tns_review (ACF).
+ * (src/tpls/sections/reviews.html); заголовок и рейтинг — поля главной (ACF),
+ * карточки отзывов остаются статикой до CPT tns_review (W6).
  */
 
 defined('ABSPATH') || exit;
+
+$tns_front_id = tns_front_id();
+$tns_reviews_title = (string) tns_field('reviews_title', $tns_front_id);
+$tns_reviews_rating = (string) tns_field('reviews_rating', $tns_front_id);
+$tns_reviews_rating_sub = (string) tns_field('reviews_rating_sub', $tns_front_id);
 ?>
 
 <!-- Recenze (`76:422`, юнит U7). Шапка: H2 `76:423` (целиком золотое слово — вся надпись
@@ -27,13 +33,19 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
   <div class="container reviews__inner">
 
     <div class="reviews__head" data-aos="fade-up">
-      <h2 class="section-title reviews__title"><span class="section-title__accent">Recenze</span></h2>
+      <h2 class="section-title reviews__title"><?php echo tns_accent($tns_reviews_title); ?></h2>
       <div class="reviews__rating">
         <svg class="reviews__rating-icon" width="32" height="32" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
+        <?php if ($tns_reviews_rating || $tns_reviews_rating_sub) : ?>
         <div class="reviews__rating-text">
-          <p class="reviews__rating-value">4,9 / 5,0 na</p>
-          <p class="reviews__rating-sub">Google Maps</p>
+          <?php if ($tns_reviews_rating) : ?>
+          <p class="reviews__rating-value"><?php echo esc_html($tns_reviews_rating); ?></p>
+          <?php endif; ?>
+          <?php if ($tns_reviews_rating_sub) : ?>
+          <p class="reviews__rating-sub"><?php echo esc_html($tns_reviews_rating_sub); ?></p>
+          <?php endif; ?>
         </div>
+        <?php endif; ?>
       </div>
     </div>
 

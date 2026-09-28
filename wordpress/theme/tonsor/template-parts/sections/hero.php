@@ -1,10 +1,28 @@
 <?php
 /**
- * Hero-слайдер: 3 слайда (hero.js). Перенесено 1:1 со статикой (src/tpls/sections/hero.html);
- * контент — CPT tns_hero_slide (ACF).
+ * Hero-слайдер: N слайдов (hero.js). Перенесено 1:1 со статикой (src/tpls/sections/hero.html);
+ * контент — CPT tns_hero_slide (ACF), порядок — menu_order. Первый опубликованный слайд —
+ * <h1> (единственный на странице) и loading=eager, остальные — <p class="hero__title"> и lazy.
+ * Пустая ссылка кнопки слайда → фолбэк на общую ссылку Fresha (fresha_general, поле главной) —
+ * заметка юнита W4. Гварды на малое число слайдов (loop/стрелки Swiper) — W7, здесь не трогаем.
  */
 
 defined('ABSPATH') || exit;
+
+$tns_front_id = tns_front_id();
+$tns_fresha_general = (string) tns_field('fresha_general', $tns_front_id);
+
+$tns_hero_slides = get_posts([
+    'post_type' => 'tns_hero_slide',
+    'post_status' => 'publish',
+    'posts_per_page' => -1,
+    'orderby' => 'menu_order',
+    'order' => 'ASC',
+]);
+
+if (!$tns_hero_slides) {
+    return;
+}
 ?>
 <!-- Hero-слайдер (`65:47`, юнит U2). Слайд 1 в корне: `65:48`+`65:49` (фото/скрим),
 `65:71` (Blok textu: H1 `65:72`, лид `65:73`), `65:77` (eyebrow), `65:74` (CTA).
@@ -29,65 +47,49 @@ defined('ABSPATH') || exit;
   <div class="hero__slider swiper">
     <div class="hero__wrapper swiper-wrapper">
 
-      <div class="hero__slide swiper-slide">
-        <div class="hero__content container" data-aos="fade-up">
-          <div class="hero__text">
-            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
-            <h1 class="hero__title"><span class="hero__title-accent">Vybereme</span> výrazný střih a naučíme vás, jak si ho upravovat</h1>
-            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
-          </div>
-          <a class="hero__cta button button--solid" href="https://www.fresha.com/cs/a/tonsor-premiovy-barbershop-plzen-plzensky-kraj-plzen-3-jizni-predmesti-1056-halkova-10-l8myvecl?pId=3091855&amp;preview=a97ba182-3039-45c6-ba48-f0862e5da559" target="_blank" rel="noopener">Rezervovat střih</a>
-        </div>
-        <div class="hero__media">
-          <picture class="hero__media-pic">
-            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-1-mobile@2x.webp')); ?>" type="image/webp">
-            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-1-mobile@2x.jpg')); ?>">
-            <source srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-1@2x.webp')); ?>" type="image/webp">
-            <img class="hero__media-img" src="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-1@2x.jpg')); ?>" alt="" width="1920" height="755" loading="eager" decoding="async">
-          </picture>
-          <div class="hero__scrim"></div>
-        </div>
-      </div>
+      <?php foreach ($tns_hero_slides as $tns_index => $tns_slide) :
+          $tns_post_id = $tns_slide->ID;
+          $tns_is_first = 0 === $tns_index;
 
-      <div class="hero__slide swiper-slide">
-        <div class="hero__content container" data-aos="fade-up">
-          <div class="hero__text">
-            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
-            <p class="hero__title">Ostříháme vás podle popisu nebo fotografie. Přesně tak, jak chcete. Uděláme <span class="hero__title-accent">perfektní fade</span></p>
-            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
-          </div>
-          <a class="hero__cta button button--solid" href="https://www.fresha.com/cs/a/tonsor-premiovy-barbershop-plzen-plzensky-kraj-plzen-3-jizni-predmesti-1056-halkova-10-l8myvecl?pId=3091855&amp;preview=a97ba182-3039-45c6-ba48-f0862e5da559" target="_blank" rel="noopener">Rezervovat střih</a>
-        </div>
-        <div class="hero__media">
-          <picture class="hero__media-pic">
-            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-2-mobile@2x.webp')); ?>" type="image/webp">
-            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-2-mobile@2x.jpg')); ?>">
-            <source srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-2@2x.webp')); ?>" type="image/webp">
-            <img class="hero__media-img" src="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-2@2x.jpg')); ?>" alt="" width="1920" height="755" loading="lazy" decoding="async">
-          </picture>
-          <div class="hero__scrim"></div>
-        </div>
-      </div>
+          $tns_heading = (string) tns_field('heading', $tns_post_id);
+          $tns_eyebrow = (string) tns_field('eyebrow', $tns_post_id);
+          $tns_lead = (string) tns_field('lead', $tns_post_id);
+          $tns_cta = (array) tns_field('cta', $tns_post_id);
+          $tns_desktop_id = (int) tns_field('image_desktop', $tns_post_id);
+          $tns_mobile_id = (int) tns_field('image_mobile', $tns_post_id);
 
+          $tns_cta_url = !empty($tns_cta['url']) ? $tns_cta['url'] : $tns_fresha_general;
+          $tns_cta_text = !empty($tns_cta['title']) ? $tns_cta['title'] : 'Rezervovat střih';
+          $tns_cta_target = !empty($tns_cta['target']) ? $tns_cta['target'] : '_blank';
+      ?>
       <div class="hero__slide swiper-slide">
         <div class="hero__content container" data-aos="fade-up">
           <div class="hero__text">
-            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
-            <p class="hero__title">Upravíme vaše vousy tak, aby působily čistě, upraveně a mužně</p>
-            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
+            <?php if ($tns_eyebrow) : ?>
+            <p class="hero__eyebrow"><?php echo esc_html($tns_eyebrow); ?></p>
+            <?php endif; ?>
+            <?php if ($tns_is_first) : ?>
+            <h1 class="hero__title"><?php echo tns_accent($tns_heading, 'hero__title-accent'); ?></h1>
+            <?php else : ?>
+            <p class="hero__title"><?php echo tns_accent($tns_heading, 'hero__title-accent'); ?></p>
+            <?php endif; ?>
+            <?php if ($tns_lead) : ?>
+            <p class="hero__lead"><?php echo esc_html($tns_lead); ?></p>
+            <?php endif; ?>
           </div>
-          <a class="hero__cta button button--solid" href="https://www.fresha.com/cs/a/tonsor-premiovy-barbershop-plzen-plzensky-kraj-plzen-3-jizni-predmesti-1056-halkova-10-l8myvecl?pId=3091855&amp;preview=a97ba182-3039-45c6-ba48-f0862e5da559" target="_blank" rel="noopener">Rezervovat střih</a>
+          <?php if ($tns_cta_url) : ?>
+          <a class="hero__cta button button--solid" href="<?php echo esc_url($tns_cta_url); ?>" target="<?php echo esc_attr($tns_cta_target); ?>" rel="noopener"><?php echo esc_html($tns_cta_text); ?></a>
+          <?php endif; ?>
         </div>
         <div class="hero__media">
-          <picture class="hero__media-pic">
-            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-3-mobile@2x.webp')); ?>" type="image/webp">
-            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-3-mobile@2x.jpg')); ?>">
-            <source srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-3@2x.webp')); ?>" type="image/webp">
-            <img class="hero__media-img" src="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-3@2x.jpg')); ?>" alt="" width="1920" height="755" loading="lazy" decoding="async">
-          </picture>
+          <?php echo tns_picture($tns_desktop_id, $tns_mobile_id, [
+              'block' => 'hero',
+              'loading' => $tns_is_first ? 'eager' : 'lazy',
+          ]); ?>
           <div class="hero__scrim"></div>
         </div>
       </div>
+      <?php endforeach; ?>
 
     </div>
   </div>
