@@ -78,8 +78,8 @@ wp plugin delete hello >/dev/null 2>&1 || true
 wp plugin deactivate akismet >/dev/null 2>&1 || true
 wp plugin delete akismet >/dev/null 2>&1 || true
 
-echo "==> Плагины (SEO-плагин ставится отдельной задачей позже)..."
-PLUGINS="advanced-custom-fields duplicate-post simple-custom-post-order"
+echo "==> Плагины..."
+PLUGINS="advanced-custom-fields duplicate-post simple-custom-post-order wordpress-seo"
 for slug in $PLUGINS; do
   if wp plugin is-installed "$slug" >/dev/null 2>&1; then
     wp plugin activate "$slug"
@@ -88,6 +88,10 @@ for slug in $PLUGINS; do
   fi
   wp language plugin install "$slug" ru_RU >/dev/null 2>&1 || true
 done
+
+echo "==> Базовые настройки SEO-плагина (контентные поля — в seed.php)..."
+wp option patch update wpseo_titles company_or_person company
+wp option patch update wpseo_titles disable-attachment true
 
 echo "==> Тема tonsor..."
 wp theme activate tonsor

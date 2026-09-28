@@ -92,12 +92,13 @@ remove_post_type_support('page', 'trackbacks');
 add_filter('comments_open', '__return_false');
 add_filter('pings_open', '__return_false');
 
-// Временный заголовок документа — 1:1 со статикой, до подключения SEO-плагина.
-add_filter('document_title_parts', function (array $tns_parts): array {
-    if (is_front_page()) {
-        return ['title' => 'TONSOR — prémiový barbershop v Plzni'];
-    }
-    return $tns_parts;
+// Заголовок и описание документа отдаёт SEO-плагин (поля страницы «Hlavní stránka»);
+// без плагина WP использует стандартный title-tag с заголовком записи/страницы.
+
+// Контент сайта — чешский независимо от языка интерфейса админки: OG-локаль в разметке
+// всегда cs_CZ, даже когда общий языковой параметр WP (интерфейс/переводы плагинов) — ru_RU.
+add_filter('wpseo_locale', function (): string {
+    return 'cs_CZ';
 });
 
 // Emoji-скрипты/стили ядра — вёрстка не использует эмодзи-полифилл.

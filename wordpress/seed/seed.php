@@ -252,6 +252,49 @@ foreach ($content['front_page']['images'] as $field => $image) {
 }
 WP_CLI::log('==> Поля главной страницы записаны.');
 
+// ---- SEO (Yoast): заголовок/описание/OG-картинка главной, данные организации и соцпрофили ----
+if (function_exists('YoastSEO')) {
+    $tns_seo = $content['front_page']['seo'];
+
+    update_post_meta($front_page_id, '_yoast_wpseo_title', $tns_seo['title']);
+    update_post_meta($front_page_id, '_yoast_wpseo_metadesc', $tns_seo['description']);
+
+    $tns_seo_image_id = tns_seed_media($tns_seo['image']['src'], $tns_seo['image']['alt']);
+    if ($tns_seo_image_id) {
+        // Ключ на ID картинки (`_yoast_wpseo_opengraph-image-id`) в текущей версии Yoast —
+        // только внутренний кэш индексируемого объекта, сама плитка на фронте строится по
+        // URL-ключу ниже; хранить его через wp_postmeta напрямую не нужно.
+        $tns_seo_image_url = (string) wp_get_attachment_url($tns_seo_image_id);
+        update_post_meta($front_page_id, '_yoast_wpseo_opengraph-image', $tns_seo_image_url);
+
+        // Тот же кадр — запасная OG-картинка для случаев без собственной (у сайта сейчас
+        // только одна публичная страница, но настройка сайтовая и переживает добавление новых).
+        $tns_wpseo_social = get_option('wpseo_social', []);
+        $tns_wpseo_social['og_default_image_id'] = $tns_seo_image_id;
+        $tns_wpseo_social['og_default_image'] = $tns_seo_image_url;
+        update_option('wpseo_social', $tns_wpseo_social);
+    }
+
+    // Соцпрофили и «организация» для графа Yoast (Organization уживается с нашей
+    // BarberShop/FAQPage JSON-LD — разные узлы, конфликта типов нет).
+    $tns_wpseo_social = get_option('wpseo_social', []);
+    $tns_wpseo_social['facebook_site'] = (string) ($content['front_page']['text']['social_facebook'] ?? '');
+    $tns_wpseo_social['instagram_url'] = (string) ($content['front_page']['text']['social_instagram'] ?? '');
+    $tns_wpseo_social['other_social_urls'] = array_values(array_filter([
+        (string) ($content['front_page']['text']['social_tiktok'] ?? ''),
+    ]));
+    update_option('wpseo_social', $tns_wpseo_social);
+
+    $tns_wpseo_titles = get_option('wpseo_titles', []);
+    $tns_wpseo_titles['company_or_person'] = 'company';
+    $tns_wpseo_titles['company_name'] = get_bloginfo('name');
+    update_option('wpseo_titles', $tns_wpseo_titles);
+
+    WP_CLI::log('==> SEO главной страницы (Yoast) записано.');
+} else {
+    WP_CLI::warning('Yoast SEO не активен — пропускаю сид SEO-полей главной страницы.');
+}
+
 // ---- Слайды главного экрана ----
 foreach ($content['hero_slides'] as $slide) {
     $acf = [

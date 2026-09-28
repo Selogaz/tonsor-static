@@ -1,9 +1,8 @@
 <?php
 /**
  * Общий <head> + открывающая разметка (GTM, промо-полоса, шапка).
- * Мета description/OG — временные (перенесены 1:1 со статики); их отдаст SEO-плагин
- * после подключения. Заголовок документа — через add_theme_support('title-tag')
- * (фильтр document_title_parts в inc/setup.php).
+ * Заголовок, description, Open Graph/Twitter-карточка, канонический URL и локаль —
+ * из SEO-плагина (поля страницы «Hlavní stránka»), печатаются внутри wp_head().
  */
 
 defined('ABSPATH') || exit;
@@ -22,28 +21,12 @@ defined('ABSPATH') || exit;
   <meta charset="<?php bloginfo('charset'); ?>">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta property="og:title" content="TONSOR — prémiový barbershop v Plzni">
-  <meta property="twitter:title" content="TONSOR — prémiový barbershop v Plzni">
 
   <meta name="format-detection" content="telephone=no">
 
   <link rel="icon" type="image/svg+xml" href="<?php echo esc_url(tns_asset('img/common.tns/favicon.svg')); ?>">
   <link rel="icon" type="image/png" sizes="32x32" href="<?php echo esc_url(tns_asset('img/common.tns/favicon.png')); ?>">
   <link rel="apple-touch-icon" href="<?php echo esc_url(tns_asset('img/common.tns/apple-touch-icon.png')); ?>">
-
-  <meta name="description" content="TONSOR — prémiový barbershop v Plzni. Rezervujte si termín na 3 kliknutí.">
-  <meta property="og:description" content="TONSOR — prémiový barbershop v Plzni. Rezervujte si termín na 3 kliknutí.">
-  <meta property="twitter:description" content="TONSOR — prémiový barbershop v Plzni. Rezervujte si termín na 3 kliknutí.">
-
-  <meta property="og:image" content="https://tonsorbarber.cz/img/common.tns/og.jpg">
-  <meta property="twitter:image" content="https://tonsorbarber.cz/img/common.tns/og.jpg">
-  <meta property="twitter:card" content="summary_large_image">
-
-  <meta property="og:locale" content="cs_CZ">
-  <meta property="og:type" content="website">
-
-  <meta property="og:url" content="https://tonsorbarber.cz/">
-  <link rel="canonical" href="https://tonsorbarber.cz/">
 
   <?php wp_head(); ?>
 </head>
