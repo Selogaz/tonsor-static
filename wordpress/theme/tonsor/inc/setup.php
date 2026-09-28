@@ -20,7 +20,7 @@ add_action('after_setup_theme', function (): void {
     ]);
 });
 
-// Временный (до Yoast SEO, юнит W9) заголовок документа — 1:1 со статикой.
+// Временный заголовок документа — 1:1 со статикой, до подключения SEO-плагина.
 add_filter('document_title_parts', function (array $tns_parts): array {
     if (is_front_page()) {
         return ['title' => 'TONSOR — prémiový barbershop v Plzni'];

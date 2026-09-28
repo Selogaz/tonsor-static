@@ -2,8 +2,8 @@
 /**
  * Закрывающая разметка: патичка, Schema.org (BarberShop/LocalBusiness + FAQPage — перенесены
  * 1:1 со статики, путь картинки через tns_asset), wp_footer() (подключает assets/js/index.min.js
- * из inc/assets.php). Замена JSON-LD на данные из полей/CPT — юниты W5 (BarberShop) и
- * W6 (FAQPage).
+ * из inc/assets.php). Замена JSON-LD на данные из полей/CPT (BarberShop и FAQPage) —
+ * отдельная доработка вывода после появления полей в шаблонах.
  */
 
 defined('ABSPATH') || exit;

@@ -1,7 +1,7 @@
 <?php
 /**
  * Dárkový poukaz. Перенесено 1:1 со статикой (src/tpls/sections/gift.html);
- * данные — поля главной, юнит W5.
+ * данные — поля главной (ACF).
  */
 
 defined('ABSPATH') || exit;

@@ -1,7 +1,7 @@
 <?php
 /**
  * Časté dotazy: аккордеон bayan, первый пункт раскрыт. Перенесено 1:1 со статикой
- * (src/tpls/sections/faq.html); данные — CPT tns_faq, юнит W3/W4/W6.
+ * (src/tpls/sections/faq.html); данные — CPT tns_faq (ACF).
  */
 
 defined('ABSPATH') || exit;

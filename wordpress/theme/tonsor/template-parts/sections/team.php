@@ -1,7 +1,7 @@
 <?php
 /**
  * Tým TONSOR: карусель барберов (team.js). Перенесено 1:1 со статикой
- * (src/tpls/sections/team.html); данные — CPT tns_barber, юнит W3/W4/W6.
+ * (src/tpls/sections/team.html); данные — CPT tns_barber (ACF).
  */
 
 defined('ABSPATH') || exit;

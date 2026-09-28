@@ -1,7 +1,7 @@
 <?php
 /**
  * Rezervace-баннер + блок соцсетей. Перенесено 1:1 со статикой (src/tpls/sections/booking.html);
- * данные — поля главной, юнит W5.
+ * данные — поля главной (ACF).
  */
 
 defined('ABSPATH') || exit;

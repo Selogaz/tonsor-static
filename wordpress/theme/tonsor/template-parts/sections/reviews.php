@@ -1,7 +1,7 @@
 <?php
 /**
  * Recenze: карусель отзывов (reviews.js). Перенесено 1:1 со статикой
- * (src/tpls/sections/reviews.html); данные — CPT tns_review, юнит W3/W4/W6.
+ * (src/tpls/sections/reviews.html); данные — CPT tns_review (ACF).
  */
 
 defined('ABSPATH') || exit;

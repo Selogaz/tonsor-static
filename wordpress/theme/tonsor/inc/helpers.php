@@ -24,3 +24,23 @@ if (!function_exists('tns_sprite')) {
         return tns_asset('img/sprite.svg') . '#' . $id . '-sym';
     }
 }
+
+if (!function_exists('tns_field')) {
+    /**
+     * Значение поля ACF с деградацией на обычный post-мета, если ACF выключен —
+     * тема не должна падать без плагина. $post_id принимает то же, что и get_field()
+     * (ID записи, объект записи, "term_123", "option" и т.д.).
+     *
+     * @return mixed
+     */
+    function tns_field(string $name, $post_id = null)
+    {
+        if (function_exists('get_field')) {
+            return get_field($name, $post_id);
+        }
+
+        $post_id = $post_id ?: get_the_ID();
+
+        return get_post_meta((int) $post_id, $name, true);
+    }
+}

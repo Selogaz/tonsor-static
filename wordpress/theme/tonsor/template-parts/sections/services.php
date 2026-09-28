@@ -1,7 +1,7 @@
 <?php
 /**
  * Služby a ceny: карточки услуг. Перенесено 1:1 со статикой (src/tpls/sections/services.html);
- * данные — CPT tns_service, юнит W3/W4/W6.
+ * данные — CPT tns_service (ACF).
  */
 
 defined('ABSPATH') || exit;

@@ -1,7 +1,7 @@
 <?php
 /**
  * Portfolio barberů: фильтры + карусель (portfolio.js). Перенесено 1:1 со статикой
- * (src/tpls/sections/portfolio.html); данные — CPT tns_work + таксономия, юниты W3/W4/W6.
+ * (src/tpls/sections/portfolio.html); данные — CPT tns_work + таксономия (ACF).
  */
 
 defined('ABSPATH') || exit;

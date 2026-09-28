@@ -1,7 +1,7 @@
 <?php
 /**
  * Hero-слайдер: 3 слайда (hero.js). Перенесено 1:1 со статикой (src/tpls/sections/hero.html);
- * контент — CPT tns_hero_slide, юнит W3/W5.
+ * контент — CPT tns_hero_slide (ACF).
  */
 
 defined('ABSPATH') || exit;

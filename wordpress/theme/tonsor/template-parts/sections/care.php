@@ -1,7 +1,7 @@
 <?php
 /**
  * Интерьер + Pečujeme o vaše sebevědomí. Перенесено 1:1 со статикой (src/tpls/sections/care.html);
- * данные — поля главной, юнит W5.
+ * данные — поля главной (ACF).
  */
 
 defined('ABSPATH') || exit;
