@@ -15,6 +15,18 @@ defined('ABSPATH') || exit;
 
 $tns_portfolio_title = (string) tns_field('portfolio_title', tns_front_id());
 
+/**
+ * Раскладка карточек по фильтрам 1:1 со статикой (src/tpls/sections/portfolio.html), пока
+ * портфолио заполнено 4 дублированными фото — см. tns_portfolio_reorder() в inc/helpers.php.
+ */
+$tns_portfolio_order_map = [
+    'kratke-vlasy' => [0, 1, 2, 3, 0, 1, 2, 3],
+    'dlouhe-vlasy' => [1, 3, 0, 2, 1, 3, 0, 2],
+    'vousy' => [2, 0, 3, 1, 2, 0, 3, 1],
+    'detske-strihy' => [3, 2, 1, 0, 3, 2, 1, 0],
+    'strih-vousy' => [0, 3, 1, 2, 0, 3, 1, 2],
+];
+
 $tns_portfolio_terms = get_terms([
     'taxonomy' => 'tns_portfolio_cat',
     'hide_empty' => true,
@@ -69,6 +81,7 @@ $tns_portfolio_terms = array_values($tns_portfolio_terms);
                       'terms' => $tns_term->term_id,
                   ]],
               ]);
+              $tns_works = tns_portfolio_reorder($tns_works, $tns_portfolio_order_map[$tns_term->slug] ?? null);
 
               foreach ($tns_works as $tns_work) :
                   $tns_work_id = $tns_work->ID;

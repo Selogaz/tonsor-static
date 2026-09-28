@@ -169,6 +169,61 @@ if (!function_exists('tns_picture')) {
     }
 }
 
+if (!function_exists('tns_portfolio_reorder')) {
+    /**
+     * Порядок карточек `tns_work` внутри одного фильтра портфолио. Пока в категориях лежат
+     * дубли одних и тех же 4 фото (по 2 карточки на фото), $sequence — фиксированная
+     * последовательность индексов "групп одинаковых фото" (0 = первая по menu_order группа,
+     * 1 = вторая, …), нужная только для точного повторения прежней раскладки; сам порядок
+     * фото внутри группы (какая из двух карточек-дублей идёт первой) по-прежнему решает
+     * menu_order записи — перетаскивание в списке админки продолжает работать.
+     *
+     * $sequence = null (фильтр не описан ниже) → карточки не трогаем, отдаём как пришли
+     * (по menu_order). Группа с $sequence, для которой не хватает записей (карточку
+     * удалили/раскрепили) или которых стало больше 4 (добавили новое уникальное фото) —
+     * лишнее дописывается в конец в исходном порядке, без ошибок и потери карточек: как
+     * только дубли заменят настоящими разными фото, приоритет просто перестаёт что-либо
+     * значить сам по себе.
+     *
+     * @param WP_Post[] $works
+     * @param int[]|null $sequence
+     * @return WP_Post[]
+     */
+    function tns_portfolio_reorder(array $works, ?array $sequence): array
+    {
+        if (null === $sequence) {
+            return $works;
+        }
+
+        $groups = [];
+        $group_keys = [];
+        foreach ($works as $work) {
+            $key = (int) get_post_thumbnail_id($work->ID);
+            if (!isset($groups[$key])) {
+                $groups[$key] = [];
+                $group_keys[] = $key;
+            }
+            $groups[$key][] = $work;
+        }
+
+        $ordered = [];
+        foreach ($sequence as $slot) {
+            $key = $group_keys[$slot] ?? null;
+            if (null !== $key && !empty($groups[$key])) {
+                $ordered[] = array_shift($groups[$key]);
+            }
+        }
+
+        foreach ($group_keys as $key) {
+            foreach ($groups[$key] as $work) {
+                $ordered[] = $work;
+            }
+        }
+
+        return $ordered;
+    }
+}
+
 if (!function_exists('tns_price')) {
     /**
      * Разметка цены услуги (`.service-card__price` внутри — сам `<p>` остаётся в шаблоне):
