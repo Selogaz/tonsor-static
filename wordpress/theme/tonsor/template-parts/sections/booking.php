@@ -1,0 +1,62 @@
+<?php
+/**
+ * Rezervace-баннер + блок соцсетей. Перенесено 1:1 со статикой (src/tpls/sections/booking.html);
+ * данные — поля главной, юнит W5.
+ */
+
+defined('ABSPATH') || exit;
+?>
+<!-- Rezervace-баннер + блок соцсетей (`76:465`, юнит U8). Один фрейм макета на десктопе и
+один визуальный блок на мобилке (общий фон `109:1176`) — баннер (`.booking`) и соцсети
+(`.inspire`) идут подряд без разделителя в одном партиале, фон общий (`--bg-card`).
+Баннер: фото `76:581`/`109:1179` (скрим — CSS, `--gradient-booking-scrim`) + eyebrow
+`76:468`/`109:1182` + H2 `76:469`/`109:1183` + кнопка `76:470`/`109:1185`. Соцсети:
+иконки `76:472`/`109:1188` (плоские глифы без круга, см. `_inspire.scss`) + заголовок
+`76:479`/`109:1195` + подпись `76:480`/`109:1196`.
+
+Решение заказчика 06.09 (правка, п. 19): текст кнопки баннера РАЗНЫЙ по ширинам — на
+десктопе «Rezervovat» (`76:471`, ссылка Fresha), на мобилке «Koupit dárkový poukaz»
+(`109:1185`, как в мобильном инстансе макета). Раньше это считалось багом макета
+(мобильный инстанс кнопки был назван «Btn / Rezervovat střih (solid)», но с
+неотредактированным текстовым оверрайдом «Koupit dárkový poukaz», скопированным с
+Dárkový poukaz) — по замечанию заказчика 06.09 верстаем как в макете (подтверждение у
+клиента — 07.09): два явных CTA, переключаемых `display` по `$mobile-xxlg` (без JS). -->
+<section class="booking" id="rezervace">
+  <div class="container">
+    <div class="booking__media">
+      <picture class="booking__media-pic">
+        <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/booking.tns/booking-banner-mobile@2x.webp')); ?>" type="image/webp">
+        <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/booking.tns/booking-banner-mobile@2x.jpg')); ?>">
+        <source srcset="<?php echo esc_url(tns_asset('img/booking.tns/booking-banner-desktop@2x.webp')); ?>" type="image/webp">
+        <img class="booking__media-img" src="<?php echo esc_url(tns_asset('img/booking.tns/booking-banner-desktop@2x.jpg')); ?>" alt="Interiér barbershopu TONSOR" width="1480" height="340" loading="lazy" decoding="async">
+      </picture>
+      <div class="booking__scrim"></div>
+
+      <div class="booking__content" data-aos="fade-up">
+        <p class="booking__eyebrow">— ONLINE REZERVACE</p>
+        <h2 class="booking__title"><span class="section-title__accent">Rezervujte</span> si termín <br>na 3 kliknutí ještě dnes</h2>
+        <a class="booking__cta booking__cta--desktop button button--solid" href="https://www.fresha.com/cs/a/tonsor-premiovy-barbershop-plzen-plzensky-kraj-plzen-3-jizni-predmesti-1056-halkova-10-l8myvecl?pId=3091855&amp;preview=a97ba182-3039-45c6-ba48-f0862e5da559" target="_blank" rel="noopener">Rezervovat</a>
+        <a class="booking__cta booking__cta--mobile button button--solid" href="#poukaz">Koupit dárkový poukaz</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="inspire">
+    <div class="container" data-aos="fade-up">
+      <div class="inspire__socials">
+        <a class="inspire__social" href="https://www.tiktok.com/@tonsor.barbershop.cz" target="_blank" rel="noopener" aria-label="TikTok TONSOR">
+          <svg width="32" height="32"><use href="<?php echo esc_url(tns_sprite('tiktok-plain')); ?>"></use></svg>
+        </a>
+        <a class="inspire__social" href="https://www.facebook.com/profile.php?id=61591946332992" target="_blank" rel="noopener" aria-label="Facebook TONSOR">
+          <svg width="32" height="32"><use href="<?php echo esc_url(tns_sprite('facebook-plain')); ?>"></use></svg>
+        </a>
+        <a class="inspire__social" href="https://www.instagram.com/tonsor.barbershop/" target="_blank" rel="noopener" aria-label="Instagram TONSOR">
+          <svg width="32" height="32"><use href="<?php echo esc_url(tns_sprite('instagram-plain')); ?>"></use></svg>
+        </a>
+      </div>
+
+      <p class="inspire__title">Najděte inspiraci pro svůj střih na sociálních sítích TONSOR</p>
+      <p class="inspire__sub">Uděláme vám střih podle fotografie</p>
+    </div>
+  </div>
+</section>

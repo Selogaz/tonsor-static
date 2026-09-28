@@ -1,0 +1,101 @@
+<?php
+/**
+ * Hero-слайдер: 3 слайда (hero.js). Перенесено 1:1 со статикой (src/tpls/sections/hero.html);
+ * контент — CPT tns_hero_slide, юнит W3/W5.
+ */
+
+defined('ABSPATH') || exit;
+?>
+<!-- Hero-слайдер (`65:47`, юнит U2). Слайд 1 в корне: `65:48`+`65:49` (фото/скрим),
+`65:71` (Blok textu: H1 `65:72`, лид `65:73`), `65:77` (eyebrow), `65:74` (CTA).
+Слайд 2 — фрейм `100:47`, слайд 3 — `100:318`. Мобилка: `104:636` (слайд 1: eyebrow
+`109:925`, H1 `109:923`, лид `109:924`, кнопка `109:1039`, фото `109:929` — БЛОК ПОД
+ТЕКСТОМ, не фон), слайды 2/3 — `109:1298`/`109:1562`. Общий eyebrow/lead/CTA на всех
+слайдах, меняются H1 и фон-фото. Только первый слайд несёт <h1> (единственный h1
+страницы), 2 и 3 — <p class="hero__title"> с тем же визуалом.
+
+Автопрокрутка без контролов в макете не нарисована. Правка 09.09 (п.3 реестра): точки
+заменены на стрелки листания. Паттерн переиспользован у Portfolio barberů (`.nav-arrow` —
+общий хром b-компонента `components.b/controls/_nav-arrows.scss`, перекрашенный под тёмный
+фон через `--fg`, тот же приём, что `.portfolio__arrow`) + иконка спрайта `arrow-left-sym`/
+`arrow-right-sym` (та же, что у Portfolio/Recenze/Tým). В отличие от тех трёх каруселей, где
+стрелки сгруппированы рядом друг с другом, здесь — по независимым краям экрана, вертикально
+по центру (`position: absolute` внутри `.hero`, законное применение для боковых стрелок
+слайдера). Стрелки — сиблинги `.hero__slider.swiper` (паттерн ТЗ, правило 13). На мобилке
+(`≤ $mobile-xxlg`) скрыты — секция там не full-bleed фон (фото уходит в поток под текст),
+центрировать боковые стрелки не по чему без наезда на контент; свайп пальцем остаётся
+(Swiper даёт его по умолчанию). -->
+<section class="hero">
+  <div class="hero__slider swiper">
+    <div class="hero__wrapper swiper-wrapper">
+
+      <div class="hero__slide swiper-slide">
+        <div class="hero__content container" data-aos="fade-up">
+          <div class="hero__text">
+            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
+            <h1 class="hero__title"><span class="hero__title-accent">Vybereme</span> výrazný střih a naučíme vás, jak si ho upravovat</h1>
+            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
+          </div>
+          <a class="hero__cta button button--solid" href="https://www.fresha.com/cs/a/tonsor-premiovy-barbershop-plzen-plzensky-kraj-plzen-3-jizni-predmesti-1056-halkova-10-l8myvecl?pId=3091855&amp;preview=a97ba182-3039-45c6-ba48-f0862e5da559" target="_blank" rel="noopener">Rezervovat střih</a>
+        </div>
+        <div class="hero__media">
+          <picture class="hero__media-pic">
+            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-1-mobile@2x.webp')); ?>" type="image/webp">
+            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-1-mobile@2x.jpg')); ?>">
+            <source srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-1@2x.webp')); ?>" type="image/webp">
+            <img class="hero__media-img" src="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-1@2x.jpg')); ?>" alt="" width="1920" height="755" loading="eager" decoding="async">
+          </picture>
+          <div class="hero__scrim"></div>
+        </div>
+      </div>
+
+      <div class="hero__slide swiper-slide">
+        <div class="hero__content container" data-aos="fade-up">
+          <div class="hero__text">
+            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
+            <p class="hero__title">Ostříháme vás podle popisu nebo fotografie. Přesně tak, jak chcete. Uděláme <span class="hero__title-accent">perfektní fade</span></p>
+            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
+          </div>
+          <a class="hero__cta button button--solid" href="https://www.fresha.com/cs/a/tonsor-premiovy-barbershop-plzen-plzensky-kraj-plzen-3-jizni-predmesti-1056-halkova-10-l8myvecl?pId=3091855&amp;preview=a97ba182-3039-45c6-ba48-f0862e5da559" target="_blank" rel="noopener">Rezervovat střih</a>
+        </div>
+        <div class="hero__media">
+          <picture class="hero__media-pic">
+            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-2-mobile@2x.webp')); ?>" type="image/webp">
+            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-2-mobile@2x.jpg')); ?>">
+            <source srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-2@2x.webp')); ?>" type="image/webp">
+            <img class="hero__media-img" src="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-2@2x.jpg')); ?>" alt="" width="1920" height="755" loading="lazy" decoding="async">
+          </picture>
+          <div class="hero__scrim"></div>
+        </div>
+      </div>
+
+      <div class="hero__slide swiper-slide">
+        <div class="hero__content container" data-aos="fade-up">
+          <div class="hero__text">
+            <p class="hero__eyebrow">– Prémiový barbershop v Plzni</p>
+            <p class="hero__title">Upravíme vaše vousy tak, aby působily čistě, upraveně a mužně</p>
+            <p class="hero__lead">Vyberte si termín a rezervujte se na 3 kliknutí</p>
+          </div>
+          <a class="hero__cta button button--solid" href="https://www.fresha.com/cs/a/tonsor-premiovy-barbershop-plzen-plzensky-kraj-plzen-3-jizni-predmesti-1056-halkova-10-l8myvecl?pId=3091855&amp;preview=a97ba182-3039-45c6-ba48-f0862e5da559" target="_blank" rel="noopener">Rezervovat střih</a>
+        </div>
+        <div class="hero__media">
+          <picture class="hero__media-pic">
+            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-3-mobile@2x.webp')); ?>" type="image/webp">
+            <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-3-mobile@2x.jpg')); ?>">
+            <source srcset="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-3@2x.webp')); ?>" type="image/webp">
+            <img class="hero__media-img" src="<?php echo esc_url(tns_asset('img/hero.tns/hero-slide-3@2x.jpg')); ?>" alt="" width="1920" height="755" loading="lazy" decoding="async">
+          </picture>
+          <div class="hero__scrim"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button type="button" class="hero__arrow hero__arrow--prev nav-arrow swiper-button-prev" aria-label="Předchozí snímek">
+    <svg class="hero__arrow-icon" width="15" height="10" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('arrow-left')); ?>"></use></svg>
+  </button>
+  <button type="button" class="hero__arrow hero__arrow--next nav-arrow swiper-button-next" aria-label="Další snímek">
+    <svg class="hero__arrow-icon" width="15" height="10" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('arrow-right')); ?>"></use></svg>
+  </button>
+</section>

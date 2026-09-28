@@ -1,0 +1,90 @@
+<?php
+/**
+ * Služby a ceny: карточки услуг. Перенесено 1:1 со статикой (src/tpls/sections/services.html);
+ * данные — CPT tns_service, юнит W3/W4/W6.
+ */
+
+defined('ABSPATH') || exit;
+?>
+
+<section class="services" id="sluzby">
+  <div class="container">
+    <div class="services__head" data-aos="fade-up">
+      <h2 class="section-title"><span class="section-title__accent">Služby</span> a ceny</h2>
+    </div>
+
+    <div class="services__grid">
+      <article class="service-card" data-aos="fade-up">
+        <h3 class="service-card__title">Střih krátkých vlasů</h3>
+        <div class="service-card__links">
+          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210843&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
+          <a class="service-card__more" href="#portfolio" data-portfolio-filter="kratke-vlasy">Ukázky práce</a>
+        </div>
+        <p class="service-card__price"><span class="service-card__price-from">od </span>500 Kč</p>
+      </article>
+
+      <article class="service-card" data-aos="fade-up">
+        <h3 class="service-card__title">Střih dlouhých vlasů</h3>
+        <div class="service-card__links">
+          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210845&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
+          <a class="service-card__more" href="#portfolio" data-portfolio-filter="dlouhe-vlasy">Ukázky práce</a>
+        </div>
+        <p class="service-card__price"><span class="service-card__price-from">od </span>600 Kč</p>
+      </article>
+
+      <article class="service-card" data-aos="fade-up">
+        <h3 class="service-card__title">Střih + úprava vousů</h3>
+        <div class="service-card__links">
+          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29211029&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
+          <a class="service-card__more" href="#portfolio" data-portfolio-filter="strih-vousy">Ukázky práce</a>
+        </div>
+        <p class="service-card__price"><span class="service-card__price-from">od </span>750 Kč</p>
+      </article>
+
+      <article class="service-card" data-aos="fade-up">
+        <h3 class="service-card__title">Úprava vousů</h3>
+        <div class="service-card__links">
+          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210914&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
+          <a class="service-card__more" href="#portfolio" data-portfolio-filter="vousy">Ukázky práce</a>
+        </div>
+        <p class="service-card__price"><span class="service-card__price-from">od </span>300 Kč</p>
+      </article>
+
+      <article class="service-card" data-aos="fade-up">
+        <h3 class="service-card__title">Dětský střih do 10&nbsp;let</h3>
+        <div class="service-card__links">
+          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210875&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
+          <a class="service-card__more" href="#portfolio" data-portfolio-filter="detske-strihy">Ukázky práce</a>
+        </div>
+        <p class="service-card__price"><span class="service-card__price-from">od </span>400 Kč</p>
+      </article>
+
+      <article class="service-card" data-aos="fade-up">
+        <h3 class="service-card__title">Tónování vousů</h3>
+        <div class="service-card__links">
+          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210926&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
+          <a class="service-card__more" href="#portfolio">Ukázky práce</a>
+        </div>
+        <p class="service-card__price"><span class="service-card__price-from">od </span>300 Kč</p>
+      </article>
+
+      <article class="service-card" data-aos="fade-up">
+        <h3 class="service-card__title">Střih táta a syn</h3>
+        <div class="service-card__links">
+          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29211050&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
+          <a class="service-card__more" href="#portfolio">Ukázky práce</a>
+        </div>
+        <p class="service-card__price"><span class="service-card__price-from">od </span>1 100 Kč</p>
+      </article>
+
+      <article class="service-card" data-aos="fade-up">
+        <h3 class="service-card__title">Střih táta a syn + úprava vousů</h3>
+        <div class="service-card__links">
+          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29211060&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
+          <a class="service-card__more" href="#portfolio">Ukázky práce</a>
+        </div>
+        <p class="service-card__price"><span class="service-card__price-from"></span>1 400 Kč</p>
+      </article>
+    </div>
+  </div>
+</section>

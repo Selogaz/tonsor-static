@@ -1,0 +1,53 @@
+<?php
+/**
+ * Шапка: лого, меню, соцсети, CTA, бургер. Перенесено 1:1 со статикой (src/tpls/header.html);
+ * пункты меню/CTA — фиксированы, часть текста — поля главной, юнит W5.
+ */
+
+defined('ABSPATH') || exit;
+?>
+<header class="header">
+  <div class="header__container container">
+    <a class="logo header__logo" href="<?php echo esc_url(home_url('/')); ?>" aria-label="TONSOR — na hlavní stránku">
+      <picture>
+        <source srcset="<?php echo esc_url(tns_asset('img/common.tns/logo.webp')); ?>" type="image/webp">
+        <img class="logo__img" src="<?php echo esc_url(tns_asset('img/common.tns/logo.png')); ?>" alt="TONSOR" width="224" height="38">
+      </picture>
+    </a>
+
+    <div class="menu" id="menu">
+      <nav class="menu__nav" aria-label="Hlavní menu">
+        <ul class="menu__list">
+          <li class="menu__item"><a class="menu__link" href="#sluzby">Služby</a></li>
+          <li class="menu__item"><a class="menu__link" href="#portfolio">Portfolio barberů</a></li>
+          <li class="menu__item"><a class="menu__link" href="#poukaz">Dárkový poukaz</a></li>
+          <li class="menu__item"><a class="menu__link" href="#recenze">Recenze</a></li>
+        </ul>
+      </nav>
+
+      <div class="menu__socials">
+        <a class="menu__social" href="https://www.tiktok.com/@tonsor.barbershop.cz" target="_blank" rel="noopener" aria-label="TikTok TONSOR">
+          <svg width="24" height="24"><use href="<?php echo esc_url(tns_sprite('tiktok')); ?>"></use></svg>
+        </a>
+        <a class="menu__social" href="https://www.facebook.com/profile.php?id=61591946332992" target="_blank" rel="noopener" aria-label="Facebook TONSOR">
+          <svg width="24" height="24"><use href="<?php echo esc_url(tns_sprite('facebook')); ?>"></use></svg>
+        </a>
+        <a class="menu__social" href="https://www.instagram.com/tonsor.barbershop/" target="_blank" rel="noopener" aria-label="Instagram TONSOR">
+          <svg width="24" height="24"><use href="<?php echo esc_url(tns_sprite('instagram')); ?>"></use></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="menu-overlay"></div>
+
+    <div class="header__actions">
+      <a class="header__cta button button--line" href="https://www.fresha.com/cs/a/tonsor-premiovy-barbershop-plzen-plzensky-kraj-plzen-3-jizni-predmesti-1056-halkova-10-l8myvecl?pId=3091855&amp;preview=a97ba182-3039-45c6-ba48-f0862e5da559" target="_blank" rel="noopener">Rezervovat</a>
+
+      <button class="header__burger burger" id="burger" type="button" aria-label="Menu" aria-expanded="false">
+        <span class="burger__line"></span>
+        <span class="burger__line"></span>
+        <span class="burger__line"></span>
+      </button>
+    </div>
+  </div>
+</header>

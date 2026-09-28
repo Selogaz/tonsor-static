@@ -1,0 +1,40 @@
+<?php
+/**
+ * Dárkový poukaz. Перенесено 1:1 со статикой (src/tpls/sections/gift.html);
+ * данные — поля главной, юнит W5.
+ */
+
+defined('ABSPATH') || exit;
+?>
+
+<section class="gift" id="poukaz">
+  <div class="gift__media">
+    <picture class="gift__media-pic">
+      <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/gift.tns/certificate-mobile@2x.webp')); ?>" type="image/webp">
+      <source media="(max-width: 575px)" srcset="<?php echo esc_url(tns_asset('img/gift.tns/certificate-mobile@2x.jpg')); ?>">
+      <source srcset="<?php echo esc_url(tns_asset('img/gift.tns/certificate-desktop@2x.webp')); ?>" type="image/webp">
+      <img class="gift__media-img" src="<?php echo esc_url(tns_asset('img/gift.tns/certificate-desktop@2x.jpg')); ?>" alt="Dárkový poukaz TONSOR" width="968" height="680" loading="lazy" decoding="async">
+    </picture>
+  </div>
+
+  <div class="container gift__container">
+    <div class="gift__content" data-aos="fade-up">
+      <h2 class="gift__title section-title"><span class="section-title__accent">Dárkový</span> poukaz TONSOR</h2>
+
+      <p class="gift__lead">Darujte důležitému muži sebevědomí a upravený vzhled. <strong class="gift__lead-accent">Od 500 Kč</strong></p>
+
+      <ul class="gift__checks">
+        <li class="gift__check">
+          <svg class="gift__check-icon" width="20" height="20"><use href="<?php echo esc_url(tns_sprite('check')); ?>"></use></svg>
+          <span class="gift__check-text">Zaslání e-mailem</span>
+        </li>
+        <li class="gift__check">
+          <svg class="gift__check-icon" width="20" height="20"><use href="<?php echo esc_url(tns_sprite('check')); ?>"></use></svg>
+          <span class="gift__check-text">Na jakoukoli službu TONSOR</span>
+        </li>
+      </ul>
+
+      <a class="gift__cta button button--solid" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/packages?share=true&amp;pId=3091855" target="_blank" rel="noopener">Koupit dárkový poukaz</a>
+    </div>
+  </div>
+</section>
