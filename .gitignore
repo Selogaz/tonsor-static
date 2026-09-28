@@ -12,3 +12,6 @@ src/mix-manifest.json
 
 readme-local.md
 pz.md
+
+wordpress/.env
+wordpress/theme/tonsor/assets/
