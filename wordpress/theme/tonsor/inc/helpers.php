@@ -171,6 +171,32 @@ if (!function_exists('tns_picture')) {
     }
 }
 
+if (!function_exists('tns_portfolio_order_is_default')) {
+    /**
+     * true, пока НИ ОДНА из переданных работ не поменяла menu_order с момента последнего
+     * сида (сид пишет исходное значение в мету `_tns_seed_menu_order` — см. seed/seed.php).
+     * `Simple Custom Post Order` при перетаскивании в списке `tns_work` пишет menu_order
+     * ГЛОБАЛЬНО на запись — своего порядка "на категорию" у ACF Free нет, поэтому запись
+     * с одним и тем же menu_order одинаково влияет на все 5 категорий портфолио сразу.
+     * Как только клиент один раз перетащил любую из этих работ (или добавил новую, без
+     * метки сида вовсе), весь захардкоженный порядок дублей (tns_portfolio_reorder)
+     * отключается разом для всех фильтров — дальше действует обычный menu_order.
+     *
+     * @param WP_Post[] $works
+     */
+    function tns_portfolio_order_is_default(array $works): bool
+    {
+        foreach ($works as $work) {
+            $baseline = get_post_meta($work->ID, '_tns_seed_menu_order', true);
+            if ('' === $baseline || (int) $baseline !== (int) $work->menu_order) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
 if (!function_exists('tns_portfolio_reorder')) {
     /**
      * Порядок карточек `tns_work` внутри одного фильтра портфолио. Пока в категориях лежат
@@ -178,7 +204,13 @@ if (!function_exists('tns_portfolio_reorder')) {
      * последовательность индексов "групп одинаковых фото" (0 = первая по menu_order группа,
      * 1 = вторая, …), нужная только для точного повторения прежней раскладки; сам порядок
      * фото внутри группы (какая из двух карточек-дублей идёт первой) по-прежнему решает
-     * menu_order записи — перетаскивание в списке админки продолжает работать.
+     * menu_order записи.
+     *
+     * Карта — только СТАРТОВАЯ раскладка сида, не постоянное правило: применяется, пока
+     * `tns_portfolio_order_is_default()` подтверждает, что ни одна из работ не была вручную
+     * переставлена клиентом (см. её докблок про глобальный menu_order). После первой ручной
+     * перестановки любой работы функция возвращает список как пришёл (по menu_order) —
+     * перетаскивание в админке сразу становится заметно на фронте во всех категориях.
      *
      * $sequence = null (фильтр не описан ниже) → карточки не трогаем, отдаём как пришли
      * (по menu_order). Группа с $sequence, для которой не хватает записей (карточку
@@ -193,7 +225,7 @@ if (!function_exists('tns_portfolio_reorder')) {
      */
     function tns_portfolio_reorder(array $works, ?array $sequence): array
     {
-        if (null === $sequence) {
+        if (null === $sequence || !tns_portfolio_order_is_default($works)) {
             return $works;
         }
 

@@ -340,6 +340,10 @@ foreach ($content['portfolio_works'] as $work) {
             set_post_thumbnail($post_id, $image_id);
         }
         wp_set_object_terms($post_id, $all_term_ids, 'tns_portfolio_cat');
+        // Базовый menu_order на момент сида — tns_portfolio_reorder() сверяет с ним
+        // текущий menu_order записи, чтобы понять, перетаскивал ли клиент карточку
+        // руками (inc/helpers.php → tns_portfolio_order_is_default()).
+        update_post_meta($post_id, '_tns_seed_menu_order', $work['menu_order']);
     }
 }
 WP_CLI::log('==> Работы портфолио готовы.');
