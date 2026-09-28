@@ -134,8 +134,7 @@ add_action('acf/include_fields', function (): void {
                 'default_value' => 0,
             ]),
             $tns_url('fresha_url', 'Ссылка на запись (Fresha)', [
-                'instructions' => 'Ссылка на бронирование именно этой услуги.',
-                'required' => 1,
+                'instructions' => 'Ссылка на бронирование именно этой услуги. Пусто — кнопка «Rezervovat» ведёт на общую ссылку бронирования (вкладка «Общее / Fresha» настроек главной страницы).',
             ]),
             [
                 'key' => 'field_tns_portfolio_term',
@@ -210,6 +209,7 @@ add_action('acf/include_fields', function (): void {
         'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => 'tns_review']]],
         'fields' => [
             $tns_textarea('text', 'Текст отзыва', [
+                'instructions' => 'Без кавычек — на сайте они добавляются вокруг текста автоматически.',
                 'required' => 1,
                 'rows' => 4,
                 'maxlength' => 600,
@@ -298,6 +298,7 @@ add_action('acf/include_fields', function (): void {
                 'rows' => 3,
             ]),
             $tns_text('gift_cta_text', 'Текст кнопки', [
+                'instructions' => 'Сама ссылка кнопки — на вкладке «Общее / Fresha» настроек главной страницы.',
                 'maxlength' => 60,
             ]),
             $tns_image('gift_image_desktop', 'Фото, версия для широкого экрана', [
@@ -430,10 +431,10 @@ add_action('acf/include_fields', function (): void {
                 'maxlength' => 140,
             ]),
             $tns_link('booking_cta_desktop', 'Кнопка, версия для широкого экрана', [
-                'instructions' => 'Показывается на широких экранах.',
+                'instructions' => 'Показывается на широких экранах. Пусто — текст «Rezervovat» и общая ссылка бронирования (вкладка «Общее / Fresha»).',
             ]),
             $tns_link('booking_cta_mobile', 'Кнопка, версия для телефона', [
-                'instructions' => 'Показывается на узких экранах — обычно ведёт на подарочный сертификат.',
+                'instructions' => 'Показывается на узких экранах — обычно ведёт на подарочный сертификат. Пусто — текст «Koupit dárkový poukaz» и переход к сертификату на этой же странице.',
             ]),
             $tns_image('booking_image_desktop', 'Фото, версия для широкого экрана', [
                 'instructions' => 'Обязательно. Рекомендуемый размер 1480×340 px.',

@@ -19,6 +19,9 @@ WP_TITLE="${WP_TITLE:-TONSOR}"
 WP_ADMIN_USER="${WP_ADMIN_USER:-admin}"
 WP_ADMIN_PASSWORD="${WP_ADMIN_PASSWORD:-admin12345}"
 WP_ADMIN_EMAIL="${WP_ADMIN_EMAIL:-admin@tonsorbarber.local}"
+TONSOR_USER="${TONSOR_USER:-tonsor}"
+TONSOR_USER_PASSWORD="${TONSOR_USER_PASSWORD:-tonsor12345}"
+TONSOR_USER_EMAIL="${TONSOR_USER_EMAIL:-tonsor@tonsorbarber.local}"
 
 wp() {
   docker compose --profile tools run --rm -T wpcli "$@"
@@ -75,7 +78,7 @@ wp plugin delete hello >/dev/null 2>&1 || true
 wp plugin deactivate akismet >/dev/null 2>&1 || true
 wp plugin delete akismet >/dev/null 2>&1 || true
 
-echo "==> Плагины (план §4; Yoast SEO — НЕ ставим, это W9)..."
+echo "==> Плагины (SEO-плагин ставится отдельной задачей позже)..."
 PLUGINS="advanced-custom-fields duplicate-post simple-custom-post-order"
 for slug in $PLUGINS; do
   if wp plugin is-installed "$slug" >/dev/null 2>&1; then
@@ -88,6 +91,20 @@ done
 
 echo "==> Тема tonsor..."
 wp theme activate tonsor
+
+echo "==> Настройки плагинов: дубликат карточки создаётся черновиком, порядок работ..."
+wp option update duplicate_post_copystatus 0
+
+echo "==> Учётка клиента ($TONSOR_USER, роль Editor)..."
+if wp user get "$TONSOR_USER" >/dev/null 2>&1; then
+  wp user update "$TONSOR_USER" --role=editor
+else
+  wp user create "$TONSOR_USER" "$TONSOR_USER_EMAIL" --role=editor --user_pass="$TONSOR_USER_PASSWORD"
+fi
+
+echo "==> Комментарии отключены целиком (сайт их не использует нигде)..."
+wp option update default_comment_status closed
+wp option update default_ping_status closed
 
 echo "==> Готово."
 wp option get siteurl

@@ -322,7 +322,7 @@ foreach ($content['barbers'] as $barber) {
 }
 WP_CLI::log('==> Барберы готовы.');
 
-// ---- Работы портфолио (каждая работа — во всех 5 категориях, план §3 п.3) ----
+// ---- Работы портфолио (каждая работа — во всех 5 категориях) ----
 $all_term_ids = array_values($term_id_by_slug);
 foreach ($content['portfolio_works'] as $work) {
     $image_id = tns_seed_media($work['image']['src'], $work['image']['alt']);

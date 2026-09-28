@@ -16,6 +16,9 @@
   new window.Swiper(el, {
     slidesPerView: "auto",
     spaceBetween: 15,
+    // Гвард (краевой случай малого числа барберов из админки): при нехватке карточек для
+    // прокрутки watchOverflow прячет стрелки целиком (.swiper-button-lock, _swiper-core.scss).
+    watchOverflow: true,
     navigation: {
       nextEl: ".team__arrow--next",
       prevEl: ".team__arrow--prev",

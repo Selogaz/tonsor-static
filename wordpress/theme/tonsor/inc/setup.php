@@ -29,6 +29,69 @@ add_action('after_setup_theme', function (): void {
 // уже заранее подготовлены под экспорт x2, лишний уровень пересжатия не нужен.
 add_filter('big_image_size_threshold', '__return_false');
 
+// WebP для сгенерированных подразмеров (админ-миниатюры, `wp_get_attachment_image_src()` с
+// именованным размером вроде 'thumbnail' — сейчас это аватар отзыва) — если сама среда это
+// умеет. НЕ через стандартный фильтр `image_editor_output_format`: ядро включает по нему и
+// ОРИГИНАЛ ("full") тоже — если новый mime для исходного файла отличается от текущего, WP
+// молча подменяет сам загруженный файл на сконвертированную версию ещё ДО генерации
+// подразмеров (wp_create_image_subsizes() в wp-admin/includes/image.php, ветка `$convert`),
+// то есть `tns_picture()` (inc/helpers.php) на любой новой заливке перестал бы отдавать
+// байт-в-байт тот же файл, что загрузил клиент, — риск для паритета сопоставимый с тем, что
+// уже закрыт фильтром big_image_size_threshold выше. Поэтому конвертируем сами и только
+// готовые подразмеры — уже ПОСЛЕ того, как WP сгенерировал их в исходном формате; запись
+// 'file' (оригинал) в метаданных вложения не трогаем вообще.
+add_filter('wp_generate_attachment_metadata', function (array $metadata, int $attachment_id): array {
+    if (empty($metadata['sizes']) || !is_array($metadata['sizes'])) {
+        return $metadata;
+    }
+
+    if (!wp_image_editor_supports(['mime_type' => 'image/webp'])) {
+        return $metadata;
+    }
+
+    $upload_dir = trailingslashit(dirname(get_attached_file($attachment_id)));
+
+    foreach ($metadata['sizes'] as &$size) {
+        if (empty($size['file']) || !in_array($size['mime-type'] ?? '', ['image/jpeg', 'image/png'], true)) {
+            continue;
+        }
+
+        $source_path = $upload_dir . $size['file'];
+        $editor = wp_get_image_editor($source_path);
+        if (is_wp_error($editor)) {
+            continue;
+        }
+
+        $webp_path = preg_replace('/\.(jpe?g|png)$/i', '.webp', $source_path);
+        $saved = $editor->save($webp_path, 'image/webp');
+        if (is_wp_error($saved)) {
+            continue;
+        }
+
+        if ($source_path !== $webp_path) {
+            @unlink($source_path);
+        }
+
+        $size['file'] = $saved['file'];
+        $size['mime-type'] = $saved['mime-type'];
+        if (isset($saved['filesize'])) {
+            $size['filesize'] = $saved['filesize'];
+        }
+    }
+    unset($size);
+
+    return $metadata;
+}, 20, 2);
+
+// Комментариев на сайте нет нигде: ни у CPT (не в 'supports'), ни у обычных страниц
+// (единственная — носитель полей главной, комментарии на ней и так закрыты при создании,
+// inc/admin.php). Условие closed — на случай, если у какой-то записи статус вручную поменяют
+// в БД — форма/ответы всё равно нигде не всплывут.
+remove_post_type_support('page', 'comments');
+remove_post_type_support('page', 'trackbacks');
+add_filter('comments_open', '__return_false');
+add_filter('pings_open', '__return_false');
+
 // Временный заголовок документа — 1:1 со статикой, до подключения SEO-плагина.
 add_filter('document_title_parts', function (array $tns_parts): array {
     if (is_front_page()) {

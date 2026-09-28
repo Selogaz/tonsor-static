@@ -15,8 +15,15 @@
   const el = document.querySelector(".reviews__slider");
   if (!el || !window.Swiper) return;
 
+  // Гвард (краевой случай малого числа отзывов из админки): зацикливание имеет смысл,
+  // только если карточек больше, чем видно в ряд на самом широком брейкпоинте (3) — иначе
+  // Swiper предупредил бы в консоль и всё равно бы отключил loop сам, но неявно. При нехватке
+  // карточек для прокрутки стрелки прячет watchOverflow (.swiper-button-lock, _swiper-core.scss).
+  const slideCount = el.querySelectorAll(".reviews__slide").length;
+
   new window.Swiper(el, {
-    loop: true,
+    loop: slideCount > 3,
+    watchOverflow: true,
     spaceBetween: 10,
     slidesPerView: 1.075,
     navigation: {

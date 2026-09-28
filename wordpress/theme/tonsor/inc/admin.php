@@ -209,17 +209,19 @@ add_action('pre_get_posts', function (WP_Query $query): void {
 });
 
 /**
- * Yoast Duplicate Post по умолчанию дублирует только "post"/"page" — включаем наши
- * типы записей фильтром, не трогая настройки плагина в БД.
+ * Yoast Duplicate Post по умолчанию дублирует "post"/"page" — у нас это только карточки
+ * лендинга: заменяем список полностью, не расширяем (единственная запись типа "page" —
+ * носитель полей главной, дублировать её незачем и небезопасно — получилась бы вторая
+ * такая же страница-черновик с той же ролью).
  */
-add_filter('duplicate_post_enabled_post_types', function (array $post_types): array {
-    return array_values(array_unique(array_merge($post_types, tns_orderable_post_types())));
+add_filter('duplicate_post_enabled_post_types', function (): array {
+    return tns_orderable_post_types();
 });
 
 /**
- * Simple Custom Post Order хранит список сортируемых типов в своей опции — включаем
- * наши типы один раз, не трогая остальные настройки плагина (движок, роли и т.д.),
- * если админ их менял вручную.
+ * Simple Custom Post Order хранит список сортируемых типов записей и таксономий в двух
+ * разных ключах одной опции — включаем наши один раз, не трогая остальные настройки
+ * плагина (движок, роли и т.д.), если админ их менял вручную.
  */
 add_action('init', function (): void {
     $options = get_option('scporder_options', []);
@@ -228,12 +230,31 @@ add_action('init', function (): void {
     }
 
     $objects = isset($options['objects']) && is_array($options['objects']) ? $options['objects'] : [];
-    $missing = array_diff(tns_orderable_post_types(), $objects);
+    $tags = isset($options['tags']) && is_array($options['tags']) ? $options['tags'] : [];
 
-    if (!$missing) {
+    $missing_objects = array_diff(tns_orderable_post_types(), $objects);
+    $missing_tags = array_diff(['tns_portfolio_cat'], $tags);
+
+    if (!$missing_objects && !$missing_tags) {
         return;
     }
 
-    $options['objects'] = array_values(array_unique(array_merge($objects, $missing)));
+    $options['objects'] = array_values(array_unique(array_merge($objects, $missing_objects)));
+    $options['tags'] = array_values(array_unique(array_merge($tags, $missing_tags)));
     update_option('scporder_options', $options);
 }, 20);
+
+/**
+ * Комментариев на сайте нет (inc/setup.php) — прячем пункт меню и колонку в списках,
+ * чтобы не путать клиента лишним разделом админки.
+ */
+add_action('admin_menu', function (): void {
+    remove_menu_page('edit-comments.php');
+}, 999);
+
+remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 60);
+
+add_filter('manage_pages_columns', function (array $columns): array {
+    unset($columns['comments']);
+    return $columns;
+});

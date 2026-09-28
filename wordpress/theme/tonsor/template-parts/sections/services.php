@@ -4,12 +4,16 @@
  * заголовок — поле главной (ACF); карточки — CPT tns_service, порядок menu_order.
  * «Ukázky práce» несёт data-portfolio-filter только если у услуги выбран термин портфолио
  * и в нём есть хотя бы одна опубликованная работа (term->count — WP считает его именно по
- * опубликованным записям, см. _update_post_term_count() в ядре).
+ * опубликованным записям, см. _update_post_term_count() в ядре). Пустая ссылка Fresha у
+ * услуги → «Rezervovat» ведёт на общую ссылку бронирования (fresha_general, поле главной) —
+ * кнопка пропадает совсем, только если пусты обе.
  */
 
 defined('ABSPATH') || exit;
 
-$tns_services_title = (string) tns_field('services_title', tns_front_id());
+$tns_front_id = tns_front_id();
+$tns_services_title = (string) tns_field('services_title', $tns_front_id);
+$tns_fresha_general = (string) tns_field('fresha_general', $tns_front_id);
 
 $tns_services = get_posts([
     'post_type' => 'tns_service',
@@ -32,6 +36,7 @@ $tns_services = get_posts([
           $tns_post_id = $tns_service->ID;
           $tns_title = get_the_title($tns_post_id);
           $tns_fresha_url = (string) tns_field('fresha_url', $tns_post_id);
+          $tns_cta_url = $tns_fresha_url !== '' ? $tns_fresha_url : $tns_fresha_general;
           $tns_term_id = (int) tns_field('portfolio_term', $tns_post_id);
           $tns_filter_slug = '';
 
@@ -45,8 +50,8 @@ $tns_services = get_posts([
       <article class="service-card" data-aos="fade-up">
         <h3 class="service-card__title"><?php echo esc_html($tns_title); ?></h3>
         <div class="service-card__links">
-          <?php if ($tns_fresha_url) : ?>
-          <a class="service-card__cta" href="<?php echo esc_url($tns_fresha_url); ?>" target="_blank" rel="noopener">Rezervovat</a>
+          <?php if ($tns_cta_url) : ?>
+          <a class="service-card__cta" href="<?php echo esc_url($tns_cta_url); ?>" target="_blank" rel="noopener">Rezervovat</a>
           <?php endif; ?>
           <a class="service-card__more" href="#portfolio"<?php echo $tns_filter_slug ? ' data-portfolio-filter="' . esc_attr($tns_filter_slug) . '"' : ''; ?>>Ukázky práce</a>
         </div>

@@ -62,3 +62,12 @@
 /* Grid module (node_modules/swiper/modules/grid/grid.min.css) — сетка «строки×колонки» в свайпере. */
 .swiper-grid > .swiper-wrapper { flex-wrap: wrap; }
 .swiper-grid-column > .swiper-wrapper { flex-wrap: wrap; flex-direction: column; }
+
+/* Из navigation.min.css (node_modules/swiper/modules/navigation/) — только класс блокировки
+   стрелок: с watchOverflow Swiper сам добавляет его, когда слайдов не хватает для прокрутки
+   (карточек меньше, чем помещается на экране), стрелки должны пропадать целиком, а не просто
+   тускнеть, как при обычном swiper-button-disabled на первом/последнем слайде. `!important` —
+   как в официальном источнике (там же он форсит скрытие через .swiper-navigation-disabled):
+   этот файл подключается раньше `components.b/controls/_nav-arrows.scss` и её аналогов
+   (`_reviews.scss`, `_team.scss`), у которых та же специфичность (один класс) на `display`. */
+.swiper-button-lock { display: none !important; }
