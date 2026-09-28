@@ -1,12 +1,23 @@
 <?php
 /**
  * Služby a ceny: карточки услуг. Перенесено 1:1 со статикой (src/tpls/sections/services.html);
- * заголовок — поле главной (ACF); карточки услуг остаются статикой до CPT tns_service (W6).
+ * заголовок — поле главной (ACF); карточки — CPT tns_service, порядок menu_order.
+ * «Ukázky práce» несёт data-portfolio-filter только если у услуги выбран термин портфолио
+ * и в нём есть хотя бы одна опубликованная работа (term->count — WP считает его именно по
+ * опубликованным записям, см. _update_post_term_count() в ядре).
  */
 
 defined('ABSPATH') || exit;
 
 $tns_services_title = (string) tns_field('services_title', tns_front_id());
+
+$tns_services = get_posts([
+    'post_type' => 'tns_service',
+    'post_status' => 'publish',
+    'posts_per_page' => -1,
+    'orderby' => 'menu_order',
+    'order' => 'ASC',
+]);
 ?>
 
 <section class="services" id="sluzby">
@@ -15,78 +26,34 @@ $tns_services_title = (string) tns_field('services_title', tns_front_id());
       <h2 class="section-title"><?php echo tns_accent($tns_services_title); ?></h2>
     </div>
 
+    <?php if ($tns_services) : ?>
     <div class="services__grid">
-      <article class="service-card" data-aos="fade-up">
-        <h3 class="service-card__title">Střih krátkých vlasů</h3>
-        <div class="service-card__links">
-          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210843&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
-          <a class="service-card__more" href="#portfolio" data-portfolio-filter="kratke-vlasy">Ukázky práce</a>
-        </div>
-        <p class="service-card__price"><span class="service-card__price-from">od </span>500 Kč</p>
-      </article>
+      <?php foreach ($tns_services as $tns_service) :
+          $tns_post_id = $tns_service->ID;
+          $tns_title = get_the_title($tns_post_id);
+          $tns_fresha_url = (string) tns_field('fresha_url', $tns_post_id);
+          $tns_term_id = (int) tns_field('portfolio_term', $tns_post_id);
+          $tns_filter_slug = '';
 
+          if ($tns_term_id) {
+              $tns_term = get_term($tns_term_id, 'tns_portfolio_cat');
+              if ($tns_term instanceof WP_Term && $tns_term->count > 0) {
+                  $tns_filter_slug = $tns_term->slug;
+              }
+          }
+      ?>
       <article class="service-card" data-aos="fade-up">
-        <h3 class="service-card__title">Střih dlouhých vlasů</h3>
+        <h3 class="service-card__title"><?php echo esc_html($tns_title); ?></h3>
         <div class="service-card__links">
-          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210845&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
-          <a class="service-card__more" href="#portfolio" data-portfolio-filter="dlouhe-vlasy">Ukázky práce</a>
+          <?php if ($tns_fresha_url) : ?>
+          <a class="service-card__cta" href="<?php echo esc_url($tns_fresha_url); ?>" target="_blank" rel="noopener">Rezervovat</a>
+          <?php endif; ?>
+          <a class="service-card__more" href="#portfolio"<?php echo $tns_filter_slug ? ' data-portfolio-filter="' . esc_attr($tns_filter_slug) . '"' : ''; ?>>Ukázky práce</a>
         </div>
-        <p class="service-card__price"><span class="service-card__price-from">od </span>600 Kč</p>
+        <p class="service-card__price"><?php echo tns_price($tns_post_id); ?></p>
       </article>
-
-      <article class="service-card" data-aos="fade-up">
-        <h3 class="service-card__title">Střih + úprava vousů</h3>
-        <div class="service-card__links">
-          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29211029&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
-          <a class="service-card__more" href="#portfolio" data-portfolio-filter="strih-vousy">Ukázky práce</a>
-        </div>
-        <p class="service-card__price"><span class="service-card__price-from">od </span>750 Kč</p>
-      </article>
-
-      <article class="service-card" data-aos="fade-up">
-        <h3 class="service-card__title">Úprava vousů</h3>
-        <div class="service-card__links">
-          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210914&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
-          <a class="service-card__more" href="#portfolio" data-portfolio-filter="vousy">Ukázky práce</a>
-        </div>
-        <p class="service-card__price"><span class="service-card__price-from">od </span>300 Kč</p>
-      </article>
-
-      <article class="service-card" data-aos="fade-up">
-        <h3 class="service-card__title">Dětský střih do 10&nbsp;let</h3>
-        <div class="service-card__links">
-          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210875&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
-          <a class="service-card__more" href="#portfolio" data-portfolio-filter="detske-strihy">Ukázky práce</a>
-        </div>
-        <p class="service-card__price"><span class="service-card__price-from">od </span>400 Kč</p>
-      </article>
-
-      <article class="service-card" data-aos="fade-up">
-        <h3 class="service-card__title">Tónování vousů</h3>
-        <div class="service-card__links">
-          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29210926&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
-          <a class="service-card__more" href="#portfolio">Ukázky práce</a>
-        </div>
-        <p class="service-card__price"><span class="service-card__price-from">od </span>300 Kč</p>
-      </article>
-
-      <article class="service-card" data-aos="fade-up">
-        <h3 class="service-card__title">Střih táta a syn</h3>
-        <div class="service-card__links">
-          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29211050&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
-          <a class="service-card__more" href="#portfolio">Ukázky práce</a>
-        </div>
-        <p class="service-card__price"><span class="service-card__price-from">od </span>1 100 Kč</p>
-      </article>
-
-      <article class="service-card" data-aos="fade-up">
-        <h3 class="service-card__title">Střih táta a syn + úprava vousů</h3>
-        <div class="service-card__links">
-          <a class="service-card__cta" href="https://www.fresha.com/book-now/stam-barber-s-r-o-c9avb40d/services?lid=3196688&amp;oiid=sv%3A29211060&amp;share=true&amp;pId=3091855" target="_blank" rel="noopener">Rezervovat</a>
-          <a class="service-card__more" href="#portfolio">Ukázky práce</a>
-        </div>
-        <p class="service-card__price"><span class="service-card__price-from"></span>1 400 Kč</p>
-      </article>
+      <?php endforeach; ?>
     </div>
+    <?php endif; ?>
   </div>
 </section>

@@ -181,6 +181,7 @@
   justify-content: center;
   width: 4.8rem;
   height: 4.8rem;
+  overflow: hidden;
   font-family: var(--ff-regular);
   font-size: var(--fz-review-avatar);
   font-weight: var(--fw-medium);
@@ -192,6 +193,18 @@
     width: 3.3rem;
     height: 3.3rem;
   }
+}
+
+// Фото автора отзыва (поле ACF `photo`, необязательное) вместо инициала — та же круглая
+// рамка `.reviews__avatar`, только без фоновой заливки под ней.
+.reviews__avatar--photo {
+  background: transparent;
+}
+
+.reviews__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .reviews__author-info {

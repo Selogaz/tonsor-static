@@ -2,7 +2,9 @@
 /**
  * Recenze: карусель отзывов (reviews.js). Перенесено 1:1 со статикой
  * (src/tpls/sections/reviews.html); заголовок и рейтинг — поля главной (ACF),
- * карточки отзывов остаются статикой до CPT tns_review (W6).
+ * карточки — CPT tns_review, порядок menu_order. Чешские кавычки „…“ вокруг текста —
+ * оформление шаблона (в статике впечатаны в разметку у каждого из 10 отзывов), поле
+ * `text` хранит сам текст без них — проще редактировать в админке.
  */
 
 defined('ABSPATH') || exit;
@@ -11,6 +13,14 @@ $tns_front_id = tns_front_id();
 $tns_reviews_title = (string) tns_field('reviews_title', $tns_front_id);
 $tns_reviews_rating = (string) tns_field('reviews_rating', $tns_front_id);
 $tns_reviews_rating_sub = (string) tns_field('reviews_rating_sub', $tns_front_id);
+
+$tns_reviews = get_posts([
+    'post_type' => 'tns_review',
+    'post_status' => 'publish',
+    'posts_per_page' => -1,
+    'orderby' => 'menu_order',
+    'order' => 'ASC',
+]);
 ?>
 
 <!-- Recenze (`76:422`, юнит U7). Шапка: H2 `76:423` (целиком золотое слово — вся надпись
@@ -19,16 +29,12 @@ $tns_reviews_rating_sub = (string) tns_field('reviews_rating_sub', $tns_front_id
 на мобилке вторая строка мельче/полужирная/полупрозрачная — `109:1139`). Карточки — Swiper
 (`76:428`/`76:440`/`76:452`, десктоп 3 в ряд по 477px с зазором 24px; мобилка `109:1153`/
 `109:1154` 269×181 с «подглядыванием» следующей, x=294 при контейнере 320): 5 звёзд
-(`star-sym`), текст отзыва, аватар — круглая заливка с инициалом (НЕ фото: сверено
-design-context, у всех инстансов `76:436`/`76:448`/`76:460` один и тот же fill) прижат
-к низу карточки флексом (не завязан на длину текста, все карточки — фиксированной высоты).
-Стрелки `76:557`/`76:558` (мобилка `109:1167`) — свой стиль `.reviews__arrow` (решение
-юнита: не `nav-arrow` из components.b, чтобы не трогать общий файл), лежат сиблингами
-`.reviews__slider.swiper` (паттерн ТЗ), на десктопе абсолютно поверх шапки справа, на
-мобилке — в потоке под каруселью по центру. Тексты и имена — 10 реальных отзывов клиента
-(правка 10.09, п.5), без дублей — на 10 слайдах loop в Swiper держится без дополнительных
-копий (см. reviews.js). Стоковых фото в макете этой секции нет — img/reviews.tns/ не
-используется юнитом. -->
+(`star-sym`), текст отзыва, аватар — круглая заливка с инициалом, либо (W6) фото автора
+(поле `photo`, необязательное) прижат к низу карточки флексом (не завязан на длину текста,
+все карточки — фиксированной высоты). Стрелки `76:557`/`76:558` (мобилка `109:1167`) — свой
+стиль `.reviews__arrow` (решение юнита: не `nav-arrow` из components.b, чтобы не трогать
+общий файл), лежат сиблингами `.reviews__slider.swiper` (паттерн ТЗ), на десктопе абсолютно
+поверх шапки справа, на мобилке — в потоке под каруселью по центру. -->
 <section class="reviews" id="recenze">
   <div class="container reviews__inner">
 
@@ -49,208 +55,48 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
       </div>
     </div>
 
+    <?php if ($tns_reviews) : ?>
     <div class="reviews__slider swiper">
       <div class="reviews__wrapper swiper-wrapper">
 
+        <?php foreach ($tns_reviews as $tns_review) :
+            $tns_post_id = $tns_review->ID;
+            $tns_name = get_the_title($tns_post_id);
+            $tns_text = (string) tns_field('text', $tns_post_id);
+            $tns_stars = max(0, min(5, (int) tns_field('stars', $tns_post_id)));
+            $tns_service = (string) tns_field('service', $tns_post_id);
+            $tns_photo_id = (int) tns_field('photo', $tns_post_id);
+            $tns_photo_src = $tns_photo_id ? wp_get_attachment_image_src($tns_photo_id, 'thumbnail') : false;
+            $tns_initial = $tns_name !== '' ? mb_strtoupper(mb_substr($tns_name, 0, 1)) : '';
+        ?>
         <div class="reviews__slide swiper-slide">
           <article class="reviews__card">
             <div class="reviews__stars" aria-hidden="true">
+              <?php for ($tns_i = 0; $tns_i < $tns_stars; $tns_i++) : ?>
               <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
+              <?php endfor; ?>
             </div>
-            <p class="reviews__text">„Kluci dělají fakt skvělé střihy. Pokud chcete fade, TONSOR rozhodně doporučuji. Parkování zdarma a služby přizpůsobené přáním zákazníka. 😊“</p>
+            <?php if ($tns_text) : ?>
+            <p class="reviews__text">„<?php echo esc_html($tns_text); ?>“</p>
+            <?php endif; ?>
             <div class="reviews__author">
-              <span class="reviews__avatar">P</span>
+              <?php if ($tns_photo_src) : ?>
+              <span class="reviews__avatar reviews__avatar--photo">
+                <img class="reviews__avatar-img" src="<?php echo esc_url($tns_photo_src[0]); ?>" alt="" width="48" height="48" loading="lazy" decoding="async">
+              </span>
+              <?php else : ?>
+              <span class="reviews__avatar"><?php echo esc_html($tns_initial); ?></span>
+              <?php endif; ?>
               <div class="reviews__author-info">
-                <p class="reviews__name">Pavel H.</p>
-                <p class="reviews__service">Střih / barber služby</p>
+                <p class="reviews__name"><?php echo esc_html($tns_name); ?></p>
+                <?php if ($tns_service) : ?>
+                <p class="reviews__service"><?php echo esc_html($tns_service); ?></p>
+                <?php endif; ?>
               </div>
             </div>
           </article>
         </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„Super profesionální služby na velké úrovni. Krásné prostředí, výborný kolektiv.“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">M</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Maxim D.</p>
-                <p class="reviews__service">Střih / barber služby</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„Skvělý barbershop! Profesionální přístup, příjemná atmosféra a opravdu precizní práce. Barber si dal záležet na každém detailu a výsledek přesně odpovídal mé představě.“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">D</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Denis K.</p>
-                <p class="reviews__service">Střih / barber služby</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„Velká spokojenost! Jednoduchá a rychlá rezervace. Super odvedená práce. Doporučuji!!“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">M</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Milan J.</p>
-                <p class="reviews__service">Střih / barber služby</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„Zkušený tým pracovníků 👍“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">V</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Vitalij</p>
-                <p class="reviews__service">Barber služby</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„Bezkonkurenčně nejlepší Barber v Plzni.“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">J</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Jiří A.</p>
-                <p class="reviews__service">Střih / barber služby</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„Vše naprosto super. Nejen samotný střih, ale všechen servis kolem toho. Prostředí barbershopu navíc velmi příjemné.“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">J</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Jakub D.</p>
-                <p class="reviews__service">Střih / barber služby</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„Dostal jsem perfektní střih, super barbershop, všem radím!“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">I</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Ivan G.</p>
-                <p class="reviews__service">Střih</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„Super přístup a střih doporučuji 10/10.“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">L</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Lukáš K.</p>
-                <p class="reviews__service">Střih</p>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="reviews__slide swiper-slide">
-          <article class="reviews__card">
-            <div class="reviews__stars" aria-hidden="true">
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-              <svg class="reviews__star" width="16" height="16"><use href="<?php echo esc_url(tns_sprite('star')); ?>"></use></svg>
-            </div>
-            <p class="reviews__text">„TOP jako vždy... doporučuji... 👍“</p>
-            <div class="reviews__author">
-              <span class="reviews__avatar">R</span>
-              <div class="reviews__author-info">
-                <p class="reviews__name">Roman</p>
-                <p class="reviews__service">Barber služby</p>
-              </div>
-            </div>
-          </article>
-        </div>
+        <?php endforeach; ?>
 
       </div>
     </div>
@@ -261,6 +107,7 @@ design-context, у всех инстансов `76:436`/`76:448`/`76:460` оди
     <button type="button" class="reviews__arrow reviews__arrow--next swiper-button-next" aria-label="Další recenze">
       <svg class="reviews__arrow-icon" width="15" height="10" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('arrow-right')); ?>"></use></svg>
     </button>
+    <?php endif; ?>
 
   </div>
 </section>

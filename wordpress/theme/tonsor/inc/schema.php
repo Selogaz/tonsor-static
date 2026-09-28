@@ -1,9 +1,7 @@
 <?php
 /**
  * JSON-LD Schema.org. BarberShop/LocalBusiness собирается из полей контактов
- * главной страницы (footer.php печатает результат tns_schema_barbershop()).
- * FAQPage пока остаётся захардкоженной в footer.php — переедет сюда вместе со
- * списком записей вопросов-ответов.
+ * главной страницы, FAQPage — из записей tns_faq (footer.php печатает оба).
  */
 
 defined('ABSPATH') || exit;
@@ -50,6 +48,48 @@ if (!function_exists('tns_schema_barbershop')) {
         if ($tns_maps_url) {
             $tns_data['hasMap'] = $tns_maps_url;
         }
+
+        return (string) wp_json_encode($tns_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+}
+
+if (!function_exists('tns_schema_faq')) {
+    /**
+     * JSON-LD FAQPage из опубликованных записей tns_faq (menu_order — тот же порядок,
+     * что и в разметке аккордеона faq.php). Пустой список — пустая строка, footer.php
+     * пропускает тег script целиком (не печатает FAQPage без вопросов).
+     */
+    function tns_schema_faq(): string
+    {
+        $tns_items = get_posts([
+            'post_type' => 'tns_faq',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'orderby' => 'menu_order',
+            'order' => 'ASC',
+        ]);
+
+        if (!$tns_items) {
+            return '';
+        }
+
+        $tns_entities = [];
+        foreach ($tns_items as $tns_item) {
+            $tns_entities[] = [
+                '@type' => 'Question',
+                'name' => get_the_title($tns_item),
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => (string) tns_field('answer', $tns_item->ID),
+                ],
+            ];
+        }
+
+        $tns_data = [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => $tns_entities,
+        ];
 
         return (string) wp_json_encode($tns_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }

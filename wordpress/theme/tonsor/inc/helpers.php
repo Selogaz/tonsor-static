@@ -168,3 +168,21 @@ if (!function_exists('tns_picture')) {
         return '<picture class="' . esc_attr(implode(' ', $pic_classes)) . '">' . $mobile_source . $img . '</picture>';
     }
 }
+
+if (!function_exists('tns_price')) {
+    /**
+     * Разметка цены услуги (`.service-card__price` внутри — сам `<p>` остаётся в шаблоне):
+     * `<span class="service-card__price-from">od </span>1 100 Kč`. Span выводится всегда,
+     * даже без приставки «od» (пустой, как в статике у услуг без «od») — на него завязан CSS.
+     * Разделитель тысяч — неразрывный пробел (план §2 «Цена»).
+     */
+    function tns_price(int $post_id): string
+    {
+        $price = (int) tns_field('price', $post_id);
+        $has_from = (bool) tns_field('price_from', $post_id);
+
+        $formatted = number_format($price, 0, ',', "\xc2\xa0");
+
+        return '<span class="service-card__price-from">' . ($has_from ? 'od ' : '') . '</span>' . esc_html($formatted) . ' Kč';
+    }
+}

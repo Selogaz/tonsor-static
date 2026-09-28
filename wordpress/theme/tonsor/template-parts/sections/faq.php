@@ -1,8 +1,9 @@
 <?php
 /**
  * Časté dotazy: аккордеон bayan, первый пункт раскрыт. Перенесено 1:1 со статикой
- * (src/tpls/sections/faq.html); заголовок и лид — поля главной (ACF), сами
- * вопросы-ответы остаются статикой до CPT tns_faq (W6).
+ * (src/tpls/sections/faq.html); заголовок и лид — поля главной (ACF), карточки — CPT
+ * tns_faq, порядок menu_order. JSON-LD FAQPage из тех же записей — inc/schema.php,
+ * печатается в footer.php.
  */
 
 defined('ABSPATH') || exit;
@@ -10,31 +11,32 @@ defined('ABSPATH') || exit;
 $tns_front_id = tns_front_id();
 $tns_faq_title = (string) tns_field('faq_title', $tns_front_id);
 $tns_faq_lead = (string) tns_field('faq_lead', $tns_front_id);
+
+$tns_faq_items = get_posts([
+    'post_type' => 'tns_faq',
+    'post_status' => 'publish',
+    'posts_per_page' => -1,
+    'orderby' => 'menu_order',
+    'order' => 'ASC',
+]);
 ?>
 <!-- Časté dotazy (`76:494`, юнит U11). H2 «Odpovídáme na vaše otázky» (акцент — целиком
 слово «Odpovídáme») + лид «Vše, co potřebujete vědět před návštěvou barbershopu TONSOR»
 (`76:495`/`76:496`, `109:1229`/`109:1230` — идентичный текст на обеих ширинах).
 
-5 аккордеонов — библиотека bayan (`components.b/groupers/_bayan.js`): `.faq__item` несёт
-класс `bayan`, первая карточка — ещё и `bayan--opened` (первый вопрос раскрыт по умолчанию
-на обеих ширинах — bayan это уже покрывает самим классом в разметке, свой JS не нужен).
+Аккордеоны — библиотека bayan (`components.b/groupers/_bayan.js`): `.faq__item` несёт класс
+`bayan`, первая карточка по порядку (menu_order) — ещё и `bayan--opened` (первый вопрос
+раскрыт по умолчанию на обеих ширинах — bayan это уже покрывает самим классом в разметке,
+свой JS не нужен).
 
 Десктоп — CSS-грид 2 колонки, обычный `grid-template-columns: 1fr 1fr` без переворота
-потока: `get_metadata` показывает, что faq-1/faq-2 у обеих один и тот же y=250, faq-3/faq-4 —
-y=420, faq-5 — y=590, т.е. карточки идут ПАРАМИ СТРОК, не независимыми колонками —
-стандартный row-major поток с DOM-порядком 1..5 сам даёт нужное «слева 1,3,5 / справа 2,4».
-
-В макете все 5 карточек нарисованы в РАСКРЫТОМ состоянии (одинаковая высота 150px, у каждой
-есть видимый текст ответа faq-a-1..5, шеврон смотрит вверх) — это статический мокап всех
-состояний сразу, не задуманная раскладка «все открыты». Реальный аккордеон (открыт только
-первый) — по заданию юнита; тексты ответов 2-5 взяты из этого же мокапа (`76:504`/`76:509`/
-`76:514`/`76:519`) — это НЕ заглушки, макет содержит их все.
+потока — карточки идут ПАРАМИ СТРОК, стандартный row-major поток с DOM-порядком сам даёт
+нужное «слева 1,3,5 / справа 2,4».
 
 Шеврон — символ спрайта `chevron-down-sym` (в спрайте уже отзеркален под положение «вниз» =
-свёрнуто, см. `pages/page-homepage.md` → «Иконки»), поворот 180° в раскрытом состоянии на CSS.
+свёрнуто), поворот 180° в раскрытом состоянии на CSS.
 
-Мобилка (`109:1229…109:1260`) — 1 колонка, тот же DOM-порядок; текстов вопросов/ответов
-не меняет, только раскладку. -->
+Мобилка (`109:1229…109:1260`) — 1 колонка, тот же DOM-порядок. -->
 <section class="faq" id="faq">
   <div class="container">
     <div class="faq__head" data-aos="fade-up">
@@ -44,58 +46,27 @@ y=420, faq-5 — y=590, т.е. карточки идут ПАРАМИ СТРОК
       <?php endif; ?>
     </div>
 
+    <?php if ($tns_faq_items) : ?>
     <div class="faq__list">
 
-      <div class="faq__item bayan bayan--opened" data-aos="fade-up">
+      <?php foreach ($tns_faq_items as $tns_index => $tns_faq_item) :
+          $tns_post_id = $tns_faq_item->ID;
+          $tns_question = get_the_title($tns_post_id);
+          $tns_answer = (string) tns_field('answer', $tns_post_id);
+          $tns_is_first = 0 === $tns_index;
+      ?>
+      <div class="faq__item bayan<?php echo $tns_is_first ? ' bayan--opened' : ''; ?>" data-aos="fade-up">
         <div class="faq__item-question">
-          <p class="faq__item-question-text">Kolik stojí služby?</p>
+          <p class="faq__item-question-text"><?php echo esc_html($tns_question); ?></p>
           <svg class="faq__item-chevron" width="22" height="13" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('chevron-down')); ?>"></use></svg>
         </div>
         <div class="faq__item-answer">
-          <p class="faq__item-answer-inner">Ceny začínají od 300 Kč za úpravu nebo tónování vousů. Kompletní ceník všech služeb najdete na našem webu.</p>
+          <p class="faq__item-answer-inner"><?php echo esc_html($tns_answer); ?></p>
         </div>
       </div>
-
-      <div class="faq__item bayan" data-aos="fade-up">
-        <div class="faq__item-question">
-          <p class="faq__item-question-text">Mohu se před návštěvou poradit ohledně střihu?</p>
-          <svg class="faq__item-chevron" width="22" height="13" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('chevron-down')); ?>"></use></svg>
-        </div>
-        <div class="faq__item-answer">
-          <p class="faq__item-answer-inner">Ano. Můžeme se spojit přes WhatsApp. Pošlete nám referenční fotku a svou fotografii a poradíme vám, zda je daný střih vhodný a jak by vám mohl sedět.</p>
-        </div>
-      </div>
-
-      <div class="faq__item bayan" data-aos="fade-up">
-        <div class="faq__item-question">
-          <p class="faq__item-question-text">Máte volný termín dnes nebo zítra?</p>
-          <svg class="faq__item-chevron" width="22" height="13" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('chevron-down')); ?>"></use></svg>
-        </div>
-        <div class="faq__item-answer">
-          <p class="faq__item-answer-inner">Snažíme se nechávat několik termínů pro rezervace na poslední chvíli. Aktuální dostupnost najdete v online rezervačním systému.</p>
-        </div>
-      </div>
-
-      <div class="faq__item bayan" data-aos="fade-up">
-        <div class="faq__item-question">
-          <p class="faq__item-question-text">Jak dlouho služba trvá?</p>
-          <svg class="faq__item-chevron" width="22" height="13" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('chevron-down')); ?>"></use></svg>
-        </div>
-        <div class="faq__item-answer">
-          <p class="faq__item-answer-inner">Standardní pánský střih trvá přibližně 45–60 minut. Kombinace střih + vousy trvá přibližně 75–90 minut.</p>
-        </div>
-      </div>
-
-      <div class="faq__item bayan" data-aos="fade-up">
-        <div class="faq__item-question">
-          <p class="faq__item-question-text">Musím se objednat předem?</p>
-          <svg class="faq__item-chevron" width="22" height="13" aria-hidden="true"><use href="<?php echo esc_url(tns_sprite('chevron-down')); ?>"></use></svg>
-        </div>
-        <div class="faq__item-answer">
-          <p class="faq__item-answer-inner">Doporučujeme rezervovat termín 2–3 dny před plánovanou návštěvou. Před svátky a vytíženými termíny raději alespoň týden dopředu.</p>
-        </div>
-      </div>
+      <?php endforeach; ?>
 
     </div>
+    <?php endif; ?>
   </div>
 </section>

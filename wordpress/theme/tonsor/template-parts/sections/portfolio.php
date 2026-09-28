@@ -1,13 +1,36 @@
 <?php
 /**
  * Portfolio barberů: фильтры + карусель (portfolio.js). Перенесено 1:1 со статикой
- * (src/tpls/sections/portfolio.html); заголовок — поле главной (ACF), табы/слайды —
- * пока статика, до CPT tns_work + таксономии (W6).
+ * (src/tpls/sections/portfolio.html); заголовок — поле главной (ACF), табы/select/слайды —
+ * термины tns_portfolio_cat и работы tns_work.
+ *
+ * Термины — только с ≥1 опубликованной работой (get_terms hide_empty=true; WP считает
+ * term->count именно по опубликованным записям, см. _update_post_term_count() в ядре),
+ * порядок — по term meta `order` (ACF-поле термина, inc/fields.php). Контракт portfolio.js
+ * (план §1.4): у каждого слайда ОДИН data-category → работа, привязанная к нескольким
+ * терминам, выводится слайдом на каждый термин; первый таб = стартовый фильтр.
  */
 
 defined('ABSPATH') || exit;
 
 $tns_portfolio_title = (string) tns_field('portfolio_title', tns_front_id());
+
+$tns_portfolio_terms = get_terms([
+    'taxonomy' => 'tns_portfolio_cat',
+    'hide_empty' => true,
+    'meta_key' => 'order',
+    'orderby' => 'meta_value_num',
+    'order' => 'ASC',
+]);
+
+if (is_wp_error($tns_portfolio_terms)) {
+    $tns_portfolio_terms = [];
+}
+
+// get_terms() с hide_empty не переиндексирует ключи после фильтрации (напр. при скрытом
+// первом по порядку термине ключи начинаются не с 0) — без этого сравнение "0 === $tns_index"
+// ниже ошибочно не находило бы первый видимый термин.
+$tns_portfolio_terms = array_values($tns_portfolio_terms);
 ?>
 
 <section class="portfolio" id="portfolio">
@@ -15,431 +38,56 @@ $tns_portfolio_title = (string) tns_field('portfolio_title', tns_front_id());
     <div class="portfolio__grid">
       <h2 class="portfolio__title section-title" data-aos="fade-up"><?php echo tns_accent($tns_portfolio_title); ?></h2>
 
+      <?php if ($tns_portfolio_terms) : ?>
       <div class="portfolio__tabs" role="tablist">
-        <button type="button" class="portfolio__tab portfolio__tab--active" data-filter="kratke-vlasy" role="tab" aria-selected="true">Krátké vlasy</button>
-        <button type="button" class="portfolio__tab" data-filter="dlouhe-vlasy" role="tab" aria-selected="false">Dlouhé vlasy</button>
-        <button type="button" class="portfolio__tab" data-filter="vousy" role="tab" aria-selected="false">Vousy</button>
-        <button type="button" class="portfolio__tab" data-filter="detske-strihy" role="tab" aria-selected="false">Dětské střihy</button>
-        <button type="button" class="portfolio__tab" data-filter="strih-vousy" role="tab" aria-selected="false">Střih + vousy</button>
+        <?php foreach ($tns_portfolio_terms as $tns_index => $tns_term) : ?>
+        <button type="button" class="portfolio__tab<?php echo 0 === $tns_index ? ' portfolio__tab--active' : ''; ?>" data-filter="<?php echo esc_attr($tns_term->slug); ?>" role="tab" aria-selected="<?php echo 0 === $tns_index ? 'true' : 'false'; ?>"><?php echo esc_html($tns_term->name); ?></button>
+        <?php endforeach; ?>
       </div>
 
       <div class="portfolio__select-wrap">
         <select class="portfolio__select" aria-label="Filtr portfolia">
-          <option value="kratke-vlasy">Krátké vlasy</option>
-          <option value="dlouhe-vlasy">Dlouhé vlasy</option>
-          <option value="vousy">Vousy</option>
-          <option value="detske-strihy">Dětské střihy</option>
-          <option value="strih-vousy">Střih + vousy</option>
+          <?php foreach ($tns_portfolio_terms as $tns_term) : ?>
+          <option value="<?php echo esc_attr($tns_term->slug); ?>"><?php echo esc_html($tns_term->name); ?></option>
+          <?php endforeach; ?>
         </select>
         <svg class="portfolio__select-chevron" width="14" height="8"><use href="<?php echo esc_url(tns_sprite('chevron-down')); ?>"></use></svg>
       </div>
 
       <div class="portfolio__slider swiper">
         <div class="swiper-wrapper">
-          <!-- kratke-vlasy: 1,2,3,4,1,2,3,4 -->
-          <article class="portfolio__slide swiper-slide" data-category="kratke-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
+          <?php foreach ($tns_portfolio_terms as $tns_term) :
+              $tns_works = get_posts([
+                  'post_type' => 'tns_work',
+                  'post_status' => 'publish',
+                  'posts_per_page' => -1,
+                  'orderby' => 'menu_order',
+                  'order' => 'ASC',
+                  'tax_query' => [[
+                      'taxonomy' => 'tns_portfolio_cat',
+                      'field' => 'term_id',
+                      'terms' => $tns_term->term_id,
+                  ]],
+              ]);
 
-          <article class="portfolio__slide swiper-slide" data-category="kratke-vlasy">
+              foreach ($tns_works as $tns_work) :
+                  $tns_work_id = $tns_work->ID;
+                  $tns_thumb_id = (int) get_post_thumbnail_id($tns_work_id);
+                  $tns_barber = tns_field('barber', $tns_work_id);
+                  $tns_caption = $tns_barber instanceof WP_Post ? get_the_title($tns_barber) : '';
+          ?>
+          <article class="portfolio__slide swiper-slide" data-category="<?php echo esc_attr($tns_term->slug); ?>">
             <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
+              <?php echo tns_picture($tns_thumb_id, 0, ['block' => 'portfolio', 'loading' => 'lazy']); ?>
             </div>
-            <p class="portfolio__caption">Zachar</p>
+            <?php if ($tns_caption) : ?>
+            <p class="portfolio__caption"><?php echo esc_html($tns_caption); ?></p>
+            <?php endif; ?>
           </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="kratke-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="kratke-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="kratke-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="kratke-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="kratke-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="kratke-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <!-- dlouhe-vlasy: 2,4,1,3,2,4,1,3 -->
-          <article class="portfolio__slide swiper-slide" data-category="dlouhe-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="dlouhe-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="dlouhe-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="dlouhe-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="dlouhe-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="dlouhe-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="dlouhe-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="dlouhe-vlasy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <!-- vousy: 3,1,4,2,3,1,4,2 -->
-          <article class="portfolio__slide swiper-slide" data-category="vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <!-- detske-strihy: 4,3,2,1,4,3,2,1 -->
-          <article class="portfolio__slide swiper-slide" data-category="detske-strihy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="detske-strihy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="detske-strihy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="detske-strihy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="detske-strihy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="detske-strihy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="detske-strihy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="detske-strihy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <!-- strih-vousy: 1,4,2,3,1,4,2,3 -->
-          <article class="portfolio__slide swiper-slide" data-category="strih-vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="strih-vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="strih-vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="strih-vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="strih-vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-1@2x.jpg')); ?>" alt="Pánský krátký sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Anastasie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="strih-vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-4@2x.jpg')); ?>" alt="Kudrnatý sestřih s fade" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Viktorie</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="strih-vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-2@2x.jpg')); ?>" alt="Pánský sestřih, pohled zezadu" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Zachar</p>
-          </article>
-
-          <article class="portfolio__slide swiper-slide" data-category="strih-vousy">
-            <div class="portfolio__media">
-              <picture class="portfolio__media-pic">
-                <source srcset="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.webp')); ?>" type="image/webp">
-                <img class="portfolio__media-img" src="<?php echo esc_url(tns_asset('img/portfolio.tns/work-3@2x.jpg')); ?>" alt="Melírovaný sestřih s texturou" width="352" height="420" loading="lazy" decoding="async">
-              </picture>
-            </div>
-            <p class="portfolio__caption">Ivan</p>
-          </article>
+          <?php
+              endforeach;
+          endforeach;
+          ?>
         </div>
       </div>
 
@@ -451,6 +99,7 @@ $tns_portfolio_title = (string) tns_field('portfolio_title', tns_front_id());
           <svg class="portfolio__arrow-icon" width="15" height="10"><use href="<?php echo esc_url(tns_sprite('arrow-right')); ?>"></use></svg>
         </button>
       </div>
+      <?php endif; ?>
     </div>
   </div>
 </section>
