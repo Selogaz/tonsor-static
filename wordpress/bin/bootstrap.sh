@@ -99,11 +99,17 @@ wp theme activate tonsor
 echo "==> Настройки плагинов: дубликат карточки создаётся черновиком, порядок работ..."
 wp option update duplicate_post_copystatus 0
 
-echo "==> Учётка клиента ($TONSOR_USER, роль Editor)..."
+echo "==> Учётка клиента ($TONSOR_USER, роль «SEO Manager» от Yoast = Editor + wpseo_manage_options)..."
+# Штатная роль Yoast создаётся при активации плагина: права Editor + глобальные настройки Yoast SEO
+# (без manage_options — плагины, темы, пользователи и общие настройки WP по-прежнему недоступны).
+if ! wp role exists wpseo_manager >/dev/null 2>&1; then
+  echo "Роль wpseo_manager не найдена — Yoast SEO не активирован?" >&2
+  exit 1
+fi
 if wp user get "$TONSOR_USER" >/dev/null 2>&1; then
-  wp user update "$TONSOR_USER" --role=editor
+  wp user update "$TONSOR_USER" --role=wpseo_manager
 else
-  wp user create "$TONSOR_USER" "$TONSOR_USER_EMAIL" --role=editor --user_pass="$TONSOR_USER_PASSWORD"
+  wp user create "$TONSOR_USER" "$TONSOR_USER_EMAIL" --role=wpseo_manager --user_pass="$TONSOR_USER_PASSWORD"
 fi
 
 echo "==> Комментарии отключены целиком (сайт их не использует нигде)..."
