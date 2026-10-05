@@ -173,24 +173,34 @@ if (!function_exists('tns_picture')) {
 
 if (!function_exists('tns_portfolio_order_is_default')) {
     /**
-     * true, пока НИ ОДНА из переданных работ не поменяла menu_order с момента последнего
-     * сида (сид пишет исходное значение в мету `_tns_seed_menu_order` — см. seed/seed.php).
-     * `Simple Custom Post Order` при перетаскивании в списке `tns_work` пишет menu_order
-     * ГЛОБАЛЬНО на запись — своего порядка "на категорию" у ACF Free нет, поэтому запись
-     * с одним и тем же menu_order одинаково влияет на все 5 категорий портфолио сразу.
-     * Как только клиент один раз перетащил любую из этих работ (или добавил новую, без
-     * метки сида вовсе), весь захардкоженный порядок дублей (tns_portfolio_reorder)
-     * отключается разом для всех фильтров — дальше действует обычный menu_order.
+     * true, пока клиент не менял порядок работ относительно сида. Сид пишет исходный
+     * menu_order в мету `_tns_seed_menu_order` (см. seed/seed.php); сравниваются НЕ числа, а
+     * относительный порядок: работы сортируются по текущему menu_order (при равных — по ID),
+     * и их метки сида должны идти по возрастанию. `Simple Custom Post Order` сам, без единого
+     * перетаскивания, перенумеровывает menu_order в 1…N при открытии списка работ в админке
+     * (сохраняя относительный порядок) — абсолютные значения поэтому ничего не говорят, а
+     * вот перестановка карточек ломает возрастание меток.
+     * Плагин пишет menu_order ГЛОБАЛЬНО на запись — своего порядка "на категорию" у ACF Free
+     * нет, поэтому перестановка одинаково влияет на все 5 категорий портфолио сразу.
+     * Как только клиент перетащил любую из этих работ (или добавил новую, без метки сида
+     * вовсе), весь захардкоженный порядок дублей (tns_portfolio_reorder) отключается разом
+     * для всех фильтров — дальше действует обычный menu_order.
      *
      * @param WP_Post[] $works
      */
     function tns_portfolio_order_is_default(array $works): bool
     {
+        usort($works, static function ($a, $b) {
+            return [(int) $a->menu_order, (int) $a->ID] <=> [(int) $b->menu_order, (int) $b->ID];
+        });
+
+        $previous = null;
         foreach ($works as $work) {
             $baseline = get_post_meta($work->ID, '_tns_seed_menu_order', true);
-            if ('' === $baseline || (int) $baseline !== (int) $work->menu_order) {
+            if ('' === $baseline || (null !== $previous && (int) $baseline <= $previous)) {
                 return false;
             }
+            $previous = (int) $baseline;
         }
 
         return true;
