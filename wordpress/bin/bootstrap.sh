@@ -22,6 +22,14 @@ WP_ADMIN_EMAIL="${WP_ADMIN_EMAIL:-admin@tonsorbarber.local}"
 TONSOR_USER="${TONSOR_USER:-tonsor}"
 TONSOR_USER_PASSWORD="${TONSOR_USER_PASSWORD:-tonsor12345}"
 TONSOR_USER_EMAIL="${TONSOR_USER_EMAIL:-tonsor@tonsorbarber.local}"
+# Версии плагинов закреплены на тех, на которых собран и проверен сайт (локалка и стейджинг).
+# При обновлении плагинов поднимать номера здесь (или переопределять через .env).
+ACF_VERSION="${ACF_VERSION:-6.8.10}"
+SCPO_VERSION="${SCPO_VERSION:-2.8.8}"
+DUPLICATE_POST_VERSION="${DUPLICATE_POST_VERSION:-4.7}"
+YOAST_SEO_VERSION="${YOAST_SEO_VERSION:-28.5}"
+# 1 — разрешить понижение версии плагина (по умолчанию не понижаем, см. блок «Плагины»).
+ALLOW_PLUGIN_DOWNGRADE="${ALLOW_PLUGIN_DOWNGRADE:-0}"
 
 wp() {
   docker compose --profile tools run --rm -T wpcli "$@"
@@ -79,13 +87,33 @@ wp plugin deactivate akismet >/dev/null 2>&1 || true
 wp plugin delete akismet >/dev/null 2>&1 || true
 
 echo "==> Плагины..."
-PLUGINS="advanced-custom-fields duplicate-post simple-custom-post-order wordpress-seo"
-for slug in $PLUGINS; do
+# Идемпотентно: нужная версия уже стоит — только активируем; стоит более старая — доводим до закреплённой.
+# Более НОВАЯ версия, чем закреплённая, не понижается молча: плагин мог уже провести миграции БД,
+# и откат кода под них небезопасен. Печатаем предупреждение и идём дальше с тем, что стоит;
+# осознанный откат — ALLOW_PLUGIN_DOWNGRADE=1 (лучше на свежей БД).
+PLUGIN_PINS="
+advanced-custom-fields:$ACF_VERSION
+duplicate-post:$DUPLICATE_POST_VERSION
+simple-custom-post-order:$SCPO_VERSION
+wordpress-seo:$YOAST_SEO_VERSION
+"
+for pin in $PLUGIN_PINS; do
+  slug="${pin%%:*}"
+  want="${pin#*:}"
+  have=""
   if wp plugin is-installed "$slug" >/dev/null 2>&1; then
-    wp plugin activate "$slug"
-  else
-    wp plugin install "$slug" --activate
+    have="$(wp plugin get "$slug" --field=version)"
   fi
+  if [ "$have" = "$want" ]; then
+    echo "$slug $want — уже нужной версии."
+  elif [ -z "$have" ]; then
+    wp plugin install "$slug" --version="$want"
+  elif [ "$(printf '%s\n%s\n' "$have" "$want" | sort -V | head -n1)" = "$want" ] && [ "$ALLOW_PLUGIN_DOWNGRADE" != "1" ]; then
+    echo "ВНИМАНИЕ: $slug $have новее закреплённой $want — не понижаю (возможны миграции БД). Поднимите номер в bootstrap.sh/.env или задайте ALLOW_PLUGIN_DOWNGRADE=1." >&2
+  else
+    wp plugin install "$slug" --version="$want" --force
+  fi
+  wp plugin activate "$slug"
   wp language plugin install "$slug" ru_RU >/dev/null 2>&1 || true
 done
 
